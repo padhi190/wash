@@ -44,7 +44,7 @@
                                 <td>{{ $expense->expense_category->name or '' }}</td>
                                 <td>{{ $expense->employee->name or '' }}</td>
                                 <td>{{ $expense->entry_date }}</td>
-                                <td>{{ $expense->amount }}</td>
+                                <td style="text-align:right">{{ number_format($expense->amount,0) }}</td>
                                 <td>{{ $expense->from->name or '' }}</td>
                                 <td>{!! $expense->note !!}</td>
                                 <td>

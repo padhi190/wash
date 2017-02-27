@@ -21,7 +21,7 @@ class AbsensisController extends Controller
         if (! Gate::allows('absensi_access')) {
             return abort(401);
         }
-        $absensis = Absensi::all();
+        $absensis = Absensi::orderBy('tanggal', 'desc')->where('branch_id', session('branch_id'))->get();
 
         return view('absensis.index', compact('absensis'));
     }

@@ -19,10 +19,12 @@ class MonthlyReportsController extends Controller
         $to->day = $to->daysInMonth;
 
         $exp_q = Expense::with('expense_category')
-            ->whereBetween('entry_date', [$from, $to]);
+            ->whereBetween('entry_date', [$from, $to])
+            ->where('branch_id', session('branch_id'));
 
         $inc_q = Income::with('income_category')
-            ->whereBetween('entry_date', [$from, $to]);
+            ->whereBetween('entry_date', [$from, $to])
+            ->where('branch_id', session('branch_id'));
 
         $exp_total = $exp_q->sum('amount');
         $inc_total = $inc_q->sum('amount');

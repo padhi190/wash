@@ -21,7 +21,7 @@ class EmployeesController extends Controller
         if (! Gate::allows('employee_access')) {
             return abort(401);
         }
-        $employees = Employee::all();
+        $employees = Employee::orderBy('name', 'asc')->where('branch_id', session('branch_id'))->get();
 
         return view('employees.index', compact('employees'));
     }

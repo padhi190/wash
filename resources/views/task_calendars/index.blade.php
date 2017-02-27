@@ -21,7 +21,7 @@
                 events : [
                         @foreach($events as $event)
                     {
-                        title : '{{ $event->name }}',
+                        title : '{{ $event->kendaraan->license_plate }} - {{ $event->status->name}}',
                         start : '{{ \Carbon\Carbon::createFromFormat(config('app.date_format'),$event->due_date)->format('Y-m-d') }}',
                         url : '{{ url('tasks').'/'.$event->id.'/edit' }}'
                     },

@@ -111,8 +111,8 @@ class VehiclesController extends Controller
         }
         $relations = [
             'customers' => \App\Customer::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'incomes' => \App\Income::where('vehicle_id', $id)->get(),
-            'tasks' => \App\Task::where('kendaraan_id', $id)->get(),
+            'incomes' => \App\Income::where('vehicle_id', $id)->where('branch_id', session('branch_id'))->get(),
+            'tasks' => \App\Task::where('kendaraan_id', $id)->where('branch_id', session('branch_id'))->get(),
         ];
 
         $vehicle = Vehicle::findOrFail($id);

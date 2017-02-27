@@ -18,12 +18,14 @@
                 {!! Form::submit('Select month',['class' => 'btn btn-primary']) !!}
             </div>
         </div>
+    {!! Form::close() !!}
 
+    
     <div class="panel panel-default">
         <div class="panel-heading">
             Report
         </div>
-        {!! Form::close() !!}
+        
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">

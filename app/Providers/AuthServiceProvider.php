@@ -77,10 +77,10 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1, 2, 3]);
         });
         Gate::define('expense_category_create', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('expense_category_edit', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('expense_category_view', function ($user) {
             return in_array($user->role_id, [1, 2, 3]);
@@ -176,7 +176,7 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1, 2, 3]);
         });
         Gate::define('customer_delete', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Vehicle
@@ -193,7 +193,7 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1, 2, 3]);
         });
         Gate::define('vehicle_delete', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Task calendar
@@ -247,7 +247,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Task statuses
         Gate::define('task_status_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('task_status_create', function ($user) {
             return in_array($user->role_id, [1]);
@@ -256,7 +256,7 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1]);
         });
         Gate::define('task_status_view', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('task_status_delete', function ($user) {
             return in_array($user->role_id, [1]);
@@ -264,7 +264,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Task tags
         Gate::define('task_tag_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('task_tag_create', function ($user) {
             return in_array($user->role_id, [1]);
@@ -273,7 +273,7 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1]);
         });
         Gate::define('task_tag_view', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('task_tag_delete', function ($user) {
             return in_array($user->role_id, [1]);
@@ -306,16 +306,16 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1, 2, 3]);
         });
         Gate::define('employee_create', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('employee_edit', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
         Gate::define('employee_view', function ($user) {
             return in_array($user->role_id, [1, 2, 3]);
         });
         Gate::define('employee_delete', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Product management
@@ -394,6 +394,11 @@ class AuthServiceProvider extends ServiceProvider
         // Auth gates for: User actions
         Gate::define('user_action_access', function ($user) {
             return in_array($user->role_id, [1, 2]);
+        });
+
+        // Auth gates for change branch_id session
+        Gate::define('change_branch', function($user) {
+            return in_array($user->role_id, [1]);
         });
 
     }

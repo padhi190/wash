@@ -50,7 +50,7 @@
 <ul class="nav nav-tabs" role="tablist">
     
 <li role="presentation" class="active"><a href="#income" aria-controls="income" role="tab" data-toggle="tab">Income</a></li>
-<li role="presentation" class=""><a href="#tasks" aria-controls="tasks" role="tab" data-toggle="tab">Tasks</a></li>
+<li role="presentation" class=""><a href="#tasks" aria-controls="tasks" role="tab" data-toggle="tab">Jadwal Detailing</a></li>
 </ul>
 
 <!-- Tab panes -->

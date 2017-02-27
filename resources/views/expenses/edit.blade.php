@@ -11,7 +11,8 @@
         </div>
 
         <div class="panel-body">
-            <div class="row">
+            {{ Form::hidden('branch_id', Session::get('branch_id'))}}
+            <!-- <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('branch_id', 'Cabang*', ['class' => 'control-label']) !!}
                     {!! Form::select('branch_id', $branches, old('branch_id'), ['class' => 'form-control select2']) !!}
@@ -22,7 +23,7 @@
                         </p>
                     @endif
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('expense_category_id', 'Kategori*', ['class' => 'control-label']) !!}

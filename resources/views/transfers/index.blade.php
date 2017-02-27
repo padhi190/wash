@@ -43,7 +43,7 @@
                                 <td>{{ $transfer->tanggal }}</td>
                                 <td>{{ $transfer->dari->name or '' }}</td>
                                 <td>{{ $transfer->ke->name or '' }}</td>
-                                <td>{{ $transfer->jumlah }}</td>
+                                <td style="text-align: right">{{ number_format($transfer->jumlah,0) }}</td>
                                 <td>{!! $transfer->note !!}</td>
                                 <td>
                                     @can('transfer_view')

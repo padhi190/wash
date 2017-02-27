@@ -10,7 +10,8 @@
         </div>
         
         <div class="panel-body">
-            <div class="row">
+            {{ Form::hidden('branch_id', Session::get('branch_id'))}}
+            <!-- <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('branch_id', 'Cabang*', ['class' => 'control-label']) !!}
                     {!! Form::select('branch_id', $branches, old('branch_id'), ['class' => 'form-control select2']) !!}
@@ -21,11 +22,11 @@
                         </p>
                     @endif
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('tanggal', 'Tanggal*', ['class' => 'control-label']) !!}
-                    {!! Form::text('tanggal', old('tanggal'), ['class' => 'form-control date', 'placeholder' => '']) !!}
+                    {!! Form::text('tanggal', old('tanggal', Carbon\Carbon::now()->format('d-m-Y')), ['class' => 'form-control date', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('tanggal'))
                         <p class="help-block">
