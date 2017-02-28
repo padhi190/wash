@@ -25,8 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        session(['user' => $user, 'branch_name' => $user->branch->branch_name, 'branch_id' => $user['branch_id']]);
         return view('home');
     }
+
 }

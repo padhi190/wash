@@ -130,6 +130,29 @@
                 </ul>
             </li>
             @endcan
+            @can('change_branch')
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-home"></i>
+                    <span class="title">Lihat Cabang Lain</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    @foreach( Session::get('branches') as $branch)
+                        <li>
+                            <a href="/change_branch/{{$branch->id}}">
+                                <i class="fa fa-tags"></i>
+                                <span class="title">
+                                    {{ $branch->branch_name }}
+                                </span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+            @endcan
             @can('user_management_access')
             <li class="treeview">
                 <a href="#">
@@ -257,7 +280,7 @@
                                 @lang('quickadmin.categories.title')
                             </span>
                         </a>
-                    </li>
+                </li>
                 @endcan
                 @can('tag_access')
                 <li class="{{ $request->segment(1) == 'tags' ? 'active active-sub' : '' }}">
@@ -282,7 +305,7 @@
                 </ul>
             </li>
             @endcan
-
+            
             <li>
                 <a href="#logout" onclick="$('#logout').submit();">
                     <i class="fa fa-arrow-left"></i>
