@@ -100,8 +100,20 @@ class MonthlyReportsController extends Controller
                         ->groupBy('vehicle_id')
                         ->count();
 
-        $average_frequency = $no_of_sales/$no_of_vehicles;
-        $average_spending = $inc_total/$no_of_sales;
+        
+        if($no_of_vehicles>0){
+            $average_frequency = $no_of_sales/$no_of_vehicles;    
+        }
+        else{
+            $average_frequency = 0;
+        }                
+        
+        if($no_of_sales>0){
+            $average_spending = $inc_total/$no_of_sales;    
+        }
+        else{
+            $average_spending = 0;
+        }
                         
         return view('monthly_reports.index', compact(
             'exp_summary',

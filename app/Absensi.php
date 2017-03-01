@@ -82,7 +82,7 @@ class Absensi extends Model
     
     public function karyawan()
     {
-        return $this->belongsTo(Employee::class, 'karyawan_id')->withTrashed();
+        return $this->belongsToMany(Employee::class, 'absensi_employee')->withTrashed();
     }
     
 }

@@ -25,7 +25,7 @@ class StoreAbsensisRequest extends FormRequest
         return [
             'branch_id' => 'required',
             'tanggal' => 'required',
-            'karyawan_id' => 'required',
+            // 'karyawan_id' => 'required',
             
         ];
     }

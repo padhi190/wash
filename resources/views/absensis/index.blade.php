@@ -39,7 +39,11 @@
 
                                 <td>{{ $absensi->branch->branch_name or '' }}</td>
                                 <td>{{ $absensi->tanggal }}</td>
-                                <td>{{ $absensi->karyawan->name or '' }}</td>
+                                <td>
+                                    @foreach ($absensi->karyawan as $karyawan)
+                                        <span class="label label-info label-many">{{ $karyawan->name }}</span>
+                                    @endforeach
+                                </td>
                                 <td>{!! $absensi->note !!}</td>
                                 <td>
                                     @can('absensi_view')

@@ -37,8 +37,8 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 form-group">
-                    {!! Form::label('karyawan_id', 'Karyawan*', ['class' => 'control-label']) !!}
-                    {!! Form::select('karyawan_id', $karyawans, old('karyawan_id'), ['class' => 'form-control select2']) !!}
+                    {!! Form::label('karyawan', 'Karyawan*', ['class' => 'control-label']) !!}
+                    {!! Form::select('karyawan[]', $karyawans, old('karyawan'), ['class' => 'form-control select2' , 'multiple' => 'multiple']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('karyawan_id'))
                         <p class="help-block">

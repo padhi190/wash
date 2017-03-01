@@ -26,7 +26,7 @@ class UpdateAbsensisRequest extends FormRequest
             
             'branch_id' => 'required',
             'tanggal' => 'required',
-            'karyawan_id' => 'required',
+            // 'karyawan_id' => 'required',
             
         ];
     }

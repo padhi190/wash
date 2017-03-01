@@ -56,6 +56,7 @@ class AbsensisController extends Controller
             return abort(401);
         }
         $absensi = Absensi::create($request->all());
+        $absensi->karyawan()->sync(array_filter((array)$request->input('karyawan')));
 
         return redirect()->route('absensis.index');
     }
@@ -74,7 +75,7 @@ class AbsensisController extends Controller
         }
         $relations = [
             'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-            'karyawans' => \App\Employee::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'karyawans' => \App\Employee::get()->pluck('name', 'id'),
         ];
 
         $absensi = Absensi::findOrFail($id);
@@ -96,7 +97,8 @@ class AbsensisController extends Controller
         }
         $absensi = Absensi::findOrFail($id);
         $absensi->update($request->all());
-
+        $absensi->karyawan()->sync(array_filter((array)$request->input('karyawan')));
+        
         return redirect()->route('absensis.index');
     }
 
