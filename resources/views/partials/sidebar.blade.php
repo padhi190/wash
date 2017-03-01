@@ -5,13 +5,14 @@
     <section class="sidebar">
         <ul class="sidebar-menu">
 
+            @can('dashboard_access')
             <li class="{{ $request->segment(1) == 'home' ? 'active' : '' }}">
                 <a href="{{ url('/') }}">
                     <i class="fa fa-wrench"></i>
                     <span class="title">@lang('quickadmin.dashboard')</span>
                 </a>
             </li>
-
+            @endcan
             
             @can('customer_access')
             <li class="{{ $request->segment(1) == 'customers' ? 'active' : '' }}">

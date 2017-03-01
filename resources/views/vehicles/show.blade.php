@@ -66,7 +66,7 @@
                         <th>@lang('quickadmin.income.fields.income-category')</th>
                         <th>@lang('quickadmin.income.fields.qty')</th>
                         <th>@lang('quickadmin.income.fields.amount')</th>
-                        <th>@lang('quickadmin.income.fields.discount')</th>
+                        <!-- <th>@lang('quickadmin.income.fields.discount')</th> -->
                         <th>@lang('quickadmin.income.fields.payment-type')</th>
                         <th>@lang('quickadmin.income.fields.note')</th>
                         <th>&nbsp;</th>
@@ -81,9 +81,9 @@
                                 <td>{{ $income->vehicle->license_plate or '' }}</td>
                                 <td>{{ $income->entry_date }}</td>
                                 <td>{{ $income->income_category->name or '' }}</td>
-                                <td>{{ $income->qty }}</td>
-                                <td>{{ $income->amount }}</td>
-                                <td>{{ $income->discount }}</td>
+                                <td style="text-align: center">{{ $income->qty }}</td>
+                                <td style="text-align: right">{{ number_format($income->amount,0) }}</td>
+                                <!-- <td>{{ $income->discount }}</td> -->
                                 <td>{{ $income->payment_type->name or '' }}</td>
                                 <td>{!! $income->note !!}</td>
                                 <td>

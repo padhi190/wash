@@ -38,7 +38,7 @@ class AbsensisController extends Controller
         }
         $relations = [
             'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-            'karyawans' => \App\Employee::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'karyawans' => \App\Employee::get()->pluck('name', 'id'),
         ];
 
         return view('absensis.create', $relations);

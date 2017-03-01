@@ -142,7 +142,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Monthly report
         Gate::define('monthly_report_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Branch
@@ -398,6 +398,10 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for change branch_id session
         Gate::define('change_branch', function($user) {
+            return in_array($user->role_id, [1]);
+        });
+
+         Gate::define('dashboard_access', function($user) {
             return in_array($user->role_id, [1]);
         });
 
