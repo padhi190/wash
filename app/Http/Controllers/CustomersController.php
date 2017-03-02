@@ -56,7 +56,16 @@ class CustomersController extends Controller
         }
         $customer = Customer::create($request->all());
 
-        return redirect()->route('customers.index');
+        if (! Gate::allows('vehicle_create')) {
+            return redirect()->route('customers.index');
+        }        
+
+        $relations = [
+            'customers' => \App\Customer::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'customer_id' => $customer->id
+        ];
+
+        return view('vehicles.create', $relations);
     }
 
 

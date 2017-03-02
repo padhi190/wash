@@ -20,7 +20,7 @@ class VehiclesController extends Controller
         if (! Gate::allows('vehicle_access')) {
             return abort(401);
         }
-        $vehicles = Vehicle::all();
+        $vehicles = Vehicle::orderBy('id', 'desc')->get();
 
         return view('vehicles.index', compact('vehicles'));
     }
@@ -37,9 +37,11 @@ class VehiclesController extends Controller
         }
         $relations = [
             'customers' => \App\Customer::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'customer_id' => null
         ];
 
         return view('vehicles.create', $relations);
+
     }
 
     /**
@@ -55,7 +57,20 @@ class VehiclesController extends Controller
         }
         $vehicle = Vehicle::create($request->all());
 
-        return redirect()->route('vehicles.index');
+        if (! Gate::allows('income_create')) {
+            return redirect()->route('vehicles.index');
+        }
+
+        $relations = [
+            'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
+            'vehicles' => \App\Vehicle::get()->pluck('license_plate', 'id')->prepend('Please select', ''),
+            'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'payment_types' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'vehicle_id' => $vehicle->id
+        ];
+
+        return view('incomes.create', $relations);
     }
 
 
@@ -155,6 +170,19 @@ class VehiclesController extends Controller
                 $entry->delete();
             }
         }
+    }
+
+    public function createIncome($id) {
+        $relations = [
+            'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
+            'vehicles' => \App\Vehicle::get()->pluck('license_plate', 'id')->prepend('Please select', ''),
+            'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'payment_types' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'vehicle_id' => $id
+        ];
+
+        return view('incomes.create', $relations);
     }
 
 }

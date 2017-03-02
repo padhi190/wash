@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('branches_mass_destroy', ['uses' => 'BranchesController@massDestroy', 'as' => 'branches.mass_destroy']);
     Route::resource('customers', 'CustomersController');
     Route::post('customers_mass_destroy', ['uses' => 'CustomersController@massDestroy', 'as' => 'customers.mass_destroy']);
+    Route::get('vehicles/createIncome/{id}', ['uses' => 'VehiclesController@createIncome', 'as' => 'vehicles.createIncome']);
     Route::resource('vehicles', 'VehiclesController');
     Route::post('vehicles_mass_destroy', ['uses' => 'VehiclesController@massDestroy', 'as' => 'vehicles.mass_destroy']);
     Route::resource('task_calendars', 'TaskCalendarsController');

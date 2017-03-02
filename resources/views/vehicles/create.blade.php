@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('customer_id', 'Customer*', ['class' => 'control-label']) !!}
-                    {!! Form::select('customer_id', $customers, old('customer_id'), ['class' => 'form-control select2']) !!}
+                    {!! Form::select('customer_id', $customers, old('customer_id', $customer_id), ['class' => 'form-control select2']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('customer_id'))
                         <p class="help-block">

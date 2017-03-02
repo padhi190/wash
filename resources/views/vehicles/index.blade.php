@@ -24,7 +24,7 @@
                         <th>@lang('quickadmin.vehicle.fields.license-plate')</th>
                         <th>@lang('quickadmin.vehicle.fields.customer')</th>
                         <th>@lang('quickadmin.vehicle.fields.type')</th>
-                        <th>@lang('quickadmin.vehicle.fields.brand')</th>
+                        <!-- <th>@lang('quickadmin.vehicle.fields.brand')</th> -->
                         <th>@lang('quickadmin.vehicle.fields.model')</th>
                         <th>@lang('quickadmin.vehicle.fields.color')</th>
                         <th>@lang('quickadmin.vehicle.fields.note')</th>
@@ -43,8 +43,8 @@
                                 <td>{{ $vehicle->license_plate }}</td>
                                 <td>{{ $vehicle->customer->name or '' }}</td>
                                 <td>{{ $vehicle->type }}</td>
-                                <td>{{ $vehicle->brand }}</td>
-                                <td>{{ $vehicle->model }}</td>
+                                <!-- <td>{{ $vehicle->brand }}</td> -->
+                                <td>{{ $vehicle->brand }} {{ $vehicle->model }}</td>
                                 <td>{{ $vehicle->color }}</td>
                                 <td>{!! $vehicle->note !!}</td>
                                 <td>
@@ -62,6 +62,11 @@
                                         'route' => ['vehicles.destroy', $vehicle->id])) !!}
                                     {!! Form::submit(trans('quickadmin.delete'), array('class' => 'btn btn-xs btn-danger')) !!}
                                     {!! Form::close() !!}
+                                    @endcan
+                                    @can('income_create')
+                                    <a href="{{ route('vehicles.createIncome',[$vehicle->id]) }}" class="btn btn-xs btn-success">
+                                     +Penjualan
+                                    </a>
                                     @endcan
                                 </td>
                             </tr>

@@ -48,6 +48,6 @@ class LoginController extends Controller
                 'branches' => $branches
                 ]);
     
-        return redirect('/home');
+        return redirect('/incomes');
     }
 }

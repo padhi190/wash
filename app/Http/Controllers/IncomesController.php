@@ -41,6 +41,7 @@ class IncomesController extends Controller
             'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
             'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
             'payment_types' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'vehicle_id' => null
         ];
 
         return view('incomes.create', $relations);
