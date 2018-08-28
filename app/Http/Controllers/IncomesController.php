@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Income;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\StoreIncomesRequest;
 use App\Http\Requests\UpdateIncomesRequest;
+use Carbon\Carbon;
 
 class IncomesController extends Controller
 {
     /**
-     * Display a listing of Income.
-     *
+     * Display a listing of Income
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -20,7 +21,16 @@ class IncomesController extends Controller
         if (! Gate::allows('income_access')) {
             return abort(401);
         }
-        $incomes = Income::orderBy('entry_date','desc')->where('branch_id', session('branch_id'))->get();
+
+        $to = Carbon::now();
+        $from = clone $to;
+        $from->subDays(14);
+        $from->hour=5;
+        $from->minute=0;
+        $incomes = Income::with('income_category','vehicle','payment_type')->orderBy('entry_date','desc')
+                    ->whereBetween('entry_date', [$from, $to])
+                    ->where('branch_id', session('branch_id'))
+                    ->get();
 
         return view('incomes.index', compact('incomes'));
     }
@@ -35,14 +45,68 @@ class IncomesController extends Controller
         if (! Gate::allows('income_create')) {
             return abort(401);
         }
+        $minutes = 60*24;
+        $minutes_fast = 60;
+        $branches = Cache::remember('branches', $minutes, function () {
+            return \App\Branch::get();
+        });
+
+        $payment_types = Cache::remember('payment_types', $minutes, function () {
+            return \App\Account::get();
+        });
+
+        $income_categories = Cache::remember('income_categories', $minutes, function () {
+            return \App\IncomeCategory::get();
+        });
+
+        $products = Cache::remember('products', $minutes, function () {
+            return \App\Product::get();
+        });
+
+        // $vehicles = \App\Vehicle::with('customer')->get();
+        $vehicles = Cache::remember('vehicles', $minutes, function() {
+            return \App\Vehicle::with('customer')->get();
+        });
+            
+
+        $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
+            
+            return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
+        });
+
+        // dd($vehiclesAndCustomer);
+
+        // $customers = \App\Customer::with('latestVehicle')->get();
+
+        $customers = Cache::remember('customers', $minutes, function(){
+            return \App\Customer::with('latestVehicle')->get();
+        });
+        
+        
+        $customersAndCar = $customers->mapWithKeys(function($item,$key){
+            
+            return [$item['id'] => $item['name'] . ': ' .$item['latestVehicle']['full_vehicle']];
+        });
+
+        $last_sales = Income::orderBy('created_at','desc')->where('branch_id', session('branch_id'))->first();
+
+
+        
+
         $relations = [
-            'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-            'vehicles' => \App\Vehicle::get()->pluck('license_plate', 'id')->prepend('Please select', ''),
-            'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'payment_types' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'vehicle_id' => null
+            'customers' => $customersAndCar->all(),
+            'customer_id' => null,
+            'branches' => $branches,
+            'vehicles' => $vehiclesAndCustomer->all(),
+            'income_categories' => $income_categories->pluck('name','id'),
+            'products' => $products->pluck('name', 'id')->prepend('Please select', ''),
+            'payment_types' => $payment_types->pluck('name', 'id'),
+            'last_bon' => \App\Branch::where('id', session('branch_id'))->first()->last_bon,
+            'vehicle_id' => null,
+            'prices' => config('pricelist'.session('branch_id')),
+            'last_sales' => $last_sales,
         ];
+        // dd($relations);
 
         return view('incomes.create', $relations);
     }
@@ -58,9 +122,17 @@ class IncomesController extends Controller
         if (! Gate::allows('income_create')) {
             return abort(401);
         }
+        // dd($request->all());
         $income = Income::create($request->all());
 
-        return redirect()->route('incomes.index');
+        //update last_bon used
+        $branch = \App\Branch::findOrFail(session('branch_id'));
+        $branch->update(['last_bon' => $request->nobon]);
+
+        // return redirect()->route('incomes.index');
+        $request->session()->flash('alert-success', 'Bon no. ' . $request->nobon . ' berhasil ditambahkan!');
+        // $request->session()->flash('print-bon', '');
+        return redirect()->route('incomes.create');
     }
 
 
@@ -75,12 +147,20 @@ class IncomesController extends Controller
         if (! Gate::allows('income_edit')) {
             return abort(401);
         }
+
+        $vehicles = \App\Vehicle::with('customer')->get();
+
+        $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
+            
+            return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
+        });
+
         $relations = [
             'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-            'vehicles' => \App\Vehicle::get()->pluck('license_plate', 'id')->prepend('Please select', ''),
-            'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'vehicles' => $vehiclesAndCustomer->all(),
+            'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id'),
             'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'payment_types' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'payment_types' => \App\Account::get()->pluck('name', 'id'),
         ];
 
         $income = Income::findOrFail($id);

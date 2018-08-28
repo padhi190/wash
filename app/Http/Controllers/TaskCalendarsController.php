@@ -7,7 +7,7 @@ class TaskCalendarsController extends Controller
 {
     public function index()
     {
-        $events = Task::whereNotNull('due_date')->get();
+        $events = Task::whereNotNull('due_date')->with('kendaraan','status')->get();
         return view('task_calendars.index', compact('events'));
     }
 }

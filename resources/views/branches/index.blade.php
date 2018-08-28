@@ -25,6 +25,7 @@
                         <th>@lang('quickadmin.branch.fields.address')</th>
                         <th>@lang('quickadmin.branch.fields.city')</th>
                         <th>@lang('quickadmin.branch.fields.phone')</th>
+                        <th>@lang('quickadmin.branch.fields.last_bon')</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@
                                 <td>{{ $branch->address }}</td>
                                 <td>{{ $branch->city }}</td>
                                 <td>{{ $branch->phone }}</td>
+                                <td>{{ $branch->last_bon }}</td>
                                 <td>
                                     @can('branch_view')
                                     <a href="{{ route('branches.show',[$branch->id]) }}" class="btn btn-xs btn-primary">@lang('quickadmin.view')</a>

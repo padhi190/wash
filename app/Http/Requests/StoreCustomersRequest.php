@@ -26,7 +26,7 @@ class StoreCustomersRequest extends FormRequest
             
             'name' => 'required',
             'sex' => 'required',
-            
+            'phone' => 'unique:customers,phone',
             
             
         ];

@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
         
         // Auth gates for: User management
         Gate::define('user_management_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Roles
@@ -69,7 +69,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Settings
         Gate::define('setting_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Expense category
@@ -142,7 +142,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Monthly report
         Gate::define('monthly_report_access', function ($user) {
-            return in_array($user->role_id, [1]);
+            return in_array($user->role_id, [1, 3]);
         });
 
         // Auth gates for: Branch
@@ -298,7 +298,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Task calendar
         Gate::define('task_calendar_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1, 2, 3]);
         });
 
         // Auth gates for: Employees
@@ -320,7 +320,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Auth gates for: Product management
         Gate::define('product_management_access', function ($user) {
-            return in_array($user->role_id, [1, 2]);
+            return in_array($user->role_id, [1]);
         });
 
         // Auth gates for: Categories
@@ -401,8 +401,20 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1]);
         });
 
-         Gate::define('dashboard_access', function($user) {
-            return in_array($user->role_id, [1]);
+        Gate::define('dashboard_access', function($user) {
+            return in_array($user->role_id, [1, 2, 3]);
+        });
+
+        Gate::define('history_access', function($user) {
+            return in_array($user->role_id, [1, 2, 3]);
+        });
+
+        Gate::define('change_password', function($user) {
+            return in_array($user->role_id, [1, 3]);
+        });
+
+        Gate::define('isKasir', function($user) {
+            return in_array($user->role_id, [2]);
         });
 
     }

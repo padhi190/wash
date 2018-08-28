@@ -6,7 +6,7 @@
 </head>
 
 
-<body class="hold-transition skin-blue">
+<body class="hold-transition skin-yellow fixed @can('isKasir') sidebar-collapse @endcan }}">
 
 <div id="wrapper">
 

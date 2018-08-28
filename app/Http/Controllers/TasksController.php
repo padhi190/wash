@@ -20,7 +20,7 @@ class TasksController extends Controller
         if (! Gate::allows('task_access')) {
             return abort(401);
         }
-        $tasks = Task::orderBy('due_date', 'desc')->where('branch_id', session('branch_id'))->get();
+        $tasks = Task::with('branch','kendaraan','status')->orderBy('due_date', 'desc')->where('branch_id', session('branch_id'))->get();
 
         return view('tasks.index', compact('tasks'));
     }

@@ -18,8 +18,8 @@ class EmployeeSeed extends Seeder
 
         ];
 
-        foreach ($items as $item) {
-            \App\Employee::create($item);
-        }
+        // foreach ($items as $item) {
+        //     \App\Employee::create($item);
+        // }
     }
 }

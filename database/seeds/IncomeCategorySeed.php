@@ -14,9 +14,10 @@ class IncomeCategorySeed extends Seeder
         $items = [
             
             ['id' => 1, 'name' => 'Carwash', 'price' => '40000.00',],
-            ['id' => 2, 'name' => 'Wax', 'price' => '100000.00',],
+            // ['id' => 2, 'name' => 'Wax', 'price' => '100000.00',],
             ['id' => 3, 'name' => 'Detailing', 'price' => '1000000.00',],
-            ['id' => 4, 'name' => 'F&B', 'price' => null,],
+            // ['id' => 4, 'name' => 'F&B', 'price' => null,],
+            ['id' => 5, 'name' => 'Bikewash', 'price' => '1000000.00',],
 
         ];
 

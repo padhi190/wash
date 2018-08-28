@@ -17,8 +17,10 @@ class TaskSeed extends Seeder
 
         ];
 
-        foreach ($items as $item) {
-            \App\Task::create($item);
-        }
+        // foreach ($items as $item) {
+        //     \App\Task::create($item);
+        // }
+
+        // factory(App\Task::class, 50)->create();
     }
 }

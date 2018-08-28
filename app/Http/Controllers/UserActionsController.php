@@ -20,7 +20,7 @@ class UserActionsController extends Controller
         if (! Gate::allows('user_action_access')) {
             return abort(401);
         }
-        $user_actions = UserAction::all();
+        $user_actions = UserAction::with('user')->get();
 
         return view('user_actions.index', compact('user_actions'));
     }

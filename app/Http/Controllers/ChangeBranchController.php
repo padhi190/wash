@@ -23,7 +23,7 @@ class ChangeBranchController extends Controller
         }
 
         $branch = Branch::findOrFail($branch_id);
-        session(['branch_id' => $branch_id, 'branch_name' => $branch['branch_name']]);
+        session(['branch_id' => $branch_id, 'branch_name' => $branch['branch_name'], 'branch' => $branch]);
         return redirect()->intended('/home');
     }
 

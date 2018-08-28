@@ -78,6 +78,16 @@
                             <td style="text-align: right;">{{ number_format($inc['amount'], 2) }} ({{number_format($inc['amount']/$inc_total_s * 100, 1)}}%)</td>
                         </tr>
                     @endforeach
+                    @if($use_new_format)
+                        <tr>
+                            <th>Wax</th>
+                            <td style="text-align: right;">{{ number_format($wax_dollar, 2) }} ({{number_format($wax_dollar/$inc_total_s * 100, 1)}}%)</td>
+                        </tr>
+                        <tr>
+                            <th>F&B</th>
+                            <td style="text-align: right;">{{ number_format($fnb_dollar, 2) }} ({{number_format($fnb_dollar/$inc_total_s * 100, 1)}}%)</td>
+                        </tr>
+                    @endif
                     </table>
                 </div>
                 <div class="col-md-4">

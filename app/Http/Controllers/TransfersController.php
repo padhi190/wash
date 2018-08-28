@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Transfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\StoreTransfersRequest;
 use App\Http\Requests\UpdateTransfersRequest;
 
@@ -20,7 +21,7 @@ class TransfersController extends Controller
         if (! Gate::allows('transfer_access')) {
             return abort(401);
         }
-        $transfers = Transfer::orderBy('tanggal', 'desc')->where('branch_id', session('branch_id'))->get();
+        $transfers = Transfer::with('dari','ke','branch')->orderBy('tanggal', 'desc')->where('branch_id', session('branch_id'))->get();
 
         return view('transfers.index', compact('transfers'));
     }
@@ -159,6 +160,12 @@ class TransfersController extends Controller
                 $entry->delete();
             }
         }
+    }
+
+    public function refresh()
+    {
+        Cache::flush();
+        return back();
     }
 
 }

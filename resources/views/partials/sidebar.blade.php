@@ -2,13 +2,36 @@
 <!-- Left side column. contains the sidebar -->
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
+    <section class="sidebar" style="height: 100%">
         <ul class="sidebar-menu">
-
+            @can('change_branch')
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-home"></i>
+                    <span class="title">Lihat Cabang Lain</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    @foreach( Session::get('branches') as $branch)
+                        <li>
+                            <a href="{{ url('/change_branch/' . $branch->id ) }}">
+                                <i class="fa fa-tags"></i>
+                                <span class="title">
+                                    {{ $branch->branch_name }}
+                                </span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+            @endcan
+            
             @can('dashboard_access')
             <li class="{{ $request->segment(1) == 'home' ? 'active' : '' }}">
                 <a href="{{ url('/') }}">
-                    <i class="fa fa-wrench"></i>
+                    <i class="fa fa-dashboard"></i>
                     <span class="title">@lang('quickadmin.dashboard')</span>
                 </a>
             </li>
@@ -51,14 +74,49 @@
             @endcan
             
             @can('monthly_report_access')
-            <li class="{{ $request->segment(1) == 'monthly_reports' ? 'active' : '' }}">
-                <a href="{{ route('monthly_reports.index') }}">
-                    <i class="fa fa-line-chart"></i>
-                    <span class="title">@lang('quickadmin.monthly-report.title')</span>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-bar-chart"></i>
+                    <span class="title">Reports</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
                 </a>
+                <ul class="treeview-menu">
+                    <li class="{{ $request->segment(1) == 'monthly_reports' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('monthly_reports.index') }}">
+                            <i class="fa fa-line-chart"></i>
+                            <span class="title">@lang('quickadmin.monthly-report.title')</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             @endcan
-            
+            @can('history_access')
+            <li class="treeview {{ $request->segment(1) == 'history' ? 'active' : '' }}">
+                <a href="#">
+                    <i class="fa fa-book"></i>
+                    <span class="title">History</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ $request->segment(2) == 'income' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('history.income') }}">
+                            <i class="fa fa-arrow-circle-right"></i>
+                            <span class="title">@lang('quickadmin.income.title')</span>
+                        </a>
+                    </li>
+                    <li class="{{ $request->segment(2) == 'expense' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('history.expense') }}">
+                            <i class="fa fa-arrow-circle-left"></i>
+                            <span class="title">@lang('quickadmin.expense.title')</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endcan
             @can('transfer_access')
             <li class="{{ $request->segment(1) == 'transfers' ? 'active' : '' }}">
                 <a href="{{ route('transfers.index') }}">
@@ -68,14 +126,14 @@
             </li>
             @endcan
             
-            @can('absensi_access')
+            <!-- @can('absensi_access')
             <li class="{{ $request->segment(1) == 'absensis' ? 'active' : '' }}">
                 <a href="{{ route('absensis.index') }}">
                     <i class="fa fa-clock-o"></i>
                     <span class="title">@lang('quickadmin.absensi.title')</span>
                 </a>
             </li>
-            @endcan
+            @endcan -->
             
             @can('task_management_access')
             <li class="treeview">
@@ -128,29 +186,6 @@
                         </a>
                     </li>
                 @endcan
-                </ul>
-            </li>
-            @endcan
-            @can('change_branch')
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-home"></i>
-                    <span class="title">Lihat Cabang Lain</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    @foreach( Session::get('branches') as $branch)
-                        <li>
-                            <a href="/change_branch/{{$branch->id}}">
-                                <i class="fa fa-tags"></i>
-                                <span class="title">
-                                    {{ $branch->branch_name }}
-                                </span>
-                            </a>
-                        </li>
-                    @endforeach
                 </ul>
             </li>
             @endcan
@@ -306,7 +341,12 @@
                 </ul>
             </li>
             @endcan
-            
+            <li>
+                <a href="{{ url('/refresh') }}">
+                    <i class="fa fa-arrows-h"></i>
+                    <span class="title">Refresh Data</span>
+                </a>
+            </li>
             <li>
                 <a href="#logout" onclick="$('#logout').submit();">
                     <i class="fa fa-arrow-left"></i>

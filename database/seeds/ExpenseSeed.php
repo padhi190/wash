@@ -19,8 +19,10 @@ class ExpenseSeed extends Seeder
 
         ];
 
-        foreach ($items as $item) {
-            \App\Expense::create($item);
-        }
+        // foreach ($items as $item) {
+        //     \App\Expense::create($item);
+        // }
+
+        factory(App\Expense::class, 1000)->create();
     }
 }

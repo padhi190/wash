@@ -20,7 +20,7 @@ class UsersController extends Controller
         if (! Gate::allows('user_access')) {
             return abort(401);
         }
-        $users = User::all();
+        $users = User::with('role','branch')->get();
 
         return view('users.index', compact('users'));
     }

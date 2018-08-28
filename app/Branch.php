@@ -17,7 +17,7 @@ class Branch extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['branch_name', 'address', 'city', 'phone'];
+    protected $fillable = ['branch_name', 'address', 'city', 'phone', 'last_bon'];
     
     public static function boot()
     {

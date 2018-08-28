@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title">@lang('quickadmin.expense.title')</h3>
+    <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title')</h3>
     @can('expense_create')
     <p>
         <a href="{{ route('expenses.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
@@ -21,7 +21,6 @@
                             <th style="text-align:center;"><input type="checkbox" id="select-all" /></th>
                         @endcan
 
-                        <th>@lang('quickadmin.expense.fields.branch')</th>
                         <th>@lang('quickadmin.expense.fields.expense-category')</th>
                         <th>@lang('quickadmin.expense.fields.employee')</th>
                         <th>@lang('quickadmin.expense.fields.entry-date')</th>
@@ -40,7 +39,6 @@
                                     <td></td>
                                 @endcan
 
-                                <td>{{ $expense->branch->branch_name or '' }}</td>
                                 <td>{{ $expense->expense_category->name or '' }}</td>
                                 <td>{{ $expense->employee->name or '' }}</td>
                                 <td>{{ $expense->entry_date }}</td>
@@ -82,6 +80,10 @@
         @can('expense_delete')
             window.route_mass_crud_entries_destroy = '{{ route('expenses.mass_destroy') }}';
         @endcan
+
+         $( document ).ready(function() {
+            $('input[type=search]').focus();
+        });
 
     </script>
 @endsection

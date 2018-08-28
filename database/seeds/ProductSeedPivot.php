@@ -28,12 +28,12 @@ class ProductSeedPivot extends Seeder
 
         ];
 
-        foreach ($items as $id => $item) {
-            $product = \App\Product::find($id);
+        // foreach ($items as $id => $item) {
+        //     $product = \App\Product::find($id);
 
-            foreach ($item as $key => $ids) {
-                $product->{$key}()->sync($ids);
-            }
-        }
+        //     foreach ($item as $key => $ids) {
+        //         $product->{$key}()->sync($ids);
+        //     }
+        // }
     }
 }

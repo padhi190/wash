@@ -27,8 +27,8 @@ class UpdateExpensesRequest extends FormRequest
             'branch_id' => 'required',
             'expense_category_id' => 'required',
             
-            'entry_date' => 'required',
-            'amount' => 'required',
+            'entry_date' => 'required|date',
+            'amount' => 'required|numeric',
             'from_id' => 'required',
             
         ];

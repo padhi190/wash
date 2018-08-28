@@ -75,7 +75,7 @@
             <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
-                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '']) !!}
+                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows'=>'2']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('note'))
                         <p class="help-block">
@@ -101,7 +101,7 @@
         $('.datetime').datetimepicker({
             autoclose: true,
             dateFormat: "{{ config('app.date_format_js') }}",
-            timeFormat: "hh:mm:ss"
+            timeFormat: "HH:mm"
         });
     </script>
 

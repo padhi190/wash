@@ -6,6 +6,7 @@ use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreCustomersRequest;
+use App\Http\Requests\StoreCustomerFullRequest;
 use App\Http\Requests\UpdateCustomersRequest;
 use Yajra\Datatables\Datatables;
 
@@ -21,7 +22,7 @@ class CustomersController extends Controller
         if (! Gate::allows('customer_access')) {
             return abort(401);
         }
-        $customers = Customer::orderBy('join_date', 'desc')->get();
+        $customers = Customer::orderBy('join_date', 'desc')->with('vehicles','branch')->get();
 
         return view('customers.index', compact('customers'));
     }
@@ -164,6 +165,96 @@ class CustomersController extends Controller
                 $entry->delete();
             }
         }
+    }
+
+    public function createFull()
+    {
+        if (! Gate::allows('customer_create')) {
+            return abort(401);
+        }
+        $relations = [
+            'customer_id' => null,
+            'vehicles' => \App\Vehicle::get()->pluck('full_vehicle', 'id')->prepend('Please select', ''),
+            'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id'),
+            'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'payment_types' => \App\Account::get()->pluck('name', 'id'),
+            'last_bon' => \App\Branch::where('id', session('branch_id'))->first()->last_bon,
+            'prices' => config('pricelist'),
+            'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', '')
+        ];
+
+        return view('customers.createfull', $relations);
+
+    }
+
+    public function storeFull(StoreCustomerFullRequest $request)
+    {
+        if (! Gate::allows('customer_create')) {
+            return abort(401);
+        }
+
+        // dd($request->customer_id);
+        // $vehicle = Vehicle::create($request->all());
+        $customer = new Customer;
+        $customer->name          = $request->name;
+        $customer->sex           = $request->sex;
+        $customer->phone         = $request->phone;
+        $customer->email         = $request->email;
+        $customer->save();
+
+        if (! Gate::allows('vehicle_create')) {
+            return redirect()->route('customers.index');
+        }
+
+        $vehicle   = new \App\Vehicle;
+        $vehicle->license_plate = $request->license_plate;
+        $vehicle->type          = $request->type;
+        $vehicle->brand         = $request->brand;
+        $vehicle->model         = $request->model;
+        $vehicle->color         = $request->color;
+        $vehicle->size          = $request->size;
+        $customer->vehicles()->save($vehicle);
+
+        if (! Gate::allows('income_create')) {
+            return redirect()->route('vehicles.index');
+        }
+
+        $sales = new \App\Income;
+        $sales->entry_date          = $request->entry_date;
+        $sales->qty                 = $request->qty;
+        $sales->nobon               = $request->nobon;
+        $sales->amount              = $request->amount;
+        $sales->branch_id           = $request->branch_id;
+        $sales->income_category_id  = $request->income_category_id;
+        $sales->product_id          = $request->product_id;
+        $sales->payment_type_id     = $request->payment_type_id;
+        $sales->fnb_amount          = $request->fnb_amount;
+        $sales->wax_amount          = $request->wax_amount;
+
+        $vehicle->sales()->save($sales);
+        
+
+        $branch = \App\Branch::findOrFail(session('branch_id'));
+        $branch->update(['last_bon' => $request->nobon]);
+
+        // return redirect()->route('incomes.index');
+        $message = 'Customer ' . ucwords($customer->name) . ' ,Plat No. ' .  strtoupper($vehicle->license_plate) . ' & Bon no. ' . $request->nobon . ' berhasil ditambahkan!';
+        $request->session()->flash('alert-success', $message);
+        // $request->session()->flash('print-bon', '');
+        return redirect()->route('incomes.create');
+
+        // $relations = [
+        //     'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
+        //     'vehicles' => \App\Vehicle::get()->pluck('full_vehicle', 'id')->prepend('Please select', ''),
+        //     'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id'),
+        //     'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
+        //     'payment_types' => \App\Account::get()->pluck('name', 'id'),
+        //     'last_bon' => \App\Branch::where('id', session('branch_id'))->first()->last_bon,
+        //     'vehicle_id' => null,
+        //     'prices' => config('pricelist')
+        // ];
+
+        // return view('incomes.create', $relations);
     }
 
 }

@@ -29,6 +29,10 @@
                             <td>{{ $customer->phone }}</td>
                         </tr>
                         <tr>
+                            <th>@lang('quickadmin.customer.fields.email')</th>
+                            <td>{{ $customer->email }}</td>
+                        </tr>
+                        <tr>
                             <th>@lang('quickadmin.customer.fields.join-date')</th>
                             <td>{{ $customer->join_date }}</td>
                         </tr>

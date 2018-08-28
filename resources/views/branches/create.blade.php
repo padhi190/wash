@@ -58,6 +58,18 @@
                     @endif
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('last_bon', 'No. Bon (Last Used)', ['class' => 'control-label']) !!}
+                    {!! Form::text('last_bon', old('last_bon'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('last_bon'))
+                        <p class="help-block">
+                            {{ $errors->first('last_bon') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
             
         </div>
     </div>

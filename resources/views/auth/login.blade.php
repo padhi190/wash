@@ -18,7 +18,7 @@
             background: -webkit-linear-gradient(-135deg, #ffffff, #ffffff);
         }
         .login-button, .bar:before, .bar:after{
-            background: #000000;
+            background: #22A7F0;
         }
 
     </style>

@@ -19,8 +19,8 @@ class ProductSeed extends Seeder
 
         ];
 
-        foreach ($items as $item) {
-            \App\Product::create($item);
-        }
+        // foreach ($items as $item) {
+        //     \App\Product::create($item);
+        // }
     }
 }

@@ -13,12 +13,14 @@ class TransferSeed extends Seeder
     {
         $items = [
             
-            ['id' => 1, 'branch_id' => 1, 'tanggal' => '23-02-2017 09:15:20', 'dari_id' => 1, 'ke_id' => 2, 'jumlah' => '2000000.00', 'note' => null,],
+            ['id' => 1, 'branch_id' => 1, 'tanggal' => '23-02-2017 09:15', 'dari_id' => 1, 'ke_id' => 2, 'jumlah' => '2000000.00', 'note' => null,],
 
         ];
 
         foreach ($items as $item) {
             \App\Transfer::create($item);
         }
+
+        factory(App\Transfer::class, 500)->create();
     }
 }

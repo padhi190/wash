@@ -29,7 +29,6 @@ class UpdateCustomersRequest extends FormRequest
             'sex' => 'required',
             
             
-            
         ];
     }
 }

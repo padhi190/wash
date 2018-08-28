@@ -24,7 +24,7 @@ class Income extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['entry_date', 'qty', 'amount', 'discount', 'note', 'branch_id', 'vehicle_id', 'income_category_id', 'product_id', 'payment_type_id'];
+    protected $fillable = ['entry_date', 'qty', 'nobon', 'amount', 'discount', 'note', 'branch_id', 'vehicle_id', 'income_category_id', 'product_id', 'payment_type_id', 'fnb_amount', 'wax_amount','wax_category'];
     
     public static function boot()
     {
@@ -58,7 +58,7 @@ class Income extends Model
     public function setEntryDateAttribute($input)
     {
         if ($input != null && $input != '') {
-            $this->attributes['entry_date'] = Carbon::createFromFormat(config('app.date_format') . ' H:i:s', $input)->format('Y-m-d H:i:s');
+            $this->attributes['entry_date'] = Carbon::createFromFormat(config('app.date_format') . ' H:i', $input)->format('Y-m-d H:i');
         } else {
             $this->attributes['entry_date'] = null;
         }
@@ -72,10 +72,10 @@ class Income extends Model
      */
     public function getEntryDateAttribute($input)
     {
-        $zeroDate = str_replace(['Y', 'm', 'd'], ['0000', '00', '00'], config('app.date_format') . ' H:i:s');
+        $zeroDate = str_replace(['Y', 'm', 'd'], ['0000', '00', '00'], config('app.date_format') . ' H:i');
 
         if ($input != $zeroDate && $input != null) {
-            return Carbon::createFromFormat('Y-m-d H:i:s', $input)->format(config('app.date_format') . ' H:i:s');
+            return Carbon::createFromFormat('Y-m-d H:i:s', $input)->format(config('app.date_format') . ' H:i');
         } else {
             return '';
         }
@@ -150,5 +150,39 @@ class Income extends Model
     {
         return $this->belongsTo(Account::class, 'payment_type_id')->withTrashed();
     }
+
+    public function getTotalAmountAttribute()
+    {
+        $fnb_amount = $this->attributes['fnb_amount'];
+        $wax_amount = $this->attributes['wax_amount'];
+        $amount = $this->attributes['amount'];
+
+        if(! is_numeric($fnb_amount)) {
+            $fnb_amount = 0;
+        }
+
+        if(! is_numeric($wax_amount)) {
+            $wax_amount = 0;
+        }
+
+        if(! is_numeric($amount)) {
+            $amount = 0;
+        }
+
+        // return $this->attributes['amount'] + $this->attributes['fnb_amount'] + $this->attributes['wax_amount'];
+        return $amount + $fnb_amount + $wax_amount;
+    }
     
+    public function getAdditionalSalesAttribute()
+    {
+        $additional='';
+        if($this->attributes['fnb_amount']>0){
+            $additional=$additional . ", F&B";
+        }
+        if($this->attributes['wax_amount']>0){
+            $additional=$additional . ", Wax";
+        }
+
+        return $additional;
+    }
 }

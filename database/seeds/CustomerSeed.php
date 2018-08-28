@@ -23,5 +23,7 @@ class CustomerSeed extends Seeder
         foreach ($items as $item) {
             \App\Customer::create($item);
         }
+
+        factory(App\Customer::class, 5000)->create();
     }
 }

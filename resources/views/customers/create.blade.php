@@ -5,9 +5,9 @@
     {!! Form::open(['method' => 'POST', 'route' => ['customers.store']]) !!}
 
     <div class="panel panel-default">
-        <div class="panel-heading">
+        <!-- <div class="panel-heading">
             @lang('quickadmin.create')
-        </div>
+        </div> -->
         
         <div class="panel-body">
             {{ Form::hidden('branch_id', Session::get('branch_id'))}}
@@ -24,9 +24,9 @@
                 </div>
             </div> -->
             <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="col-xs-6 form-group">
                     {!! Form::label('name', 'Nama*', ['class' => 'control-label']) !!}
-                    {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                    {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => '', 'style' => 'text-transform:capitalize', 'autofocus']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('name'))
                         <p class="help-block">
@@ -34,9 +34,8 @@
                         </p>
                     @endif
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+
+                <div class="col-xs-6 form-group">
                     {!! Form::label('sex', 'Jenis Kelamin*', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('sex'))
@@ -44,23 +43,20 @@
                             {{ $errors->first('sex') }}
                         </p>
                     @endif
-                    <div>
-                        <label>
-                            {!! Form::radio('sex', 'Laki-laki', false) !!}
-                            Laki-laki
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="sex" value='Laki-laki' autocomplete="off" checked> Laki-laki
                         </label>
-                    </div>
-                    <div>
-                        <label>
-                            {!! Form::radio('sex', 'Perempuan', false) !!}
-                            Perempuan
+                        <label class="btn btn-primary">
+                            <input type="radio" name="sex" value='Perempuan' autocomplete="off" > Perempuan
                         </label>
                     </div>
                     
                 </div>
             </div>
+
             <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="col-xs-6 form-group">
                     {!! Form::label('phone', 'Phone', ['class' => 'control-label']) !!}
                     {!! Form::text('phone', old('phone'), ['class' => 'form-control', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
@@ -70,8 +66,20 @@
                         </p>
                     @endif
                 </div>
+
+                <div class="col-xs-6 form-group">
+                    {!! Form::label('email', 'Email', ['class' => 'control-label']) !!}
+                    {!! Form::text('email', old('email'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('email'))
+                        <p class="help-block">
+                            {{ $errors->first('email') }}
+                        </p>
+                    @endif
+                </div>
             </div>
-            <div class="row">
+            
+            <!-- <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('join_date', 'Tanggal', ['class' => 'control-label']) !!}
                     {!! Form::text('join_date', old('join_date', Carbon\Carbon::now()->format('d-m-Y')), ['class' => 'form-control date', 'placeholder' => '']) !!}
@@ -82,11 +90,11 @@
                         </p>
                     @endif
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col-xs-12 form-group">
                     {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
-                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '']) !!}
+                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '2']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('note'))
                         <p class="help-block">
@@ -99,7 +107,7 @@
         </div>
     </div>
 
-    {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger']) !!}
+    {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger btn-lg']) !!}
     {!! Form::close() !!}
 @stop
 

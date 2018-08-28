@@ -29,8 +29,7 @@ class UpdateIncomesRequest extends FormRequest
             'entry_date' => 'required',
             'income_category_id' => 'required',
             
-            'qty' => 'required',
-            'amount' => 'required',
+            'amount' => 'required|numeric',
             
             'payment_type_id' => 'required',
             

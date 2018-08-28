@@ -24,10 +24,10 @@ class StoreTransfersRequest extends FormRequest
     {
         return [
             'branch_id' => 'required',
-            'tanggal' => 'required',
+            'tanggal' => 'required|date',
             'dari_id' => 'required',
             'ke_id' => 'required',
-            'jumlah' => 'required',
+            'jumlah' => 'required|numeric',
             
         ];
     }

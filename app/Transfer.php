@@ -45,7 +45,7 @@ class Transfer extends Model
     public function setTanggalAttribute($input)
     {
         if ($input != null && $input != '') {
-            $this->attributes['tanggal'] = Carbon::createFromFormat(config('app.date_format') . ' H:i:s', $input)->format('Y-m-d H:i:s');
+            $this->attributes['tanggal'] = Carbon::createFromFormat(config('app.date_format') . ' H:i', $input)->format('Y-m-d H:i');
         } else {
             $this->attributes['tanggal'] = null;
         }
@@ -59,10 +59,10 @@ class Transfer extends Model
      */
     public function getTanggalAttribute($input)
     {
-        $zeroDate = str_replace(['Y', 'm', 'd'], ['0000', '00', '00'], config('app.date_format') . ' H:i:s');
+        $zeroDate = str_replace(['Y', 'm', 'd'], ['0000', '00', '00'], config('app.date_format') . ' H:i');
 
         if ($input != $zeroDate && $input != null) {
-            return Carbon::createFromFormat('Y-m-d H:i:s', $input)->format(config('app.date_format') . ' H:i:s');
+            return Carbon::createFromFormat('Y-m-d H:i:s', $input)->format(config('app.date_format') . ' H:i');
         } else {
             return '';
         }

@@ -15,8 +15,10 @@
 <script src="{{ url('quickadmin/js') }}/main.js"></script>
 
 <script src="{{ url('adminlte/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ url('adminlte/plugins/chartjs/Chart.min.js') }}"></script>
 <script src="{{ url('adminlte/plugins/fastclick/fastclick.js') }}"></script>
 <script src="{{ url('adminlte/js/app.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 <script>
     window._token = '{{ csrf_token() }}';
 </script>

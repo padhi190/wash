@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -183,6 +183,8 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
+        Felixkiss\UniqueWithValidator\ServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
         
         /*
          * Application Service Providers...
@@ -245,6 +247,7 @@ return [
         'Image'        => Intervention\Image\Facades\Image::class,
         'Form'         => Collective\Html\FormFacade::class,
         'Html'         => Collective\Html\HtmlFacade::class,
+        // 'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
     ],
 

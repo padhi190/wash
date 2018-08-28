@@ -17,8 +17,8 @@ class AbsensiSeed extends Seeder
 
         ];
 
-        foreach ($items as $item) {
-            \App\Absensi::create($item);
-        }
+        // foreach ($items as $item) {
+        //     \App\Absensi::create($item);
+        // }
     }
 }

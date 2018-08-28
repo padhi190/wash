@@ -1,19 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
+   
+    
     <h3 class="page-title">@lang('quickadmin.income.title')</h3>
+    @can('vehicle_create')
+    <div class="flash-message">
+                @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                  @if(Session::has('alert-' . $msg))
+
+                  <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+                  @endif
+                @endforeach
+    </div> 
+    <p>
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#formModal">
+              <i class="fa fa-user"></i>  + Customer Baru
+        </button>
+        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#formModal2">
+              <i class="fa fa-car"></i>  + Kendaraan Baru</a>
+        </button>
+
+       
+    </p>
+    @endcan
+
     {!! Form::open(['method' => 'POST', 'route' => ['incomes.store']]) !!}
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            @lang('quickadmin.create')
-        </div>
+        
         
         <div class="panel-body">
             <div class="row">
                 <div class="col-xs-12 form-group">
-                    <!-- {!! Form::label('branch_id', 'Cabang*', ['class' => 'control-label']) !!}
-                    {!! Form::select('branch_id', $branches, Session::get('branch_id'), ['class' => 'form-control select2', 'disabled' => 'disabled']) !!} -->
+                    {!! Form::label('income_category_id', 'Kategori*', ['class' => 'control-label']) !!}
+                   
+                    <p class="help-block"></p>
+                    @if($errors->has('income_category_id'))
+                        <p class="help-block">
+                            {{ $errors->first('income_category_id') }}
+                        </p>
+                    @endif
+                    <div class="btn-group btn-group-lg" data-toggle="buttons">
+                      @foreach($income_categories as $key => $cat)
+                        @if(in_array($cat,array('Carwash','Detailing','Bikewash')))
+                        <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}">
+                            <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
+                            {{$cat == 'Carwash' ? 'checked' : ''}}
+                            onchange="setPrice(this);"> {{ $cat }}
+                        </label>
+                        @endif
+                      @endforeach
+                      
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    
                     {{ Form::hidden('branch_id', Session::get('branch_id'))}}
                     <p class="help-block"></p>
                     @if($errors->has('branch_id'))
@@ -25,7 +69,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="col-xs-6 form-group">
                     {!! Form::label('vehicle_id', 'Kendaraan*', ['class' => 'control-label']) !!}
                     {!! Form::select('vehicle_id', $vehicles, old('vehicle_id', $vehicle_id), ['class' => 'form-control select2']) !!}
                     <p class="help-block"></p>
@@ -35,59 +79,47 @@
                         </p>
                     @endif
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+
+                <div class="col-xs-6 form-group">
                     {!! Form::label('entry_date', 'Tanggal*', ['class' => 'control-label']) !!}
-                    {!! Form::text('entry_date', old('entry_date', Carbon\Carbon::now()->format('d-m-Y H:i:s')), ['class' => 'form-control datetime', 'placeholder' => '']) !!}
+                    {!! Form::text('entry_date', old('entry_date', Carbon\Carbon::now()->format('d-m-Y H:i')), ['class' => 'form-control datetime', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('entry_date'))
                         <p class="help-block">
                             {{ $errors->first('entry_date') }}
-                        </p>
+                        </p> 
                     @endif
                 </div>
+
             </div>
+           
             <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('income_category_id', 'Kategori*', ['class' => 'control-label']) !!}
-                    {!! Form::select('income_category_id', $income_categories, old('income_category_id'), ['class' => 'form-control select2']) !!}
+
+                <div class="col-xs-6 form-group">
+                    {!! Form::label('payment_type_id', 'Cara Pembayaran*', ['class' => 'control-label']) !!}
+                   
                     <p class="help-block"></p>
-                    @if($errors->has('income_category_id'))
+                    @if($errors->has('payment_type_id'))
                         <p class="help-block">
-                            {{ $errors->first('income_category_id') }}
+                            {{ $errors->first('payment_type_id') }}
                         </p>
                     @endif
+                    <div class="btn-group" data-toggle="buttons">
+                      @foreach($payment_types as $key => $payment)
+                        <label class="btn btn-danger {{ $payment == 'Cash' ? 'active' : ''}}">
+                            <input type="radio" name="payment_type_id" value={{$key}} data-name="{{$payment}}" autocomplete="off" 
+                             {{ $payment == 'Cash' ? 'checked' : ''}}
+                            > 
+                            {{ $payment }}
+                        </label>
+                      @endforeach
+                      
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('product_id', 'Produk (opsional)', ['class' => 'control-label']) !!}
-                    {!! Form::select('product_id', $products, old('product_id'), ['class' => 'form-control select2']) !!}
-                    <p class="help-block"></p>
-                    @if($errors->has('product_id'))
-                        <p class="help-block">
-                            {{ $errors->first('product_id') }}
-                        </p>
-                    @endif
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('qty', 'Qty*', ['class' => 'control-label']) !!}
-                    {!! Form::number('qty', old('qty', 1), ['class' => 'form-control', 'placeholder' => '']) !!}
-                    <p class="help-block"></p>
-                    @if($errors->has('qty'))
-                        <p class="help-block">
-                            {{ $errors->first('qty') }}
-                        </p>
-                    @endif
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+
+                <div class="col-xs-6 form-group">
                     {!! Form::label('amount', 'Harga*', ['class' => 'control-label']) !!}
-                    {!! Form::text('amount', old('amount'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                    {!! Form::number('amount', old('amount', $prices['carwash']), ['class' => 'form-control', 'placeholder' => '', 'onchange' =>'updateTotal()']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('amount'))
                         <p class="help-block">
@@ -95,35 +127,25 @@
                         </p>
                     @endif
                 </div>
+                
             </div>
-            <!-- <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('discount', 'Discount', ['class' => 'control-label']) !!}
-                    {!! Form::text('discount', old('discount'), ['class' => 'form-control', 'placeholder' => '']) !!}
-                    <p class="help-block"></p>
-                    @if($errors->has('discount'))
-                        <p class="help-block">
-                            {{ $errors->first('discount') }}
-                        </p>
-                    @endif
+        
+            <div class="row"> 
+
+                <div class="col-xs-6 form-group">
+                        {!! Form::label('nobon', 'No. Bon', ['class' => 'control-label']) !!}
+                        {!! Form::text('nobon', old('nobon', $last_bon+1), ['class' => 'form-control', 'placeholder' => $last_bon+1]) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('nobon'))
+                            <p class="help-block">
+                                {{ $errors->first('nobon') }}
+                            </p>
+                        @endif
                 </div>
-            </div> -->
-            <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('payment_type_id', 'Cara Pembayaran*', ['class' => 'control-label']) !!}
-                    {!! Form::select('payment_type_id', $payment_types, old('payment_type_id'), ['class' => 'form-control select2']) !!}
-                    <p class="help-block"></p>
-                    @if($errors->has('payment_type_id'))
-                        <p class="help-block">
-                            {{ $errors->first('payment_type_id') }}
-                        </p>
-                    @endif
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+
+                <div class="col-xs-6 form-group">
                     {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
-                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '']) !!}
+                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '3']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('note'))
                         <p class="help-block">
@@ -132,25 +154,997 @@
                     @endif
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-xs-3 form-group">
+                    {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
+                    <p class="help-block"></p>
+                    
+                    <div class="btn-group btn-group-justified" data-toggle="buttons">
+                        <label class="btn btn-success">
+                            <input type="checkbox" name="FnBcheckbox" id="FnBcheckbox" value="FnB" data-name="fnb" autocomplete="off" onchange="showFnB(this),updateTotal()"> 
+                                F&B
+                        </label>
+                        <label class="btn btn-success">
+                            <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
+                                Wax
+                        </label>
+                      
+                    </div>
+                </div>
+                
+                <div class="col-xs-3 form-group fnb_field" style="visibility: hidden;">
+                    {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
+                    <p class="help-block"></p>
+                    {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount', 'onchange' => 'updateTotal()']) !!}
+                    
+                    @if($errors->has('fnb_amount'))
+                        <p class="help-block">
+                            {{ $errors->first('fnb_amount') }}
+                        </p>
+                    @endif
+                </div>
+
+                <div class="col-xs-3 form-group wax_field" style="visibility: hidden;">
+                    {!! Form::label('wax_amount', 'Harga Wax', ['class' => 'control-label']) !!}
+                    <p class="help-block"></p>
+                    {!! Form::number('wax_amount', old('wax_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'wax_amount', 'onchange'=>'updateTotal()']) !!}
+                    
+                    @if($errors->has('wax_amount'))
+                        <p class="help-block">
+                            {{ $errors->first('wax_amount') }}
+                        </p>
+                    @endif
+                </div>
+
+                <div class="col-xs-3 form-group">
+                    {!! Form::label('total_amount', 'Total', ['class' => 'control-label']) !!}
+                    <p class="help-block"></p>
+                    {!! Form::number('total_amount', old('total_amount', $prices['carwash']), ['class' => 'form-control disabled', 'placeholder' => '', 'id' => 'total_amount','disabled']) !!}
+                    
+                    @if($errors->has('total_amount'))
+                        <p class="help-block">
+                            {{ $errors->first('total_amount') }}
+                        </p>
+                    @endif
+                </div>              
+            </div>
             
         </div>
     </div>
 
-    {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger']) !!}
+    <div class="row">
+        <div class="col-xs-3 form-group">
+            {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger btn-lg']) !!}
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#printModal">
+              Print Bon Terakhir
+            </button>
+        </div>
+        <div class="col-xs-3 form-group">
+            
+        </div>
+        <div class="col-xs-6 form-group">
+             
+        </div>
+
+    </div>
     {!! Form::close() !!}
+    
+    <!-- Print Modal Form -->
+    
+    @extends('partials.print')
+    @section('printSection')
+         <div style="text-align:center; font-size:14px;">
+            @if($last_sales != null)
+            <p>Rcpt No: {{$last_sales->nobon}}</p>
+            <p>{{$last_sales->entry_date}}</p>
+            <p><strong>{{$last_sales->vehicle->license_plate}} - {{$last_sales->vehicle->type}}</strong></p>
+            <p>{{$last_sales->income_category->name}}</p>
+            <p style="font-size:14px">{{$last_sales->note}}</p>
+            <p><strong>Total: Rp. {{number_format($last_sales->amount)}}</strong></p>
+            @endif
+        </div>
+    @stop
+
+    <!-- Add New Customer Modal Form -->
+    @extends('partials.modalform', ['title' => 'Customer', 'formId' => 'formModal'])
+
+    @section('formSection')
+        {!! Form::open(['method' => 'POST', 'route' => ['customers.storeFull']]) !!}
+
+        <div class="panel panel-default">
+            
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('name', 'Nama*', ['class' => 'control-label']) !!}
+                        {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => '', 'style' => 'text-transform:capitalize', 'autofocus']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('name'))
+                            <p class="help-block">
+                                {{ $errors->first('name') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('phone', 'Phone', ['class' => 'control-label']) !!}
+                        {!! Form::text('phone', old('phone'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('phone'))
+                            <p class="help-block">
+                                {{ $errors->first('phone') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('email', 'Email', ['class' => 'control-label']) !!}
+                        {!! Form::text('email', old('email'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('email'))
+                            <p class="help-block">
+                                {{ $errors->first('email') }}
+                            </p>
+                        @endif
+                    </div>
+
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('sex', 'Jenis Kelamin*', ['class' => 'control-label']) !!}
+                        <br>
+                        @if($errors->has('sex'))
+                            <p class="help-block">
+                                {{ $errors->first('sex') }}
+                            </p>
+                        @endif
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" name="sex" value='Laki-laki' autocomplete="off" checked> Laki-laki
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="sex" value='Perempuan' autocomplete="off" > Perempuan
+                            </label>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="row">
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('license_plate', 'Plat No.*', ['class' => 'control-label']) !!}
+                        {!! Form::text('license_plate', old('license_plate'), ['class' => 'form-control', 'placeholder' => '', 'style' => 'text-transform:uppercase']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('license_plate'))
+                            <p class="help-block">
+                                {{ $errors->first('license_plate') }}
+                            </p>
+                        @endif
+                    </div>
+                    
+                    <div class="col-xs-6">
+                        <div class="col-xs-4 form-group">
+                            {!! Form::label('brand', 'Brand', ['class' => 'control-label']) !!}
+                            {!! Form::text('brand', old('brand'), ['class' => 'form-control','style' => 'text-transform:capitalize', 'placeholder' => '']) !!}
+                            <p class="help-block"></p>
+                            @if($errors->has('brand'))
+                                <p class="help-block">
+                                    {{ $errors->first('brand') }}
+                                </p>
+                            @endif
+                        </div>
+
+                        <div class="col-xs-4 form-group">
+                            {!! Form::label('model', 'Model', ['class' => 'control-label']) !!}
+                            {!! Form::text('model', old('model'), ['class' => 'form-control', 'style' => 'text-transform:capitalize','placeholder' => '']) !!}
+                            <p class="help-block"></p>
+                            @if($errors->has('model'))
+                                <p class="help-block">
+                                    {{ $errors->first('model') }}
+                                </p>
+                            @endif
+                        </div>
+
+                        <div class="col-xs-4 form-group">
+                            {!! Form::label('color', 'Warna', ['class' => 'control-label']) !!}
+                            {!! Form::text('color', old('color'), ['class' => 'form-control', 'style' => 'text-transform:capitalize','placeholder' => '']) !!}
+                            <p class="help-block"></p>
+                            @if($errors->has('color'))
+                                <p class="help-block">
+                                    {{ $errors->first('color') }}
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('type', 'Type*', ['class' => 'control-label']) !!}
+                        <br>
+                        @if($errors->has('type'))
+                            <p class="help-block">
+                                {{ $errors->first('type') }}
+                            </p>
+                        @endif
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label id="mobil" class="btn btn-primary active">
+                                <input type="radio" name="type" value='mobil' onchange="setKategori(this)" autocomplete="off" checked> Mobil
+                            </label>
+                            <label id="motor" class="btn btn-primary">
+                                <input type="radio" name="type" value='motor' onchange="setKategori(this)" autocomplete="off" > Motor
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="row">
+
+                    
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('income_category_id', 'Kategori*', ['class' => 'control-label']) !!}
+                       
+                        <br>
+                        @if($errors->has('income_category_id'))
+                            <p class="help-block">
+                                {{ $errors->first('income_category_id') }}
+                            </p>
+                        @endif
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                          @foreach($income_categories as $key => $cat)
+                            @if(in_array($cat,array('Carwash','Detailing','Bikewash')))
+                            <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}2">
+                                <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
+                                {{$cat == 'Carwash' ? 'checked' : ''}}
+                                onchange="showProduct2(this); setPrice2(this);"> {{ $cat }}
+                            </label>
+                            @endif
+                          @endforeach
+                          
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('size', 'Size', ['class' => 'control-label']) !!}
+                        <br>
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary ">
+                                <input type="radio" name="size" value='small' autocomplete="off" > Small
+                            </label>
+                            <label class="btn btn-primary active" >
+                                <input type="radio" name="size" value='medium' autocomplete="off" checked > Medium
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="size" value='large' autocomplete="off" > Large
+                            </label>
+                        </div>
+                        @if($errors->has('size'))
+                            <p class="help-block">
+                                {{ $errors->first('size') }}
+                            </p>
+                        @endif
+                        
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('entry_date', 'Tanggal*', ['class' => 'control-label']) !!}
+                        {!! Form::text('entry_date', old('entry_date', Carbon\Carbon::now()->format('d-m-Y H:i')), ['class' => 'form-control datetime', 'placeholder' => '', 'id'=>'entry_date2']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('entry_date'))
+                            <p class="help-block">
+                                {{ $errors->first('entry_date') }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-xs-12 form-group">
+                        
+                        {{ Form::hidden('branch_id', Session::get('branch_id'))}}
+                        <p class="help-block"></p>
+                        @if($errors->has('branch_id'))
+                            <p class="help-block">
+                                {{ $errors->first('branch_id') }}
+                                {{ Session::get('branch_id')}}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+                
+               
+                <div class="row">
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('payment_type_id', 'Cara Pembayaran*', ['class' => 'control-label']) !!}
+                        
+                       <br>
+                        @if($errors->has('payment_type_id'))
+                            <p class="help-block">
+                                {{ $errors->first('payment_type_id') }}
+                            </p>
+                        @endif
+                        <div class="btn-group" data-toggle="buttons">
+                          @foreach($payment_types as $key => $payment)
+                            <label class="btn btn-danger {{ $payment == 'Cash' ? 'active' : ''}}">
+                                <input type="radio" name="payment_type_id" value={{$key}} data-name="{{$payment}}" autocomplete="off" 
+                                 {{ $payment == 'Cash' ? 'checked' : ''}}
+                                > 
+                                {{ $payment }}
+                            </label>
+                          @endforeach
+                          
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('amount', 'Harga*', ['class' => 'control-label']) !!}
+                        {!! Form::number('amount', old('amount', $prices['carwash']), ['class' => 'form-control', 'placeholder' => '', 'id' => 'amount2', 'onchange' => 'updateTotal2()']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('amount'))
+                            <p class="help-block">
+                                {{ $errors->first('amount') }}
+                            </p>
+                        @endif
+                    </div>
+                    
+                </div>
+            
+                <div class="row"> 
+
+                    <div class="col-xs-6 form-group">
+                            {!! Form::label('nobon', 'No. Bon', ['class' => 'control-label']) !!}
+                            {!! Form::text('nobon', old('nobon', $last_bon+1), ['class' => 'form-control', 'placeholder' => $last_bon+1]) !!}
+                            <p class="help-block"></p>
+                            @if($errors->has('nobon'))
+                                <p class="help-block">
+                                    {{ $errors->first('nobon') }}
+                                </p>
+                            @endif
+                    </div>
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
+                        {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '3']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('note'))
+                            <p class="help-block">
+                                {{ $errors->first('note') }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="FnBcheckbox" id="FnBcheckbox2" value="FnB" data-name="fnb" autocomplete="off" onchange="showFnB2(this),updateTotal2()"> 
+                                    F&B
+                            </label>
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox2" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
+                                    Wax
+                            </label>
+                          
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3 form-group fnb_field2" style="visibility: hidden;">
+                        {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount2', 'onchange' => 'updateTotal2()']) !!}
+                        
+                        @if($errors->has('fnb_amount'))
+                            <p class="help-block">
+                                {{ $errors->first('fnb_amount') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group wax_field2" style="visibility: hidden;">
+                        {!! Form::label('wax_amount', 'Harga Wax', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        {!! Form::number('wax_amount', old('wax_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'wax_amount2', 'onchange'=>'updateTotal2()']) !!}
+                        
+                        @if($errors->has('wax_amount'))
+                            <p class="help-block">
+                                {{ $errors->first('wax_amount') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('total_amount', 'Total', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        {!! Form::number('total_amount', old('total_amount', $prices['carwash']), ['class' => 'form-control disabled', 'placeholder' => '', 'id' => 'total_amount2','disabled']) !!}
+                        
+                        @if($errors->has('total_amount'))
+                            <p class="help-block">
+                                {{ $errors->first('total_amount') }}
+                            </p>
+                        @endif
+                    </div>    
+
+
+                </div>
+
+            </div>
+        </div>
+
+        {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger btn-lg']) !!}
+        {!! Form::close() !!}
+    @stop
+
+    <!-- Add New Vehicle Modal Form -->
+    @extends('partials.modalform2', ['title' => 'Vehicle', 'formId' => 'formModal2'])
+    @section('formSection2')
+        {!! Form::open(['method' => 'POST', 'route' => ['vehicles.storeFull']]) !!}
+
+        <div class="panel panel-default">
+            
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('customer_id', 'Customer*', ['class' => 'control-label']) !!}<br>
+                        {!! Form::select('customer_id', $customers, old('customer_id', $customer_id), ['class' => 'form-control select2', 'style'=>'width:450px;']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('customer_id'))
+                            <p class="help-block">
+                                {{ $errors->first('customer_id') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('license_plate', 'Plat No.*', ['class' => 'control-label']) !!}
+                        {!! Form::text('license_plate', old('license_plate'), ['class' => 'form-control', 'placeholder' => '', 'style' => 'text-transform:uppercase','autofocus']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('license_plate'))
+                            <p class="help-block">
+                                {{ $errors->first('license_plate') }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="row">
+                    
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('brand', 'Brand', ['class' => 'control-label']) !!}
+                        {!! Form::text('brand', old('brand'), ['class' => 'form-control', 'style' => 'text-transform:capitalize', 'placeholder' => '']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('brand'))
+                            <p class="help-block">
+                                {{ $errors->first('brand') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('model', 'Model', ['class' => 'control-label']) !!}
+                        {!! Form::text('model', old('model'), ['class' => 'form-control', 'style' => 'text-transform:capitalize', 'placeholder' => '']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('model'))
+                            <p class="help-block">
+                                {{ $errors->first('model') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('color', 'Warna', ['class' => 'control-label']) !!}
+                        {!! Form::text('color', old('color'), ['class' => 'form-control', 'style' => 'text-transform:capitalize', 'placeholder' => '']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('color'))
+                            <p class="help-block">
+                                {{ $errors->first('color') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('type', 'Type*', ['class' => 'control-label']) !!}
+                        <br>
+                        @if($errors->has('type'))
+                            <p class="help-block">
+                                {{ $errors->first('type') }}
+                            </p>
+                        @endif
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label id="mobil3" class="btn btn-primary active">
+                                <input type="radio" name="type" value='mobil' autocomplete="off" onchange="setKategori3(this)" checked> Mobil
+                            </label>
+                            <label id="motor3" class="btn btn-primary">
+                                <input type="radio" name="type" value='motor' autocomplete="off" onchange="setKategori3(this)"> Motor
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="row">
+
+                    
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('income_category_id', 'Kategori*', ['class' => 'control-label']) !!}
+                       
+                        <br>
+                        @if($errors->has('income_category_id'))
+                            <p class="help-block">
+                                {{ $errors->first('income_category_id') }}
+                            </p>
+                        @endif
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                          @foreach($income_categories as $key => $cat)
+                            @if(in_array($cat,array('Carwash','Detailing','Bikewash')))
+                            <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}3">
+                                <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
+                                {{$cat == 'Carwash' ? 'checked' : ''}}
+                                onchange="showProduct3(this); setPrice3(this);"> {{ $cat }}
+                            </label>
+                            @endif
+                          @endforeach
+                          
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('size', 'Size', ['class' => 'control-label']) !!}
+                        <br>
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary ">
+                                <input type="radio" name="size" value='small' autocomplete="off" > Small
+                            </label>
+                            <label class="btn btn-primary active" >
+                                <input type="radio" name="size" value='medium' autocomplete="off" checked > Medium
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="size" value='large' autocomplete="off" > Large
+                            </label>
+                        </div>
+                        @if($errors->has('size'))
+                            <p class="help-block">
+                                {{ $errors->first('size') }}
+                            </p>
+                        @endif
+                        
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('entry_date', 'Tanggal*', ['class' => 'control-label']) !!}
+                        {!! Form::text('entry_date', old('entry_date', Carbon\Carbon::now()->format('d-m-Y H:i')), ['class' => 'form-control datetime', 'placeholder' => '', 'id'=>'entry_date3']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('entry_date'))
+                            <p class="help-block">
+                                {{ $errors->first('entry_date') }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-xs-12 form-group">
+                        
+                        {{ Form::hidden('branch_id', Session::get('branch_id'))}}
+                        <p class="help-block"></p>
+                        @if($errors->has('branch_id'))
+                            <p class="help-block">
+                                {{ $errors->first('branch_id') }}
+                                {{ Session::get('branch_id')}}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+               
+               
+                <div class="row">
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('payment_type_id', 'Cara Pembayaran*', ['class' => 'control-label']) !!}
+                        
+                       <br>
+                        @if($errors->has('payment_type_id'))
+                            <p class="help-block">
+                                {{ $errors->first('payment_type_id') }}
+                            </p>
+                        @endif
+                        <div class="btn-group" data-toggle="buttons">
+                          @foreach($payment_types as $key => $payment)
+                            <label class="btn btn-danger {{ $payment == 'Cash' ? 'active' : ''}}">
+                                <input type="radio" name="payment_type_id" value={{$key}} data-name="{{$payment}}" autocomplete="off" 
+                                 {{ $payment == 'Cash' ? 'checked' : ''}}
+                                > 
+                                {{ $payment }}
+                            </label>
+                          @endforeach
+                          
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('amount', 'Harga*', ['class' => 'control-label']) !!}
+                        {!! Form::number('amount', old('amount', $prices['carwash']), ['class' => 'form-control', 'placeholder' => '', 'id' => 'amount3']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('amount'))
+                            <p class="help-block">
+                                {{ $errors->first('amount') }}
+                            </p>
+                        @endif
+                    </div>
+                    
+                </div>
+            
+                <div class="row"> 
+
+                    <div class="col-xs-6 form-group">
+                            {!! Form::label('nobon', 'No. Bon', ['class' => 'control-label']) !!}
+                            {!! Form::text('nobon', old('nobon', $last_bon+1), ['class' => 'form-control', 'placeholder' => $last_bon+1]) !!}
+                            <p class="help-block"></p>
+                            @if($errors->has('nobon'))
+                                <p class="help-block">
+                                    {{ $errors->first('nobon') }}
+                                </p>
+                            @endif
+                    </div>
+
+                    <div class="col-xs-6 form-group">
+                        {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
+                        {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '3']) !!}
+                        <p class="help-block"></p>
+                        @if($errors->has('note'))
+                            <p class="help-block">
+                                {{ $errors->first('note') }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        
+                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="FnBcheckbox" id="FnBcheckbox3" value="FnB" data-name="fnb" autocomplete="off" onchange="showFnB3(this),updateTotal3()"> 
+                                    F&B
+                            </label>
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox3" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax3(this),updateTotal3()"> 
+                                    Wax
+                            </label>
+                          
+                        </div>
+                    </div>
+
+                    <div class="col-xs-3 form-group fnb_field3" style="visibility: hidden;">
+                        {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount3', 'onchange' => 'updateTotal3()']) !!}
+                        
+                        @if($errors->has('fnb_amount'))
+                            <p class="help-block">
+                                {{ $errors->first('fnb_amount') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group wax_field3" style="visibility: hidden;">
+                        {!! Form::label('wax_amount', 'Harga Wax', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        {!! Form::number('wax_amount', old('wax_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'wax_amount3', 'onchange'=>'updateTotal3()']) !!}
+                        
+                        @if($errors->has('wax_amount'))
+                            <p class="help-block">
+                                {{ $errors->first('wax_amount') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="col-xs-3 form-group">
+                        {!! Form::label('total_amount', 'Total', ['class' => 'control-label']) !!}
+                        <p class="help-block"></p>
+                        {!! Form::number('total_amount', old('total_amount', $prices['carwash']), ['class' => 'form-control disabled', 'placeholder' => '', 'id' => 'total_amount3','disabled']) !!}
+                        
+                        @if($errors->has('total_amount'))
+                            <p class="help-block">
+                                {{ $errors->first('total_amount') }}
+                            </p>
+                        @endif
+                    </div>   
+                </div>
+
+            </div>
+        </div>
+
+        {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger btn-lg']) !!}
+        {!! Form::close() !!}
+        
+    @stop
+
+
 @stop
 
 @section('javascript')
     @parent
     <script src="{{ url('quickadmin/js') }}/timepicker.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
     <script>
+       
+
+        @if(Session::has('print-bon'))
+             $('#printModal').modal('show');
+             // window.alert('test');
+             // window.print();
+        @endif
+       
         $('.datetime').datetimepicker({
             autoclose: true,
             dateFormat: "{{ config('app.date_format_js') }}",
-            timeFormat: "hh:mm:ss"
+            timeFormat: "HH:mm",
+            maxDate:0,
+            stepMinute: 5,
+            showSecond: false,
+            controlType: 'select',
+            showMillisec:false,
+            showMicrosec:false
         });
+
+        function updateTotal(){
+            var fnb = 0;
+            var wax = 0;
+            // window.alert($('input[name="FnBcheckbox"]').is(':checked'));
+            if($('input[name="FnBcheckbox"]').is(':checked')){
+                fnb = parseInt($('#fnb_amount').val());
+            }
+
+            if($('input[name="Waxcheckbox"]').is(':checked')){
+                wax = parseInt($('#wax_amount').val());
+            }
+            var total = fnb + wax + parseInt($('#amount').val());
+            $('#total_amount').val(total);
+        };
+
+        function updateTotal2(){
+            var fnb = 0;
+            var wax = 0;
+            // window.alert($('input[id="FnBcheckbox2"]').is(':checked'));
+            if($('input[id="FnBcheckbox2"]').is(':checked')){
+                fnb = parseInt($('#fnb_amount2').val());
+            }
+
+            if($('input[id="Waxcheckbox2"]').is(':checked')){
+                wax = parseInt($('#wax_amount2').val());
+            }
+            var total = fnb + wax + parseInt($('#amount2').val());
+            $('#total_amount2').val(total);
+        };
+
+        function updateTotal3(){
+            var fnb = 0;
+            var wax = 0;
+            // window.alert($('input[id="FnBcheckbox2"]').is(':checked'));
+            if($('input[id="FnBcheckbox3"]').is(':checked')){
+                fnb = parseInt($('#fnb_amount3').val());
+            }
+
+            if($('input[id="Waxcheckbox3"]').is(':checked')){
+                wax = parseInt($('#wax_amount3').val());
+            }
+            var total = fnb + wax + parseInt($('#amount3').val());
+            $('#total_amount3').val(total);
+        };
+
+        function showFnB(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.fnb_field').css('visibility', 'visible');
+                $('#fnb_amount').val({{$prices['fnb']}}); 
+            }
+            else{
+                $('.fnb_field').css('visibility', 'hidden'); 
+                $('#fnb_amount').val(0);
+            }
+        };
+
+        function showFnB2(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.fnb_field2').css('visibility', 'visible');
+                $('#fnb_amount2').val({{$prices['fnb']}}); 
+            }
+            else{
+                $('.fnb_field2').css('visibility', 'hidden'); 
+                $('#fnb_amount2').val(0);
+            }
+        };
+
+
+        function showFnB3(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.fnb_field3').css('visibility', 'visible');
+                $('#fnb_amount3').val({{$prices['fnb']}}); 
+            }
+            else{
+                $('.fnb_field3').css('visibility', 'hidden'); 
+                $('#fnb_amount3').val(0);
+            }
+        };
+
+        
+
+        function showWax(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.wax_field').css('visibility', 'visible'); 
+                $('#wax_amount').val({{$prices['wax']}});
+            }
+            else{
+                $('.wax_field').css('visibility', 'hidden'); 
+                $('#wax_amount').val(0);
+            }
+        };
+
+        function showWax2(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.wax_field2').css('visibility', 'visible'); 
+                $('#wax_amount2').val({{$prices['wax']}});
+            }
+            else{
+                $('.wax_field2').css('visibility', 'hidden'); 
+                $('#wax_amount2').val(0);
+            }
+        };
+
+        function showWax3(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.wax_field3').css('visibility', 'visible'); 
+                $('#wax_amount3').val({{$prices['wax']}});
+            }
+            else{
+                $('.wax_field3').css('visibility', 'hidden'); 
+                $('#wax_amount3').val(0);
+            }
+        };
+
+        function showProduct2(kategori){
+            if(kategori.value == 4){
+                $('.hidden_field2').css('visibility', 'visible');
+            }
+            else{
+                $('.hidden_field2').css('visibility', 'hidden');   
+            }
+        };
+
+        function showProduct3(kategori){
+            if(kategori.value == 4){
+                $('.hidden_field3').css('visibility', 'visible');
+            }
+            else{
+                $('.hidden_field3').css('visibility', 'hidden');   
+            }
+        };
+
+        function setPrice(kategori){
+            switch(kategori.value) {
+                case '1':
+                    $('#amount').val({{$prices['carwash']}});
+                    updateTotal();
+                    break;
+                case '2':
+                    $('#amount').val({{$prices['wax']}});
+                    updateTotal();
+                    break;
+                case '3':
+                    $('#amount').val({{$prices['detailing']}});
+                    updateTotal();
+                    break;
+                case '4':
+                    $('#amount').val({{$prices['fnb']}});
+                    break;
+                case '5':
+                    $('#amount').val({{$prices['bikewash']}});
+                    updateTotal();
+                    break;  
+                default:
+                    
+                    break;
+            };
+        };
+
+        function setPrice2(kategori){
+            switch(kategori.value) {
+                case '1':
+                    $('#amount2').val({{$prices['carwash']}});
+                    $("#mobil").button('toggle');
+                    updateTotal2();                    
+                    break;
+                case '2':
+                    $('#amount2').val({{$prices['wax']}});
+                    break;
+                case '3':
+                    $('#amount2').val({{$prices['detailing']}});
+                    updateTotal2();                    
+                    break;
+                case '4':
+                    $('#amount2').val({{$prices['fnb']}});
+                    break;
+                case '5':
+                    $('#amount2').val({{$prices['bikewash']}});
+                    $("#motor").button('toggle');
+                    updateTotal2();                    
+                    break;  
+                default:
+                    
+                    break;
+            };
+        };
+
+        function setKategori(type){
+            switch(type.value) {
+                case 'mobil':
+                    $('#Carwash2').button('toggle');
+                    break;
+                case 'motor':
+                    $('#Bikewash2').button('toggle');
+                    break;
+                default:
+                    break;
+            }
+
+        };
+
+        function setKategori3(type){
+            switch(type.value) {
+                case 'mobil':
+                    $('#Carwash3').button('toggle');
+                    break;
+                case 'motor':
+                    $('#Bikewash3').button('toggle');
+                    break;
+                default:
+                    break;
+            }
+        };
+
+
+
+        function setPrice3(kategori){
+            switch(kategori.value) {
+                case '1':
+                    $('#amount3').val({{$prices['carwash']}});
+                    $("#mobil3").button('toggle');
+                    updateTotal3();
+                    break;
+                case '2':
+                    $('#amount3').val({{$prices['wax']}});
+                    break;
+                case '3':
+                    $('#amount3').val({{$prices['detailing']}});
+                    updateTotal3();
+                    break;
+                case '4':
+                    $('#amount3').val({{$prices['fnb']}});
+                    break;
+                case '5':
+                    $('#amount3').val({{$prices['bikewash']}});
+                    $("#motor3").button('toggle');
+                    updateTotal3();
+                    break;  
+                default:
+                    
+                    break;
+            };
+        };
     </script>
 
 @stop

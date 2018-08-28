@@ -22,6 +22,7 @@ class CreateCustomersTable extends Migration
                 $table->text('note')->nullable();
                 $table->integer('branch_id')->unsigned()->nullable();
                 $table->foreign('branch_id', 'fk_17041_branch_branch_id_customer')->references('id')->on('branches')->onDelete('cascade');
+                $table->string('email')->nullable();
                 
                 $table->timestamps();
                 $table->softDeletes();

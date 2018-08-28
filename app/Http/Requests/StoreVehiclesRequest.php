@@ -23,7 +23,7 @@ class StoreVehiclesRequest extends FormRequest
     public function rules()
     {
         return [
-            'license_plate' => 'required',
+            'license_plate' => 'required|unique:vehicles,license_plate',
             'customer_id' => 'required',
             'type' => 'required',
             

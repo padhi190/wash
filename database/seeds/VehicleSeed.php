@@ -25,5 +25,7 @@ class VehicleSeed extends Seeder
         foreach ($items as $item) {
             \App\Vehicle::create($item);
         }
+
+        factory(App\Vehicle::class, 6000)->create();
     }
 }

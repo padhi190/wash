@@ -43,11 +43,17 @@ class LoginController extends Controller
         // $user = Auth::user();
         $branches = \App\Branch::all();
         session(['user' => $user, 
-                'branch_name' => $user->branch->branch_name, 
+                'branch_name' => $user->branch->branch_name,
+                'branch' => $user->branch,
                 'branch_id' => $user['branch_id'],
                 'branches' => $branches
                 ]);
-    
-        return redirect('/incomes');
+        if($user['role_id'] == 2){
+
+            return redirect('/incomes/create');    
+        }
+
+        return redirect('/home');        
+        
     }
 }

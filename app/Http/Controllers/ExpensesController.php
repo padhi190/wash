@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreExpensesRequest;
 use App\Http\Requests\UpdateExpensesRequest;
 use Yajra\Datatables\Datatables;
+use Carbon\Carbon;
+
 
 class ExpensesController extends Controller
 {
@@ -21,7 +23,15 @@ class ExpensesController extends Controller
         if (! Gate::allows('expense_access')) {
             return abort(401);
         }
-        $expenses = Expense::orderBy('entry_date', 'desc')->where('branch_id', session('branch_id'))->get();
+        $to = Carbon::now();
+        $from = clone $to;
+        $from->subDays(7);
+        $from->hour=5;
+        $from->minute=0;
+        $expenses = Expense::with('expense_category','employee','from')->orderBy('entry_date', 'desc')
+                    ->whereBetween('entry_date', [$from, $to])
+                    ->where('branch_id', session('branch_id'))
+                    ->get();
 
         return view('expenses.index', compact('expenses'));
     }
@@ -40,7 +50,7 @@ class ExpensesController extends Controller
             'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
             'expense_categories' => \App\ExpenseCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
             'employees' => \App\Employee::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'froms' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'froms' => \App\Account::get()->pluck('name', 'id'),
         ];
 
         return view('expenses.create', $relations);
@@ -78,7 +88,7 @@ class ExpensesController extends Controller
             'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
             'expense_categories' => \App\ExpenseCategory::get()->pluck('name', 'id')->prepend('Please select', ''),
             'employees' => \App\Employee::get()->pluck('name', 'id')->prepend('Please select', ''),
-            'froms' => \App\Account::get()->pluck('name', 'id')->prepend('Please select', ''),
+            'froms' => \App\Account::get()->pluck('name', 'id'),
         ];
 
         $expense = Expense::findOrFail($id);

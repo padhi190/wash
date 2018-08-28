@@ -18,10 +18,15 @@ $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 $this->get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 $this->post('password/reset', 'Auth\ResetPasswordController@reset')->name('auth.password.reset');
 
+// Change Password Routes...
+$this->get('change_password', 'Auth\ChangePasswordController@showChangePasswordForm')->name('auth.change_password');
+$this->patch('change_password', 'Auth\ChangePasswordController@changePassword')->name('auth.change_password');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index');
-    Route::get('change_branch/{branch_id}', 'ChangeBranchController@index');
+    Route::get('/history/income', ['uses' => 'HistoryController@income', 'as' => 'history.income']);
+    Route::get('/history/expense', ['uses' => 'HistoryController@expense', 'as' => 'history.expense']);
+    Route::get('/change_branch/{branch_id}', 'ChangeBranchController@index');
     Route::resource('roles', 'RolesController');
     Route::post('roles_mass_destroy', ['uses' => 'RolesController@massDestroy', 'as' => 'roles.mass_destroy']);
     Route::resource('users', 'UsersController');
@@ -37,15 +42,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('monthly_reports', 'MonthlyReportsController');
     Route::resource('branches', 'BranchesController');
     Route::post('branches_mass_destroy', ['uses' => 'BranchesController@massDestroy', 'as' => 'branches.mass_destroy']);
+    Route::get('customers/createFull/', ['uses' => 'CustomersController@createFull', 'as' => 'customers.createFull']);
+    Route::post('customers/storeFull/', ['uses' => 'CustomersController@storeFull', 'as' => 'customers.storeFull']);
     Route::resource('customers', 'CustomersController');
     Route::post('customers_mass_destroy', ['uses' => 'CustomersController@massDestroy', 'as' => 'customers.mass_destroy']);
     Route::get('vehicles/createIncome/{id}', ['uses' => 'VehiclesController@createIncome', 'as' => 'vehicles.createIncome']);
+    Route::get('vehicles/createFull/', ['uses' => 'VehiclesController@createFull', 'as' => 'vehicles.createFull']);
+    Route::post('vehicles/storeFull/', ['uses' => 'VehiclesController@storeFull', 'as' => 'vehicles.storeFull']);
     Route::resource('vehicles', 'VehiclesController');
     Route::post('vehicles_mass_destroy', ['uses' => 'VehiclesController@massDestroy', 'as' => 'vehicles.mass_destroy']);
     Route::resource('task_calendars', 'TaskCalendarsController');
     Route::resource('accounts', 'AccountsController');
     Route::post('accounts_mass_destroy', ['uses' => 'AccountsController@massDestroy', 'as' => 'accounts.mass_destroy']);
     Route::resource('transfers', 'TransfersController');
+    Route::get('/refresh', 'TransfersController@refresh');
     Route::post('transfers_mass_destroy', ['uses' => 'TransfersController@massDestroy', 'as' => 'transfers.mass_destroy']);
     Route::resource('task_calendars', 'TaskCalendarsController');
     Route::resource('task_statuses', 'TaskStatusesController');

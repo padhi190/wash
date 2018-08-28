@@ -5,25 +5,13 @@
     {!! Form::open(['method' => 'POST', 'route' => ['vehicles.store']]) !!}
 
     <div class="panel panel-default">
-        <div class="panel-heading">
+        <!-- <div class="panel-heading">
             @lang('quickadmin.create')
-        </div>
+        </div> -->
         
         <div class="panel-body">
             <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('license_plate', 'Plat No.*', ['class' => 'control-label']) !!}
-                    {!! Form::text('license_plate', old('license_plate'), ['class' => 'form-control', 'placeholder' => '']) !!}
-                    <p class="help-block"></p>
-                    @if($errors->has('license_plate'))
-                        <p class="help-block">
-                            {{ $errors->first('license_plate') }}
-                        </p>
-                    @endif
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="col-xs-6 form-group">
                     {!! Form::label('customer_id', 'Customer*', ['class' => 'control-label']) !!}
                     {!! Form::select('customer_id', $customers, old('customer_id', $customer_id), ['class' => 'form-control select2']) !!}
                     <p class="help-block"></p>
@@ -33,33 +21,22 @@
                         </p>
                     @endif
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
-                    {!! Form::label('type', 'Type*', ['class' => 'control-label']) !!}
+
+                <div class="col-xs-6 form-group">
+                    {!! Form::label('license_plate', 'Plat No.*', ['class' => 'control-label']) !!}
+                    {!! Form::text('license_plate', old('license_plate'), ['class' => 'form-control', 'placeholder' => '', 'style' => 'text-transform:uppercase', 'autofocus']) !!}
                     <p class="help-block"></p>
-                    @if($errors->has('type'))
+                    @if($errors->has('license_plate'))
                         <p class="help-block">
-                            {{ $errors->first('type') }}
+                            {{ $errors->first('license_plate') }}
                         </p>
                     @endif
-                    <div>
-                        <label>
-                            {!! Form::radio('type', 'mobil', false) !!}
-                            Mobil
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            {!! Form::radio('type', 'motor', false) !!}
-                            Motor
-                        </label>
-                    </div>
-                    
                 </div>
             </div>
+            
             <div class="row">
-                <div class="col-xs-12 form-group">
+                
+                <div class="col-xs-3 form-group">
                     {!! Form::label('brand', 'Brand', ['class' => 'control-label']) !!}
                     {!! Form::text('brand', old('brand'), ['class' => 'form-control', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
@@ -69,9 +46,8 @@
                         </p>
                     @endif
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+
+                <div class="col-xs-3 form-group">
                     {!! Form::label('model', 'Model', ['class' => 'control-label']) !!}
                     {!! Form::text('model', old('model'), ['class' => 'form-control', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
@@ -81,9 +57,8 @@
                         </p>
                     @endif
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+
+                <div class="col-xs-3 form-group">
                     {!! Form::label('color', 'Warna', ['class' => 'control-label']) !!}
                     {!! Form::text('color', old('color'), ['class' => 'form-control', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
@@ -93,41 +68,52 @@
                         </p>
                     @endif
                 </div>
+
+                <div class="col-xs-3 form-group">
+                    {!! Form::label('type', 'Type*', ['class' => 'control-label']) !!}
+                    <br>
+                    @if($errors->has('type'))
+                        <p class="help-block">
+                            {{ $errors->first('type') }}
+                        </p>
+                    @endif
+                    <div class="btn-group btn-group-justified" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="type" value='mobil' autocomplete="off" checked> Mobil
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="type" value='motor' autocomplete="off" > Motor
+                        </label>
+                    </div>
+                </div>
             </div>
+            
+            
             <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="col-xs-3 form-group">
                     {!! Form::label('size', 'Size', ['class' => 'control-label']) !!}
-                    <p class="help-block"></p>
+                    <br>
+                    <div class="btn-group btn-group-justified" data-toggle="buttons">
+                        <label class="btn btn-primary ">
+                            <input type="radio" name="size" value='small' autocomplete="off" > Small
+                        </label>
+                        <label class="btn btn-primary active" >
+                            <input type="radio" name="size" value='medium' autocomplete="off" checked > Medium
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="size" value='large' autocomplete="off" > Large
+                        </label>
+                    </div>
                     @if($errors->has('size'))
                         <p class="help-block">
                             {{ $errors->first('size') }}
                         </p>
                     @endif
-                    <div>
-                        <label>
-                            {!! Form::radio('size', 'small', false) !!}
-                            Small
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            {!! Form::radio('size', 'medium', false) !!}
-                            Medium
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            {!! Form::radio('size', 'large', false) !!}
-                            Large
-                        </label>
-                    </div>
                     
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="col-xs-9 form-group">
                     {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
-                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '']) !!}
+                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows'=>'2']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('note'))
                         <p class="help-block">
@@ -140,7 +126,7 @@
         </div>
     </div>
 
-    {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger']) !!}
+    {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger btn-lg']) !!}
     {!! Form::close() !!}
 @stop
 
