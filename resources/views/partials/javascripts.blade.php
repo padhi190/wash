@@ -11,7 +11,8 @@
 <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 <script src="{{ url('quickadmin/js') }}/bootstrap.min.js"></script>
-<script src="{{ url('quickadmin/js') }}/select2.full.min.js"></script>
+<!-- <script src="{{ url('quickadmin/js') }}/select2.full.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script src="{{ url('quickadmin/js') }}/main.js"></script>
 
 <script src="{{ url('adminlte/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>

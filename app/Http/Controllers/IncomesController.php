@@ -40,6 +40,13 @@ class IncomesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function loadVehiclesData(Request $request)
+    {
+        if ($request->has('q')) {
+            $data = \App\Vehicle::where('license_plate', 'LIKE', '%'.request('q').'%')->with('customer')->get();
+            return response()->json($data);
+        }
+    }
     public function create()
     {
         if (! Gate::allows('income_create')) {
@@ -64,29 +71,29 @@ class IncomesController extends Controller
         });
 
         // $vehicles = \App\Vehicle::with('customer')->get();
-        $vehicles = Cache::remember('vehicles', $minutes, function() {
-            return \App\Vehicle::with('customer')->get();
-        });
+        // $vehicles = Cache::remember('vehicles', $minutes, function() {
+        //     return \App\Vehicle::with('customer')->get();
+        // });
             
 
-        $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
+        // $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
             
-            return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
-        });
+        //     return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
+        // });
 
         // dd($vehiclesAndCustomer);
 
         // $customers = \App\Customer::with('latestVehicle')->get();
 
-        $customers = Cache::remember('customers', $minutes, function(){
-            return \App\Customer::with('latestVehicle')->get();
-        });
+        // $customers = Cache::remember('customers', $minutes, function(){
+        //     return \App\Customer::with('latestVehicle')->get();
+        // });
         
         
-        $customersAndCar = $customers->mapWithKeys(function($item,$key){
+        // $customersAndCar = $customers->mapWithKeys(function($item,$key){
             
-            return [$item['id'] => $item['name'] . ': ' .$item['latestVehicle']['full_vehicle']];
-        });
+        //     return [$item['id'] => $item['name'] . ': ' .$item['latestVehicle']['full_vehicle']];
+        // });
 
         $last_sales = Income::orderBy('created_at','desc')->where('branch_id', session('branch_id'))->first();
 
@@ -94,10 +101,10 @@ class IncomesController extends Controller
         
 
         $relations = [
-            'customers' => $customersAndCar->all(),
+            // 'customers' => $customersAndCar->all(),
             'customer_id' => null,
             'branches' => $branches,
-            'vehicles' => $vehiclesAndCustomer->all(),
+            // 'vehicles' => $vehiclesAndCustomer->all(),
             'income_categories' => $income_categories->pluck('name','id'),
             'products' => $products->pluck('name', 'id')->prepend('Please select', ''),
             'payment_types' => $payment_types->pluck('name', 'id'),

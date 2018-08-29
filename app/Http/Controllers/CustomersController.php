@@ -22,9 +22,15 @@ class CustomersController extends Controller
         if (! Gate::allows('customer_access')) {
             return abort(401);
         }
-        $customers = Customer::orderBy('join_date', 'desc')->with('vehicles','branch')->get();
+        // $customers = Customer::orderBy('join_date', 'desc')->with('vehicles','branch')->get();
 
-        return view('customers.index', compact('customers'));
+        return view('customers.index');
+    }
+
+    public function loadCustomersData()
+    {
+        $query = Customer::select('branch_id','name','phone','email');
+        return Datatables::of($query)->make(true);
     }
 
     /**

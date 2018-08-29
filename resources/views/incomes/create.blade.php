@@ -14,10 +14,10 @@
                 @endforeach
     </div> 
     <p>
-        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#formModal">
+        <!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#formModal">
               <i class="fa fa-user"></i>  + Customer Baru
-        </button>
-        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#formModal2">
+        </button> -->
+        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#formModal">
               <i class="fa fa-car"></i>  + Kendaraan Baru</a>
         </button>
 
@@ -71,7 +71,8 @@
             <div class="row">
                 <div class="col-xs-6 form-group">
                     {!! Form::label('vehicle_id', 'Kendaraan*', ['class' => 'control-label']) !!}
-                    {!! Form::select('vehicle_id', $vehicles, old('vehicle_id', $vehicle_id), ['class' => 'form-control select2']) !!}
+                    {!! Form::select('vehicle_id', ["" => "Cari"], null, ['class' => 'form-control cari']) !!}
+                    <!-- <select class="cari form-control select2" style="width:500px;" name="vehicle_id"; id="cari" ></select> -->
                     <p class="help-block"></p>
                     @if($errors->has('vehicle_id'))
                         <p class="help-block">
@@ -590,7 +591,7 @@
                 <div class="row">
                     <div class="col-xs-6 form-group">
                         {!! Form::label('customer_id', 'Customer*', ['class' => 'control-label']) !!}<br>
-                        {!! Form::select('customer_id', $customers, old('customer_id', $customer_id), ['class' => 'form-control select2', 'style'=>'width:450px;']) !!}
+                        
                         <p class="help-block"></p>
                         @if($errors->has('customer_id'))
                             <p class="help-block">
@@ -883,7 +884,31 @@
              // window.alert('test');
              // window.print();
         @endif
-       
+
+        $(document).ready(function(){
+            $('.cari').select2({
+                placeholder:'Cari...',
+                ajax: {
+                  url: "{!! route('loadVehiclesData') !!}",
+                  dataType: 'json',
+                  delay: 250,
+                  processResults: function (data) {
+                    var results = [];
+                    $.each(data, function (index, vehicles) {
+                        results.push({
+                            id: vehicles.id,
+                            text: vehicles.license_plate + " | " + vehicles.type + " " + vehicles.model + " " + vehicles.color + ": " + vehicles.customer.name
+                        });
+                    });
+
+                    return {
+                        results: results
+                    };
+                  },
+                }
+            });
+        });
+
         $('.datetime').datetimepicker({
             autoclose: true,
             dateFormat: "{{ config('app.date_format_js') }}",
