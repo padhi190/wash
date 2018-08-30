@@ -48,7 +48,8 @@
             <div class="row">
                 <div class="col-xs-6 form-group">
                     {!! Form::label('vehicle_id', 'Kendaraan*', ['class' => 'control-label']) !!}
-                    {!! Form::select('vehicle_id', $vehicles, old('vehicle_id'), ['class' => 'form-control select2']) !!}
+                    
+                    {!! Form::select('vehicle_id', [$income->vehicle_id => $income->vehicle['full_vehicle']], old('vehicle_id'), ['class' => 'form-control cari']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('vehicle_id'))
                         <p class="help-block">
@@ -199,6 +200,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
     <script>
+
+        $(document).ready(function(){
+            $('.cari').select2({
+                ajax: {
+                  url: "{!! route('loadVehiclesData') !!}",
+                  dataType: 'json',
+                  delay: 250,
+                  processResults: function (data) {
+                    var results = [];
+                    $.each(data, function (index, vehicles) {
+                        results.push({
+                            id: vehicles.id,
+                            text: vehicles.license_plate + " | " + vehicles.type + " " + vehicles.model + " " + vehicles.color + ": " + vehicles.customer.name
+                        });
+                    });
+
+                    return {
+                        results: results
+                    };
+                  },
+                }
+            });
+        });
+
         $('.datetime').datetimepicker({
             autoclose: true,
             dateFormat: "{{ config('app.date_format_js') }}",

@@ -29,8 +29,12 @@ class CustomersController extends Controller
 
     public function loadCustomersData()
     {
-        $query = Customer::select('branch_id','name','phone','email');
-        return Datatables::of($query)->make(true);
+        $query = Customer::select('id','branch_id','name','phone','email');
+        return Datatables::of($query)
+                ->addColumn('action', function ($query) {
+                return '<a href="'.route("customers.edit", $query->id).'" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+                })
+                ->make(true);
     }
 
     /**

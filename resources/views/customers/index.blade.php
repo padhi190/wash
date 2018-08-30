@@ -17,11 +17,10 @@
             <table class="table table-bordered table-striped @can('customer_delete') dt-select @endcan" id="customer-table">
                 <thead>
                     <tr>
-
-                        <th>@lang('quickadmin.customer.fields.branch')</th>
                         <th>@lang('quickadmin.customer.fields.name')</th>
                         <th>@lang('quickadmin.customer.fields.phone')</th>
                         <th>@lang('quickadmin.customer.fields.email')</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 
@@ -52,10 +51,10 @@
                 serverSide: true,
                 ajax: '{!! route('loadCustomersData') !!}',
                 columns: [
-                    { data: 'branch_id', name: 'branch_id' },
-                    { data: 'name', name: 'name' },
-                    { data: 'phone', name: 'phone' },
-                    { data: 'email', name: 'email' },
+                    { data: 'name' },
+                    { data: 'phone' },
+                    { data: 'email' },
+                    { data: 'action', orderable: false, searchable: false}
                 ]
             });
         });

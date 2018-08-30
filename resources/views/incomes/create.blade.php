@@ -897,7 +897,7 @@
                     $.each(data, function (index, vehicles) {
                         results.push({
                             id: vehicles.id,
-                            text: vehicles.license_plate + " | " + vehicles.type + " " + vehicles.model + " " + vehicles.color + ": " + vehicles.customer.name
+                            text: vehicles.license_plate + " | " + vehicles.model.toUpperCase() + " " + vehicles.color.toUpperCase() + ": " + vehicles.customer.name + " (" + vehicles.type.toUpperCase() + ")"
                         });
                     });
 
@@ -906,6 +906,14 @@
                     };
                   },
                 }
+            }).on('select2:open', () => {
+                    $(".select2-results:not(:has(a))").append('<a data-toggle="modal" href="#formModal" style="padding: 6px;height: 20px;display: inline-table;">Tambahkan Kendaraan Baru</a>');
+            });
+
+
+            $('.modal').on('shown.bs.modal', function() {
+              $('.cari').select2("close");
+              $(this).find('[autofocus]').focus();
             });
         });
 

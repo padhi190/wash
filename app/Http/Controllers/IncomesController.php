@@ -155,16 +155,16 @@ class IncomesController extends Controller
             return abort(401);
         }
 
-        $vehicles = \App\Vehicle::with('customer')->get();
+        // $vehicles = \App\Vehicle::with('customer')->get();
 
-        $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
+        // $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
             
-            return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
-        });
+        //     return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
+        // });
 
         $relations = [
             'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-            'vehicles' => $vehiclesAndCustomer->all(),
+            // 'vehicles' => $vehiclesAndCustomer->all(),
             'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id'),
             'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
             'payment_types' => \App\Account::get()->pluck('name', 'id'),
