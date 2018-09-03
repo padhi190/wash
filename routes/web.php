@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('income_categories_mass_destroy', ['uses' => 'IncomeCategoriesController@massDestroy', 'as' => 'income_categories.mass_destroy']);
     Route::resource('incomes', 'IncomesController');
     Route::get('/loadVehiclesData', 'IncomesController@loadVehiclesData')->name('loadVehiclesData');
+    Route::get('/loadIncomesData', 'IncomesController@loadIncomesData')->name('loadIncomesData');
     Route::get('/loadCustomersData', 'CustomersController@loadCustomersData')->name('loadCustomersData');
     Route::post('incomes_mass_destroy', ['uses' => 'IncomesController@massDestroy', 'as' => 'incomes.mass_destroy']);
     Route::resource('expenses', 'ExpensesController');

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\StoreIncomesRequest;
 use App\Http\Requests\UpdateIncomesRequest;
 use Carbon\Carbon;
+use Yajra\Datatables\Datatables;
 
 class IncomesController extends Controller
 {
@@ -27,19 +28,48 @@ class IncomesController extends Controller
         $from->subDays(14);
         $from->hour=5;
         $from->minute=0;
-        $incomes = Income::with('income_category','vehicle','payment_type')->orderBy('entry_date','desc')
-                    ->whereBetween('entry_date', [$from, $to])
-                    ->where('branch_id', session('branch_id'))
-                    ->get();
+        // $incomes = Income::with('income_category','vehicle','payment_type')->orderBy('entry_date','desc')
+        //             ->whereBetween('entry_date', [$from, $to])
+        //             ->where('branch_id', session('branch_id'))
+        //             ->get();
 
-        return view('incomes.index', compact('incomes'));
+        return view('incomes.index');
     }
 
-    /**
-     * Show the form for creating new Income.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function loadIncomesData()
+    {
+        $to = Carbon::now();
+        $from = clone $to;
+        $from->subDays(14);
+        $from->hour=5;
+        $from->minute=0;
+        $query = Income::query();
+        $query->between($from, $to)->where('branch_id', session('branch_id'))->with('income_category', 'vehicle');
+        $query->select('incomes.*');
+        $template = 'actionsTemplate';
+
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+            ]);
+        $datatables->editColumn('amount', function($query){
+                  return 'Rp '. number_format($query->total_amount);  
+                });
+        $datatables->editColumn('income_category.name', function($q){
+                  return $q->income_category->name.$q->additional_sales;  
+                });
+        $datatables->editColumn('vehicle.license_plate', function($q){
+                    return $q->vehicle->full_vehicle;
+                });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+                $gateKey  = 'income_';
+                $routeKey = 'incomes';
+
+                return view($template, compact('row', 'gateKey', 'routeKey'));
+            });
+
+        return $datatables->make(true);
+    }
     public function loadVehiclesData(Request $request)
     {
         if ($request->has('q')) {

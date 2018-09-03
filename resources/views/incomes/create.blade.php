@@ -21,10 +21,18 @@
               <i class="fa fa-car"></i>  + Kendaraan Baru</a>
         </button>
 
+        <a href="{!!route('incomes.index')!!}" class="btn btn-primary btn-lg">
+              <i class="fa fa-list"></i> List Penjualan</a>
+        </a>
        
     </p>
     @endcan
 
+    
+        
+
+       
+    
     {!! Form::open(['method' => 'POST', 'route' => ['incomes.store']]) !!}
 
     <div class="panel panel-default">
@@ -215,14 +223,11 @@
     </div>
 
     <div class="row">
-        <div class="col-xs-3 form-group">
+        <div class="col-xs-6 form-group">
             {!! Form::submit(trans('quickadmin.save'), ['class' => 'btn btn-danger btn-lg']) !!}
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#printModal">
+            <button type="button" id="printButton" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#printModal">
               Print Bon Terakhir
             </button>
-        </div>
-        <div class="col-xs-3 form-group">
-            
         </div>
         <div class="col-xs-6 form-group">
              
@@ -240,9 +245,17 @@
             <p>Rcpt No: {{$last_sales->nobon}}</p>
             <p>{{$last_sales->entry_date}}</p>
             <p><strong>{{$last_sales->vehicle->license_plate}} - {{$last_sales->vehicle->type}}</strong></p>
-            <p>{{$last_sales->income_category->name}}</p>
-            <p style="font-size:14px">{{$last_sales->note}}</p>
-            <p><strong>Total: Rp. {{number_format($last_sales->amount)}}</strong></p>
+            <p>{{$last_sales->income_category->name}} : <span text-align="right">Rp. {{number_format($last_sales->amount)}}</span></p>
+            
+            @if($last_sales->wax_amount > 0)
+            <p>Wax : <span text-align="right">Rp. {{number_format($last_sales->wax_amount)}}</span></p>
+            @endif
+
+            @if($last_sales->fnb_amount > 0)
+            <p>F&B : <span text-align="right">Rp. {{number_format($last_sales->fnb_amount)}}</span></p>
+            @endif
+            <!-- <p style="font-size:14px">{{$last_sales->note}}</p> -->
+            <p><strong>Total: Rp. {{number_format($last_sales->total_amount)}}</strong></p>
             @endif
         </div>
     @stop
@@ -915,6 +928,10 @@
               $('.cari').select2("close");
               $(this).find('[autofocus]').focus();
             });
+
+            @if(Session::has('alert-success'))
+                $('#printModal').modal('show');
+            @endif
         });
 
         $('.datetime').datetimepicker({

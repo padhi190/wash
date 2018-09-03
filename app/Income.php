@@ -185,4 +185,9 @@ class Income extends Model
 
         return $additional;
     }
+
+    public function scopeBetween($query, Carbon $from, Carbon $to)
+    {
+        $query->whereBetween('entry_date', [$from, $to]);
+    }
 }
