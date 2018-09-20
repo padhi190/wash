@@ -51,7 +51,7 @@
                     @endif
                     <div class="btn-group btn-group-lg" data-toggle="buttons">
                       @foreach($income_categories as $key => $cat)
-                        @if(in_array($cat,array('Carwash','Detailing','Bikewash')))
+                        @if(in_array($cat,array('Carwash','Detailing','Bikewash','Voucher','Lain-lain')))
                         <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}">
                             <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
                             {{$cat == 'Carwash' ? 'checked' : ''}}
@@ -118,7 +118,7 @@
                         <label class="btn btn-danger {{ $payment == 'Cash' ? 'active' : ''}}">
                             <input type="radio" name="payment_type_id" value={{$key}} data-name="{{$payment}}" autocomplete="off" 
                              {{ $payment == 'Cash' ? 'checked' : ''}}
-                            > 
+                            onchange="setPayment(this)"> 
                             {{ $payment }}
                         </label>
                       @endforeach
@@ -154,7 +154,7 @@
 
                 <div class="col-xs-6 form-group">
                     {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
-                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '3']) !!}
+                    {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '2', 'id' => 'note']) !!}
                     <p class="help-block"></p>
                     @if($errors->has('note'))
                         <p class="help-block">
@@ -240,7 +240,7 @@
     
     @extends('partials.print')
     @section('printSection')
-         <div style="text-align:center; font-size:14px;">
+         <div style="text-align:center; font-size:18px;">
             @if($last_sales != null)
             <p>Rcpt No: {{$last_sales->nobon}}</p>
             <p>{{$last_sales->entry_date}}</p>
@@ -406,7 +406,7 @@
                         @endif
                         <div class="btn-group btn-group-justified" data-toggle="buttons">
                           @foreach($income_categories as $key => $cat)
-                            @if(in_array($cat,array('Carwash','Detailing','Bikewash')))
+                            @if(in_array($cat,array('Carwash','Detailing','Bikewash','Voucher')))
                             <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}2">
                                 <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
                                 {{$cat == 'Carwash' ? 'checked' : ''}}
@@ -483,7 +483,7 @@
                             <label class="btn btn-danger {{ $payment == 'Cash' ? 'active' : ''}}">
                                 <input type="radio" name="payment_type_id" value={{$key}} data-name="{{$payment}}" autocomplete="off" 
                                  {{ $payment == 'Cash' ? 'checked' : ''}}
-                                > 
+                                onchange="setPayment2(this)"> 
                                 {{ $payment }}
                             </label>
                           @endforeach
@@ -519,7 +519,7 @@
 
                     <div class="col-xs-6 form-group">
                         {!! Form::label('note', 'Note', ['class' => 'control-label']) !!}
-                        {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '3']) !!}
+                        {!! Form::textarea('note', old('note'), ['class' => 'form-control ', 'placeholder' => '', 'rows' => '3', 'id'=>'note2']) !!}
                         <p class="help-block"></p>
                         @if($errors->has('note'))
                             <p class="help-block">
@@ -946,6 +946,22 @@
             showMicrosec:false
         });
 
+        function setPayment(type){
+            if (type.value="Voucher"){
+                $('#amount').val('0');
+                $('textarea#note').val('Voucher');
+                updateTotal();    
+            }
+        };
+
+        function setPayment2(type){
+            if (type.value="Voucher"){
+                $('#amount2').val('0');
+                $('textarea#note2').val('Voucher');
+                updateTotal2();    
+            }
+        };
+
         function updateTotal(){
             var fnb = 0;
             var wax = 0;
@@ -1132,7 +1148,7 @@
                     $('#amount2').val({{$prices['bikewash']}});
                     $("#motor").button('toggle');
                     updateTotal2();                    
-                    break;  
+                    break;
                 default:
                     
                     break;

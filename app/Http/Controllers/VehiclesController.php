@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreVehiclesRequest;
 use App\Http\Requests\StoreVehicleFullRequest;
 use App\Http\Requests\UpdateVehiclesRequest;
+use Yajra\Datatables\Datatables;
 
 class VehiclesController extends Controller
 {
@@ -21,9 +22,9 @@ class VehiclesController extends Controller
         if (! Gate::allows('vehicle_access')) {
             return abort(401);
         }
-        $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
-
-        return view('vehicles.index', compact('vehicles'));
+        // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
+        $ajaxurl = 'loadVehiclesDataTables';
+        return view('vehicles.index', compact('ajaxurl'));
     }
 
     /**
@@ -270,6 +271,51 @@ class VehiclesController extends Controller
         // ];
 
         // return view('incomes.create', $relations);
+    }
+
+    public function loadVehiclesDataTables()
+    {
+        $query    = Vehicle::query();
+        $query->with('customer','sales');
+        $query->select('vehicles.*');
+        $template = 'actionsTemplate2';
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+        ]);
+        $datatables->editColumn('customer.name', function($q){
+                    return $q->customer->name;
+                });
+        $datatables->editColumn('type', function($q){
+                    return $q->full_vehicle;
+        });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+            $gateKey  = 'vehicle_';
+            $routeKey = 'vehicles';
+
+            return view($template, compact('row', 'gateKey', 'routeKey'));
+        });
+        $datatables->rawColumns(['actions']);
+        $datatables->addColumn('test_url', function($q) {
+            // return $q->id;
+                return route('loadVehiclesSalesData', $q->id);
+        });
+        return $datatables->make(true);
+    
+        // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
+
+        // return view('vehicles.index', compact('vehicles'));
+   
+    }
+
+    public function loadVehiclesSalesData($id)
+    {
+        $sales = Vehicle::findOrFail($id)->sales;
+        // $sales = Vehicle::query();
+        // $sales->findOrFail($id)->with('sales');
+        // $sales->select('vehicles.*');
+        return Datatables::of($sales)->make(true);
+        // return $sales;
     }
 
 }

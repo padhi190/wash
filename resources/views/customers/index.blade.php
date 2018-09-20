@@ -46,7 +46,7 @@
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-                pageLength: '50',
+                pageLength: '20',
                 processing: true,
                 serverSide: true,
                 ajax: '{!! route('loadCustomersData') !!}',
@@ -54,7 +54,7 @@
                     { data: 'name' },
                     { data: 'phone' },
                     { data: 'email' },
-                    { data: 'action', orderable: false, searchable: false}
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });
         });

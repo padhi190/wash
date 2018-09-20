@@ -1,6 +1,6 @@
 @extends('partials.print')
     @section('printSection')
-    <div style="text-align:center; font-size:14px;">
+    <div style="text-align:center; font-size:18px;">
         <p id="rcpt">Rcpt No:</p>
         <p id="date"></p>
         <p id="vehicle"></p>
@@ -15,7 +15,7 @@
     @endsection
 @extends('layouts.app')
 @section('content')
-    <h3 class="page-title"><i class="fa fa-shopping-cart"></i> @lang('quickadmin.income.title')</h3>
+    <h3 class="page-title"><i class="fa fa-shopping-cart"></i> @lang('quickadmin.income.title') - {{$title}}</h3>
     @can('income_create')
     <p>
         <a href="{{ route('incomes.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
@@ -82,7 +82,7 @@
                     processing: true,
                     serverSide: true,
                     order: [[1, 'desc']],
-                    ajax: '{!! route('loadIncomesData') !!}',
+                    ajax: '{!! route($ajaxurl) !!}',
                     columns: [
                         { data: 'nobon' },
                         { data: 'entry_date' },
