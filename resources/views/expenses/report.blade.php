@@ -19,18 +19,7 @@
     <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') - {{$title}}</h3>
     @can('expense_create')
     <p>
-        @if($title != 'Trashed')
         <a href="{{ route('expenses.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
-        @endif
-        @if($title == 'Trashed')
-            {!! Form::open(array(
-                'style' => 'display: inline-block;',
-                'method' => 'POST',
-                'onsubmit' => "return confirm('Permanently delete ALL trashed?');",
-                'route' => ['expenses.permanentdestroyall'])) !!}
-            {!! Form::button('<span class="glyphicon glyphicon-trash"></span>', array('type'=>'submit' ,'class' => 'btn btn-danger')) !!}
-            {!! Form::close() !!}
-        @endif
     </p>
     @endcan
 
@@ -50,8 +39,6 @@
                         <th>@lang('quickadmin.expense.fields.note')</th>
                         <th>@lang('quickadmin.expense.fields.amount')</th>
                         <th>Sumber</th>
-                        
-                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 
@@ -71,10 +58,11 @@
 
          $( document ).ready(function() {
             $('#expense-table').DataTable({
-                    dom: 'Bfrtip',
+                    dom: 'Blfrtip',
                     buttons: [
                         'copy', 'csv', 'excel', 'pdf', 'print'
                     ],
+                    lengthMenu: [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
                     pageLength: '10',
                     searchDelay: 450,
                     processing: true,
@@ -87,9 +75,8 @@
                         { data: 'expense_category.parent_category'},
                         { data: 'expense_category.name'},
                         { data: 'note', name: 'note' },
-                        { data: 'amount_rp' },
+                        { data: 'amount', name:'amount' },
                         { data: 'from.name'},
-                        { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });
         });

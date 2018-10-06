@@ -23,17 +23,49 @@ class ExpensesController extends Controller
         if (! Gate::allows('expense_access')) {
             return abort(401);
         }
+        // $to = Carbon::now();
+        // $from = clone $to;
+        // $from->subDays(7);
+        // $from->hour=5;
+        // $from->minute=0;
+        // $expenses = Expense::with('expense_category','employee','from')->orderBy('entry_date', 'desc')
+        //             ->whereBetween('entry_date', [$from, $to])
+        //             ->where('branch_id', session('branch_id'))
+        //             ->get();
+        $ajaxurl = 'loadExpensesData';
+        $title = 'Last 14 Days';
+        return view('expenses.index', compact('ajaxurl', 'title'));
+    }
+
+    public function loadExpensesData()
+    {
         $to = Carbon::now();
         $from = clone $to;
-        $from->subDays(7);
+        $from->subDays(14);
         $from->hour=5;
         $from->minute=0;
-        $expenses = Expense::with('expense_category','employee','from')->orderBy('entry_date', 'desc')
-                    ->whereBetween('entry_date', [$from, $to])
-                    ->where('branch_id', session('branch_id'))
-                    ->get();
 
-        return view('expenses.index', compact('expenses'));
+        $query = Expense::query();
+        $query->whereBetween('entry_date',[$from, $to])->where('branch_id', session('branch_id'));
+        $query->with('from','expense_category');
+        $query->select('expenses.*');
+        $template = 'actionsTemplate3';
+
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+            ]);
+        $datatables->editColumn('amount_rp', function($q){
+            return 'Rp. ' . number_format($q->amount);
+        });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+                $gateKey  = 'expense_';
+                $routeKey = 'expenses';
+
+                return view($template, compact('row', 'gateKey', 'routeKey'));
+            });
+        $datatables->rawColumns(['actions']);
+        return $datatables->make(true);
     }
 
     /**
@@ -173,6 +205,82 @@ class ExpensesController extends Controller
                 $entry->delete();
             }
         }
+    }
+
+    public function loadTrashedExpensesData()
+    {
+
+        $query = Expense::query();
+        $query->onlyTrashed();
+        $query->where('branch_id', session('branch_id'));
+        $query->with('from','expense_category');
+        $query->select('expenses.*');
+        $template = 'actionsTemplateTrashed';
+
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+            ]);
+        $datatables->editColumn('amount_rp', function($q){
+            return 'Rp. ' . number_format($q->amount);
+        });
+         $datatables->editColumn('entry_date', function($q){
+            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('m/d/Y') : '';
+            });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+                $gateKey  = 'expense_';
+                $routeKey = 'expenses';
+
+                return view($template, compact('row', 'gateKey', 'routeKey'));
+            });
+        $datatables->rawColumns(['actions']);
+        return $datatables->make(true);
+    }
+
+    public function trashed()
+    {
+        if (! Gate::allows('expense_access')) {
+            return abort(401);
+        }
+        // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
+        $ajaxurl = 'loadTrashedExpensesData';
+        $title = 'Trashed';
+        return view('expenses.index', compact('ajaxurl','title'));
+    }
+
+    public function restore($id)
+    {
+        if (! Gate::allows('expense_delete')) {
+            return abort(401);
+        }
+        $expense = Expense::onlyTrashed();
+        $expense->find($id);
+        $expense->restore();
+
+        return redirect()->route('expenses.trashed');
+    }
+
+    public function permanentdestroy($id)
+    {
+        if (! Gate::allows('expense_delete')) {
+            return abort(401);
+        }
+        $expense = Expense::onlyTrashed();
+        $expense->find($id);
+        $expense->forceDelete();
+
+        return redirect()->route('expenses.trashed');
+    }
+
+    public function permanentdestroyall()
+    {
+        if (! Gate::allows('expense_delete')) {
+            return abort(401);
+        }
+        $expense = Expense::onlyTrashed();
+        $expense->forceDelete();
+
+        return redirect()->route('expenses.trashed');
     }
 
 }

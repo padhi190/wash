@@ -18,19 +18,8 @@
     <h3 class="page-title"><i class="fa fa-shopping-cart"></i> @lang('quickadmin.income.title') - {{$title}}</h3>
     @can('income_create')
     <p>
-        @if($title !='Trashed')
         <a href="{{ route('incomes.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
         <a href="#" id="today" class="btn btn-info">Hari Ini</a>
-        @endif
-        @if($title == 'Trashed')
-            {!! Form::open(array(
-                'style' => 'display: inline-block;',
-                'method' => 'POST',
-                'onsubmit' => "return confirm('Permanently delete ALL trashed?');",
-                'route' => ['incomes.permanentdestroyall'])) !!}
-            {!! Form::button('<span class="glyphicon glyphicon-trash"></span>', array('type'=>'submit' ,'class' => 'btn btn-danger')) !!}
-            {!! Form::close() !!}
-        @endif
     </p>
     @endcan
 

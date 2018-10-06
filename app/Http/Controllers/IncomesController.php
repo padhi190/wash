@@ -53,13 +53,13 @@ class IncomesController extends Controller
         $datatables->setRowAttr([
                 'data-entry-id' => '{{$id}}',
             ]);
-        $datatables->editColumn('amount', function($query){
+        $datatables->editColumn('total_amount', function($query){
                   return 'Rp '. number_format($query->total_amount);  
                 });
-        $datatables->editColumn('income_category.name', function($q){
+        $datatables->editColumn('income_category_name', function($q){
                   return $q->income_category->name.$q->additional_sales;  
                 });
-        $datatables->editColumn('vehicle.license_plate', function($q){
+        $datatables->editColumn('full_vehicle', function($q){
                     return $q->vehicle->full_vehicle;
                 });
         $datatables->editColumn('actions', function ($row) use ($template) {
@@ -284,6 +284,95 @@ class IncomesController extends Controller
                 $entry->delete();
             }
         }
+    }
+
+    public function loadTrashedIncomesData()
+    {
+        
+        $query = Income::query();
+        $query->onlyTrashed();
+        $query->where('branch_id', session('branch_id'))->with('income_category', 'vehicle','payment_type');
+        $query->select('incomes.*');
+        $template = 'actionsTemplateTrashed';
+
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+            ]);
+        $datatables->editColumn('entry_date', function($q){
+            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('m/d/Y') : '';
+            });
+        $datatables->editColumn('entry_time', function($q){
+            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('H:i') : '';
+            });
+
+        $datatables->editColumn('total_amount_number', function($query){
+                  return $query->total_amount;  
+                });
+        $datatables->editColumn('total_amount', function($query){
+                  return 'Rp '. number_format($query->total_amount);  
+                });
+        $datatables->editColumn('income_category_name', function($q){
+                  return $q->income_category->name.$q->additional_sales;  
+                });
+        $datatables->editColumn('full_vehicle', function($q){
+                    return $q->vehicle->full_vehicle;
+                });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+                $gateKey  = 'income_';
+                $routeKey = 'incomes';
+
+                return view($template, compact('row', 'gateKey', 'routeKey'));
+            });
+        $datatables->rawColumns(['actions']);
+
+        return $datatables->make(true);
+    }
+
+    public function trashed()
+    {
+        if (! Gate::allows('income_access')) {
+            return abort(401);
+        }
+        // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
+        $ajaxurl = 'loadTrashedIncomesData';
+        $title = 'Trashed';
+        return view('incomes.index', compact('ajaxurl','title'));
+    }
+
+    public function restore($id)
+    {
+        if (! Gate::allows('income_delete')) {
+            return abort(401);
+        }
+        $income = Income::onlyTrashed();
+        $income->find($id);
+        $income->restore();
+
+        return redirect()->route('incomes.trashed');
+    }
+
+    public function permanentdestroy($id)
+    {
+        if (! Gate::allows('income_delete')) {
+            return abort(401);
+        }
+        $income = Income::onlyTrashed();
+        $income->find($id);
+        $income->forceDelete();
+
+        return redirect()->route('incomes.trashed');
+    }
+
+    public function permanentdestroyall()
+    {
+        if (! Gate::allows('income_delete')) {
+            return abort(401);
+        }
+        $income = Income::onlyTrashed();
+        $income->forceDelete();
+
+        return redirect()->route('incomes.trashed');
     }
 
 }

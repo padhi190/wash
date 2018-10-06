@@ -22,6 +22,7 @@
                         @endcan
 
                         <th>@lang('quickadmin.expense-category.fields.name')</th>
+                        <th>Parent Category</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -35,6 +36,7 @@
                                 @endcan
 
                                 <td>{{ $expense_category->name }}</td>
+                                <td>{{ $expense_category->parent_category }}</td>
                                 <td>
                                     @can('expense_category_view')
                                     <a href="{{ route('expense_categories.show',[$expense_category->id]) }}" class="btn btn-xs btn-primary">@lang('quickadmin.view')</a>

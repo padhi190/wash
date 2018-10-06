@@ -1,12 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title"><i class="fa fa-car"></i> @lang('quickadmin.vehicle.title')</h3>
+    <h3 class="page-title"><i class="fa fa-car"></i> @lang('quickadmin.vehicle.title') {{$title}}</h3> 
     @can('vehicle_create')
     <p>
         <!-- <a href="{{ route('vehicles.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a> -->
-        <a href="{{ route('vehicles.create') }}" class="btn btn-success"><i class="fa fa-car"></i>  + Kendaraan</a>
-        <a href="{{ route('customers.create') }}" class="btn btn-info"><i class="fa fa-user"></i>  + Customer</a>
+        @if($title != '- Trashed')
+            <a href="{{ route('vehicles.create') }}" class="btn btn-success"><i class="fa fa-car"></i>  + Kendaraan</a>
+            <a href="{{ route('customers.create') }}" class="btn btn-info"><i class="fa fa-user"></i>  + Customer</a>
+        @endif
+        @if($title == '- Trashed')
+            {!! Form::open(array(
+                'style' => 'display: inline-block;',
+                'method' => 'POST',
+                'onsubmit' => "return confirm('Permanently delete ALL trashed?');",
+                'route' => ['vehicles.permanentdestroyall'])) !!}
+            {!! Form::button('<span class="glyphicon glyphicon-trash"></span>', array('type'=>'submit' ,'class' => 'btn btn-danger')) !!}
+            {!! Form::close() !!}
+        @endif
     </p>
     @endcan
 

@@ -24,7 +24,8 @@ class VehiclesController extends Controller
         }
         // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
         $ajaxurl = 'loadVehiclesDataTables';
-        return view('vehicles.index', compact('ajaxurl'));
+        $title = '';
+        return view('vehicles.index', compact('ajaxurl','title'));
     }
 
     /**
@@ -157,6 +158,41 @@ class VehiclesController extends Controller
         return redirect()->route('vehicles.index');
     }
 
+    public function permanentdestroy($id)
+    {
+        if (! Gate::allows('vehicle_delete')) {
+            return abort(401);
+        }
+        $vehicle = Vehicle::onlyTrashed();
+        $vehicle->find($id);
+        $vehicle->forceDelete();
+
+        return redirect()->route('vehicles.trashed');
+    }
+
+    public function permanentdestroyall()
+    {
+        if (! Gate::allows('vehicle_delete')) {
+            return abort(401);
+        }
+        $vehicle = Vehicle::onlyTrashed();
+        $vehicle->forceDelete();
+
+        return redirect()->route('vehicles.trashed');
+    }
+
+     public function restore($id)
+    {
+        if (! Gate::allows('vehicle_delete')) {
+            return abort(401);
+        }
+        $vehicle = Vehicle::onlyTrashed();
+        $vehicle->find($id);
+        $vehicle->restore();
+
+        return redirect()->route('vehicles.trashed');
+    }
+
     /**
      * Delete all selected Vehicle at once.
      *
@@ -259,18 +295,6 @@ class VehiclesController extends Controller
         // $request->session()->flash('print-bon', '');
         return redirect()->route('incomes.create');
 
-        // $relations = [
-        //     'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-        //     'vehicles' => \App\Vehicle::get()->pluck('full_vehicle', 'id')->prepend('Please select', ''),
-        //     'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id'),
-        //     'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
-        //     'payment_types' => \App\Account::get()->pluck('name', 'id'),
-        //     'last_bon' => \App\Branch::where('id', session('branch_id'))->first()->last_bon,
-        //     'vehicle_id' => null,
-        //     'prices' => config('pricelist')
-        // ];
-
-        // return view('incomes.create', $relations);
     }
 
     public function loadVehiclesDataTables()
@@ -302,20 +326,63 @@ class VehiclesController extends Controller
         });
         return $datatables->make(true);
     
-        // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
+ 
+   
+    }
 
-        // return view('vehicles.index', compact('vehicles'));
+    public function loadTrashedVehiclesDataTables()
+    {
+        $query    = Vehicle::query();
+        $query->onlyTrashed();
+        $query->with('customer','sales');
+        $query->select('vehicles.*');
+        $template = 'actionsTemplateTrashed';
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+        ]);
+        $datatables->editColumn('customer.name', function($q){
+                    return $q->customer->name;
+                });
+        $datatables->editColumn('type', function($q){
+                    return $q->full_vehicle;
+        });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+            $gateKey  = 'vehicle_';
+            $routeKey = 'vehicles';
+
+            return view($template, compact('row', 'gateKey', 'routeKey'));
+        });
+        $datatables->rawColumns(['actions']);
+        $datatables->addColumn('test_url', function($q) {
+            // return $q->id;
+                return route('loadVehiclesSalesData', $q->id);
+        });
+        return $datatables->make(true);
+    
+ 
    
     }
 
     public function loadVehiclesSalesData($id)
     {
         $sales = Vehicle::findOrFail($id)->sales;
-        // $sales = Vehicle::query();
-        // $sales->findOrFail($id)->with('sales');
-        // $sales->select('vehicles.*');
+        
         return Datatables::of($sales)->make(true);
-        // return $sales;
+       
     }
+
+    public function trashed()
+    {
+        if (! Gate::allows('vehicle_access')) {
+            return abort(401);
+        }
+        // $vehicles = Vehicle::orderBy('id', 'desc')->with('sales','customer')->get();
+        $ajaxurl = 'loadTrashedVehiclesDataTables';
+        $title = '- Trashed';
+        return view('vehicles.index', compact('ajaxurl','title'));
+    }
+
+
 
 }

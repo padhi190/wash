@@ -6,6 +6,9 @@ use App\Expense;
 use App\IncomeCategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\Gate;
+
 
 class MonthlyReportsController extends Controller
 {
@@ -158,5 +161,28 @@ class MonthlyReportsController extends Controller
             'wax_dollar',
             'use_new_format'
         ));
+    }
+
+    public function incomesreport()
+    {
+        if (! Gate::allows('income_access')) {
+            return abort(401);
+        }
+
+        
+        $ajaxurl = 'loadFullIncomesData';
+        $title = 'Raw Data';
+        return view('incomes.report', compact('ajaxurl', 'title'));   
+    }
+
+    public function expensereport()
+    {
+        if (! Gate::allows('expense_access')) {
+            return abort(401);
+        }
+        
+        $ajaxurl = 'loadFullExpensesData';
+        $title = 'Raw Data';
+        return view('expenses.report', compact('ajaxurl', 'title'));
     }
 }

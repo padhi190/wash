@@ -18,19 +18,8 @@
     <h3 class="page-title"><i class="fa fa-shopping-cart"></i> @lang('quickadmin.income.title') - {{$title}}</h3>
     @can('income_create')
     <p>
-        @if($title !='Trashed')
         <a href="{{ route('incomes.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
         <a href="#" id="today" class="btn btn-info">Hari Ini</a>
-        @endif
-        @if($title == 'Trashed')
-            {!! Form::open(array(
-                'style' => 'display: inline-block;',
-                'method' => 'POST',
-                'onsubmit' => "return confirm('Permanently delete ALL trashed?');",
-                'route' => ['incomes.permanentdestroyall'])) !!}
-            {!! Form::button('<span class="glyphicon glyphicon-trash"></span>', array('type'=>'submit' ,'class' => 'btn btn-danger')) !!}
-            {!! Form::close() !!}
-        @endif
     </p>
     @endcan
 
@@ -47,13 +36,18 @@
                         <!-- <th>@lang('quickadmin.income.fields.branch')</th> -->
                         <th>@lang('quickadmin.income.fields.nobon')</th>
                         <th>@lang('quickadmin.income.fields.entry-date')</th>
+                        <th>Time</th>
                         <th>@lang('quickadmin.income.fields.vehicle')</th>
                         <th>Kategori</th>
+                        <th>FnB</th>
+                        <th>Wax</th>
                         <th>Jumlah</th>
+                        <th>Total</th>
+                        <th>Payment</th>
                         <th>Type</th>
+                        <th>Brand</th>
                         <th>Model</th>
                         <th>Warna</th>
-                        <th></th>
                     </tr>
                 </thead>
                 
@@ -96,15 +90,21 @@
                     order: [[1, 'desc']],
                     ajax: '{!! route($ajaxurl) !!}',
                     columns: [
-                        { data: 'nobon' },
-                        { data: 'entry_date' },
-                        { data: 'full_vehicle' },
-                        { data: 'income_category_name', name: 'income_category_name' },
-                        { data: 'total_amount'},
-                        { data: 'vehicle.type', name:'vehicle.type', visible:false},
-                        { data: 'vehicle.model', name: 'vehicle.model', visible:false},
-                        { data: 'vehicle.color', name: 'vehicle.color', visible:false},
-                        { data: 'actions', name: 'actions', searchable: false, sortable: false}
+                        { data: 'nobon', searchable: true },
+                        { data: 'entry_date', searchable: true },
+                        { data: 'entry_time', searchable: false},
+                        { data: 'vehicle.license_plate', name: 'vehicle.license_plate', searchable: true },
+                        { data: 'income_category.name', name: 'income_category.name', searchable: true },
+                        { data: 'fnb_amount', searchable: true},
+                        { data: 'wax_amount', searchable: true},
+                        { data: 'amount', searchable: true},
+                        { data: 'total_amount_number', searchable: false},
+                        { data: 'payment_type.name', searchable: true},
+                        { data: 'vehicle.type', name:'vehicle.type', visible:true, searchable: true},
+                        { data: 'vehicle.brand', searchable: true},
+                        { data: 'vehicle.model', name: 'vehicle.model', visible:true, searchable: true},
+                        { data: 'vehicle.color', name: 'vehicle.color', visible:true, searchable: true},
+                       
                     ]
                 });
             });

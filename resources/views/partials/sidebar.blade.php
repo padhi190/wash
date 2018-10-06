@@ -72,6 +72,36 @@
                 </a>
             </li>
             @endcan
+
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-trash"></i>
+                    <span class="title">Trashed</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ $request->segment(2) == 'vehicles' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('vehicles.trashed') }}">
+                            <i class="fa fa-car"></i>
+                            <span class="title">@lang('quickadmin.vehicle.title')</span>
+                        </a>
+                    </li>
+                    <li class="{{ $request->segment(2) == 'incomes' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('incomes.trashed') }}">
+                            <i class="fa fa-arrow-circle-right"></i>
+                            <span class="title">@lang('quickadmin.income.title')</span>
+                        </a>
+                    </li>
+                    <li class="{{ $request->segment(2) == 'expenses' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('expenses.trashed') }}">
+                            <i class="fa fa-arrow-circle-left"></i>
+                            <span class="title">@lang('quickadmin.expense.title')</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             
             @can('monthly_report_access')
             <li class="treeview">
@@ -87,6 +117,18 @@
                         <a href="{{ route('monthly_reports.index') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">@lang('quickadmin.monthly-report.title')</span>
+                        </a>
+                    </li>
+                    <li class="{{ $request->segment(2) == 'incomes_report' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('monthly_reports.incomesreport') }}">
+                            <i class="fa fa-line-chart"></i>
+                            <span class="title">Penjualan - Excel Export</span>
+                        </a>
+                    </li>
+                    <li class="{{ $request->segment(2) == 'expense_report' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('monthly_reports.expensereport') }}">
+                            <i class="fa fa-line-chart"></i>
+                            <span class="title">Pengeluaran - Excel Export</span>
                         </a>
                     </li>
                 </ul>

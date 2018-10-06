@@ -52,7 +52,7 @@ class HistoryController extends Controller
     {
         
         $query = Income::query();
-        $query->where('branch_id', session('branch_id'))->with('income_category', 'vehicle');
+        $query->where('branch_id', session('branch_id'))->with('income_category', 'vehicle','payment_type');
         $query->select('incomes.*');
         $template = 'actionsTemplate';
 
@@ -60,13 +60,23 @@ class HistoryController extends Controller
         $datatables->setRowAttr([
                 'data-entry-id' => '{{$id}}',
             ]);
-        $datatables->editColumn('amount', function($query){
+        $datatables->editColumn('entry_date', function($q){
+            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('m/d/Y') : '';
+            });
+        $datatables->editColumn('entry_time', function($q){
+            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('H:i') : '';
+            });
+
+        $datatables->editColumn('total_amount_number', function($query){
+                  return $query->total_amount;  
+                });
+        $datatables->editColumn('total_amount', function($query){
                   return 'Rp '. number_format($query->total_amount);  
                 });
-        $datatables->editColumn('income_category.name', function($q){
+        $datatables->editColumn('income_category_name', function($q){
                   return $q->income_category->name.$q->additional_sales;  
                 });
-        $datatables->editColumn('vehicle.license_plate', function($q){
+        $datatables->editColumn('full_vehicle', function($q){
                     return $q->vehicle->full_vehicle;
                 });
         $datatables->editColumn('actions', function ($row) use ($template) {
@@ -82,21 +92,55 @@ class HistoryController extends Controller
 
     public function expense()
     {
-        if (! Gate::allows('expense_access')) {
+         if (! Gate::allows('expense_access')) {
             return abort(401);
         }
-
         // $to = Carbon::now();
         // $from = clone $to;
-        // $from->subDays(1);
+        // $from->subDays(7);
         // $from->hour=5;
         // $from->minute=0;
-        $expenses = Expense::with('expense_category','employee','from')->orderBy('entry_date','desc')
-                    // ->whereBetween('entry_date', [$from, $to])
-                    ->where('branch_id', session('branch_id'))
-                    ->get();
+        // $expenses = Expense::with('expense_category','employee','from')->orderBy('entry_date', 'desc')
+        //             ->whereBetween('entry_date', [$from, $to])
+        //             ->where('branch_id', session('branch_id'))
+        //             ->get();
+        $ajaxurl = 'loadFullExpensesData';
+        $title = 'Full';
+        return view('expenses.index', compact('ajaxurl', 'title'));
+    }
 
-        return view('expenses.index', compact('expenses'));   
+    public function loadFullExpensesData()
+    {
+        // $to = Carbon::now();
+        // $from = clone $to;
+        // $from->subDays(14);
+        // $from->hour=5;
+        // $from->minute=0;
+
+        $query = Expense::query();
+        $query->where('branch_id', session('branch_id'));
+        $query->with('from','expense_category');
+        $query->select('expenses.*');
+        $template = 'actionsTemplate3';
+
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+            ]);
+        $datatables->editColumn('amount_rp', function($q){
+            return 'Rp. ' . number_format($q->amount);
+        });
+         $datatables->editColumn('entry_date', function($q){
+            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('m/d/Y') : '';
+            });
+        $datatables->editColumn('actions', function ($row) use ($template) {
+                $gateKey  = 'expense_';
+                $routeKey = 'expenses';
+
+                return view($template, compact('row', 'gateKey', 'routeKey'));
+            });
+        $datatables->rawColumns(['actions']);
+        return $datatables->make(true);
     }
 
 }

@@ -20,7 +20,7 @@
                     @endif
                     <div class="btn-group btn-group-lg" data-toggle="buttons">
                       @foreach($income_categories as $key => $cat)
-                        @if(in_array($cat,array('Carwash','Detailing','Bikewash','Voucher')))
+                        @if(in_array($cat,array('Carwash','Detailing','Bikewash','Voucher','Lain-lain')))
                         <label class="btn btn-primary {{$key == $income->income_category_id ? 'active' : ''}}">
                             <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
                             {{$key == $income->income_category_id ? 'checked' : ''}}

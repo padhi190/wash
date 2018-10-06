@@ -26,12 +26,12 @@
                 </div>
 
                 <div class="col-xs-4 form-group">
-                    {!! Form::label('employee_id', 'Karyawan', ['class' => 'control-label']) !!}
-                    {!! Form::select('employee_id', $employees, old('employee_id'), ['class' => 'form-control select2']) !!}
+                    {!! Form::label('signature', 'Tanda Tangan', ['class' => 'control-label']) !!}
+                    {!! Form::text('signature', old('signature'), ['class' => 'form-control', 'placeholder' => '']) !!}
                     <p class="help-block"></p>
-                    @if($errors->has('employee_id'))
+                    @if($errors->has('signature'))
                         <p class="help-block">
-                            {{ $errors->first('employee_id') }}
+                            {{ $errors->first('signature') }}
                         </p>
                     @endif
                 </div>

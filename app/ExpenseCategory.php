@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 */
 class ExpenseCategory extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'parent_category'];
     
     public static function boot()
     {
