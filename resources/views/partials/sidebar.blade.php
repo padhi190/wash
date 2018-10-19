@@ -82,6 +82,12 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
+                    <li class="{{ $request->segment(2) == 'customers' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('customers.trashed') }}">
+                            <i class="fa fa-user"></i>
+                            <span class="title">@lang('quickadmin.customer.title')</span>
+                        </a>
+                    </li>
                     <li class="{{ $request->segment(2) == 'vehicles' ? 'active active-sub' : '' }}">
                         <a href="{{ route('vehicles.trashed') }}">
                             <i class="fa fa-car"></i>

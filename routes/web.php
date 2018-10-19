@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/loadFullIncomesData', 'HistoryController@loadFullIncomesData')->name('loadFullIncomesData');
     Route::get('/loadFullExpensesData', 'HistoryController@loadFullExpensesData')->name('loadFullExpensesData');
     Route::get('/loadCustomersData', 'CustomersController@loadCustomersData')->name('loadCustomersData');
+    Route::get('/loadTrashedCustomersData', 'CustomersController@loadTrashedCustomersData')->name('loadTrashedCustomersData');
     Route::post('incomes_mass_destroy', ['uses' => 'IncomesController@massDestroy', 'as' => 'incomes.mass_destroy']);
     Route::resource('expenses', 'ExpensesController');
     Route::post('expenses_mass_destroy', ['uses' => 'ExpensesController@massDestroy', 'as' => 'expenses.mass_destroy']);
@@ -61,14 +62,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('customers', 'CustomersController');
     Route::post('customers_mass_destroy', ['uses' => 'CustomersController@massDestroy', 'as' => 'customers.mass_destroy']);
     Route::get('vehicles/createIncome/{id}', ['uses' => 'VehiclesController@createIncome', 'as' => 'vehicles.createIncome']);
+
     Route::delete('trashed/vehicles/permanentdestroy/{id}', ['uses' => 'VehiclesController@permanentdestroy', 'as' => 'vehicles.permanentdestroy']);
     Route::post('trashed/vehicles/destroyall/', ['uses' => 'VehiclesController@permanentdestroyall', 'as' => 'vehicles.permanentdestroyall']);
     Route::post('trashed/vehicles/restore/{id}', ['uses' => 'VehiclesController@restore', 'as' => 'vehicles.restore']);
     Route::get('trashed/vehicles/', ['uses' => 'VehiclesController@trashed', 'as' => 'vehicles.trashed']);
+
     Route::get('trashed/incomes/', ['uses' => 'IncomesController@trashed', 'as' => 'incomes.trashed']);
     Route::delete('trashed/incomes/permanentdestroy/{id}', ['uses' => 'IncomesController@permanentdestroy', 'as' => 'incomes.permanentdestroy']);
     Route::post('trashed/incomes/destroyall/', ['uses' => 'IncomesController@permanentdestroyall', 'as' => 'incomes.permanentdestroyall']);
     Route::post('trashed/incomes/restore/{id}', ['uses' => 'IncomesController@restore', 'as' => 'incomes.restore']);
+
+    Route::get('trashed/customers/', ['uses' => 'CustomersController@trashed', 'as' => 'customers.trashed']);
+    Route::delete('trashed/customers/permanentdestroy/{id}', ['uses' => 'CustomersController@permanentdestroy', 'as' => 'customers.permanentdestroy']);
+    Route::post('trashed/customers/destroyall/', ['uses' => 'CustomersController@permanentdestroyall', 'as' => 'customers.permanentdestroyall']);
+    Route::post('trashed/customers/restore/{id}', ['uses' => 'CustomersController@restore', 'as' => 'customers.restore']);
 
     Route::get('trashed/expenses/', ['uses' => 'ExpensesController@trashed', 'as' => 'expenses.trashed']);
     Route::delete('trashed/expenses/permanentdestroy/{id}', ['uses' => 'ExpensesController@permanentdestroy', 'as' => 'expenses.permanentdestroy']);

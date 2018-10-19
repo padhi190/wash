@@ -101,6 +101,9 @@ class ExpensesController extends Controller
         }
         $expense = Expense::create($request->all());
 
+        $request->session()->flash('alert-success', 'Bon no. ' . $expense->id . ' berhasil ditambahkan!');
+        $request->session()->flash('print-bon',array($expense->id, $expense->entry_date, $expense->expense_category->name , $expense->amount, $expense->signature));
+
         return redirect()->route('expenses.index');
     }
 

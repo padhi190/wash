@@ -18,6 +18,14 @@
 @section('content')
     <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') - {{$title}}</h3>
     @can('expense_create')
+    <div class="flash-message">
+                @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                  @if(Session::has('alert-' . $msg))
+
+                  <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+                  @endif
+                @endforeach
+    </div> 
     <p>
         @if($title != 'Trashed')
         <a href="{{ route('expenses.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
@@ -92,6 +100,24 @@
                         { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });
+
+            @if(Session::has('print-bon'))
+            $(".modal-body #rcpt").html( "No Bon: {{ Session::get('print-bon')[0] }}" );
+            $(".modal-body #date").html( "{{ Session::get('print-bon')[1] }}" );
+            $(".modal-body #kategori").html( "{{ Session::get('print-bon')[2] }}" );
+            $(".modal-body #total").html( "<strong>Total : Rp. {{ number_format(Session::get('print-bon')[3])}}</strong>" );
+            @if(Session::get('print-bon')[4]!='')
+                $(".modal-body #signature").css("margin-top","15mm");
+                $(".modal-body #signature").html( "({{ Session::get('print-bon')[4] }})" );
+            @else
+                $(".modal-body #signature").css("margin-top","0mm");
+                $(".modal-body #signature").html( "" );
+            @endif
+            $('#printModal').modal('show');
+             
+             // window.alert('test');
+             // window.print();
+            @endif
         });
 
     </script>

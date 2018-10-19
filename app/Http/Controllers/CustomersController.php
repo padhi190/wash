@@ -23,8 +23,10 @@ class CustomersController extends Controller
             return abort(401);
         }
         // $customers = Customer::orderBy('join_date', 'desc')->with('vehicles','branch')->get();
+        $ajaxurl = 'loadCustomersData';
+        $title = 'All';
 
-        return view('customers.index');
+        return view('customers.index', compact('title', 'ajaxurl'));
     }
 
     public function loadCustomersData()
@@ -40,6 +42,68 @@ class CustomersController extends Controller
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
+    }
+
+    public function loadTrashedCustomersData()
+    {
+        $query = Customer::select('id','branch_id','name','phone','email');
+        $query->onlyTrashed();
+        $template = 'actionsTemplateTrashed';
+        return Datatables::of($query)
+                ->editColumn('actions', function ($row) use ($template) {
+                $gateKey  = 'customer_';
+                $routeKey = 'customers';
+
+                return view($template, compact('row', 'gateKey', 'routeKey'));
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+    }
+
+    public function trashed()
+    {
+        if (! Gate::allows('customer_access')) {
+            return abort(401);
+        }
+        // $customers = Customer::orderBy('join_date', 'desc')->with('vehicles','branch')->get();
+        $ajaxurl = 'loadTrashedCustomersData';
+        $title = 'Trashed';
+        return view('customers.index',compact('ajaxurl','title'));
+    }
+
+    public function restore($id)
+    {
+        if (! Gate::allows('customer_delete')) {
+            return abort(401);
+        }
+        $customer = Customer::onlyTrashed();
+        $customer->find($id);
+        $customer->restore();
+
+        return redirect()->route('customers.trashed');
+    }
+
+    public function permanentdestroy($id)
+    {
+        if (! Gate::allows('customer_delete')) {
+            return abort(401);
+        }
+        $customer = Customer::onlyTrashed();
+        $customer->find($id);
+        $customer->forceDelete();
+
+        return redirect()->route('customers.trashed');
+    }
+
+    public function permanentdestroyall()
+    {
+        if (! Gate::allows('customer_delete')) {
+            return abort(401);
+        }
+        $customer = Customer::onlyTrashed();
+        $customer->forceDelete();
+
+        return redirect()->route('customers.trashed');
     }
 
     /**

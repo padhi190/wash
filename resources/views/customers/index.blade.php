@@ -1,10 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title"><i class="fa fa-users"></i> @lang('quickadmin.customer.title')</h3>
+    <h3 class="page-title"><i class="fa fa-users"></i> @lang('quickadmin.customer.title') - {{$title}}</h3>
     @can('customer_create')
     <p>
+        @if($title !='Trashed')
         <a href="{{ route('customers.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
+        @endif
+        @if($title == 'Trashed')
+            {!! Form::open(array(
+                'style' => 'display: inline-block;',
+                'method' => 'POST',
+                'onsubmit' => "return confirm('Permanently delete ALL trashed?');",
+                'route' => ['customers.permanentdestroyall'])) !!}
+            {!! Form::button('<span class="glyphicon glyphicon-trash"></span>', array('type'=>'submit' ,'class' => 'btn btn-danger')) !!}
+            {!! Form::close() !!}
+        @endif
     </p>
     @endcan
 
@@ -49,7 +60,7 @@
                 pageLength: '20',
                 processing: true,
                 serverSide: true,
-                ajax: '{!! route('loadCustomersData') !!}',
+                ajax: '{!! route($ajaxurl) !!}',
                 columns: [
                     { data: 'name' },
                     { data: 'phone' },
