@@ -70,10 +70,11 @@ class HistoryController extends Controller
         $datatables->editColumn('total_amount_number', function($query){
                   return $query->total_amount;  
                 });
-        $datatables->editColumn('total_amount', function($query){
+        $datatables->editColumn('total_amount_formatted', function($query){
                   return 'Rp '. number_format($query->total_amount);  
                 });
-        $datatables->editColumn('income_category_name', function($q){
+        
+        $datatables->editColumn('income_category_name_full', function($q){
                   return $q->income_category->name.$q->additional_sales;  
                 });
         $datatables->editColumn('full_vehicle', function($q){

@@ -53,6 +53,7 @@
                         <th>Type</th>
                         <th>Model</th>
                         <th>Warna</th>
+                        <th>Kategori</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -98,12 +99,13 @@
                     columns: [
                         { data: 'nobon' },
                         { data: 'entry_date' },
-                        { data: 'full_vehicle' },
-                        { data: 'income_category_name', name: 'income_category_name' },
-                        { data: 'total_amount'},
+                        { data: 'full_vehicle' , searchable: false},
+                        { data: 'income_category_name_full', name: 'income_category_name_full' , searchable: false},
+                        { data: 'total_amount_formatted', searchable: false},
                         { data: 'vehicle.type', name:'vehicle.type', visible:false},
                         { data: 'vehicle.model', name: 'vehicle.model', visible:false},
                         { data: 'vehicle.color', name: 'vehicle.color', visible:false},
+                        { data: 'income_category.name', name:'income_category.name', visible:false},
                         { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });

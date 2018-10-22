@@ -193,7 +193,7 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [1, 2, 3]);
         });
         Gate::define('vehicle_delete', function ($user) {
-            return in_array($user->role_id, [1]);
+            return in_array($user->role_id, [1, 2]);
         });
 
         // Auth gates for: Task calendar

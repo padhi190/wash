@@ -58,7 +58,7 @@
                         <th>@lang('quickadmin.expense.fields.note')</th>
                         <th>@lang('quickadmin.expense.fields.amount')</th>
                         <th>Sumber</th>
-                        
+                        <th>Amount</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -95,8 +95,9 @@
                         { data: 'expense_category.parent_category'},
                         { data: 'expense_category.name'},
                         { data: 'note', name: 'note' },
-                        { data: 'amount_rp' },
+                        { data: 'amount_rp' , searchable:false},
                         { data: 'from.name'},
+                        { data: 'amount', visible: false},
                         { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });
