@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\Income;
+use App\Expense;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,9 @@ class HomeController extends Controller
                         ->where('branch_id', session('branch_id'))
                         // ->sum('amount');
                         ->sum(DB::raw('IFNULL(amount,0) + IFNULL(fnb_amount,0) + IFNULL(wax_amount,0)'));
+        $today_expense_dollar = Expense::where('branch_id', session('branch_id'))
+                        ->where('entry_date', $today)
+                        ->sum('amount');
 
         $today_sales_debit = Income::with('income_category')
                         ->whereBetween('entry_date', [$today, $now])
@@ -384,7 +388,8 @@ class HomeController extends Controller
                             'today_sales_no_detailing',
                             'today_sales_fnb',
                             'today_no_fnb_motor',
-                            'today_no_fnb_mobil'
+                            'today_no_fnb_mobil',
+                            'today_expense_dollar'
                             ));
     }
 

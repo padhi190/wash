@@ -29,7 +29,9 @@
     <p>
         @if($title != 'Trashed')
         <a href="{{ route('expenses.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
+        <a href="#" id="today" class="btn btn-info">Hari Ini</a>
         @endif
+
         @if($title == 'Trashed')
             {!! Form::open(array(
                 'style' => 'display: inline-block;',
@@ -78,6 +80,10 @@
         @endcan
 
          $( document ).ready(function() {
+            $("#today").click(function(){
+                $("input[type='search']").val(moment().format('YYYY-MM-DD')).keyup();
+            });
+            
             $('#expense-table').DataTable({
                     dom: 'Bfrtip',
                     buttons: [
