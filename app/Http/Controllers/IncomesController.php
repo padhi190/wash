@@ -303,22 +303,16 @@ class IncomesController extends Controller
         $datatables->setRowAttr([
                 'data-entry-id' => '{{$id}}',
             ]);
-        $datatables->editColumn('entry_date', function($q){
-            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('m/d/Y') : '';
-            });
-        $datatables->editColumn('entry_time', function($q){
-            return $q->entry_date ?  with(new Carbon($q->entry_date))->format('H:i') : '';
-            });
-
         $datatables->editColumn('total_amount_number', function($query){
                   return $query->total_amount;  
                 });
-        $datatables->editColumn('total_amount', function($query){
+        $datatables->editColumn('total_amount_formatted', function($query){
                   return 'Rp '. number_format($query->total_amount);  
                 });
-        $datatables->editColumn('income_category_name', function($q){
+        
+        $datatables->editColumn('income_category_name_full', function($q){
                   return $q->income_category->name.$q->additional_sales;  
-                });
+              });
         $datatables->editColumn('full_vehicle', function($q){
                     return $q->vehicle->full_vehicle;
                 });

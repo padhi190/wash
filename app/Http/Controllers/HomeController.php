@@ -61,6 +61,12 @@ class HomeController extends Controller
                         // ->sum('amount');
                         ->sum(DB::raw('IFNULL(amount,0) + IFNULL(fnb_amount,0) + IFNULL(wax_amount,0)'));
 
+        $today_sales_no_voucher = Income::with('income_category')
+                        ->whereBetween('entry_date', [$today, $now])
+                        ->where('branch_id', session('branch_id'))
+                        ->where('payment_type_id', '=', 6)
+                        ->count();
+
         $today_sales_dollar_mobil = Income::with('income_category')
                         ->whereBetween('entry_date', [$today, $now])
                         ->join('vehicles', 'vehicles.id', '=', 'vehicle_id')
@@ -107,6 +113,18 @@ class HomeController extends Controller
                         ->where('fnb_amount', '>', '0')
                         ->where('branch_id', session('branch_id'))
                         ->sum('fnb_amount');
+
+        $today_sales_voucher = Income::with('income_category')
+                        ->whereBetween('entry_date', [$today, $now])
+                        ->where('income_category_id', 6)
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');
+
+        $today_sales_etc = Income::with('income_category')
+                        ->whereBetween('entry_date', [$today, $now])
+                        ->where('income_category_id', 7)
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');
 
         $today_no_fnb_mobil = Income::with('income_category')
                         ->whereBetween('entry_date', [$today, $now])
@@ -389,7 +407,10 @@ class HomeController extends Controller
                             'today_sales_fnb',
                             'today_no_fnb_motor',
                             'today_no_fnb_mobil',
-                            'today_expense_dollar'
+                            'today_expense_dollar',
+                            'today_sales_voucher',
+                            'today_sales_etc',
+                            'today_sales_no_voucher'
                             ));
     }
 

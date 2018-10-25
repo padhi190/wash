@@ -51,7 +51,8 @@
                 <span class="info-box-number">
                     <i class="fa fa-car"></i> <strong>{{ number_format($today_sales_dollar_mobil, 0) }}</strong> &nbsp &nbsp
                     <i class="fa fa-motorcycle"></i> <strong> {{ number_format($today_sales_dollar_motor, 0) }} </strong>  &nbsp &nbsp
-                    <i class="fa fa-credit-card"></i> <strong> {{ number_format($today_sales_debit, 0) }} </strong>  
+                    <i class="fa fa-credit-card"></i> <strong> {{ number_format($today_sales_debit, 0) }} &nbsp &nbsp
+                    <i class="fa fa-ticket"></i> <strong> {{ $today_sales_no_voucher }} </strong>  
                 </span>               
                     
               </div><!-- /.info-box-content -->
@@ -110,16 +111,16 @@
         <div class="col-md-3">
             <div class="info-box">
               <!-- Apply any bg-* class to to the icon to color it -->
-              <span class="info-box-icon bg-maroon"><i class="fa fa-glass"></i></span>
+              <span class="info-box-icon bg-maroon"><i class="fa fa-ticket"></i></span>
               <div class="info-box-content">
-                <span class="info-box-text">F&B</span>
+                <span class="info-box-text">OTHERS</span>
                 @if( sizeof($carwash_no)>0)
                 <span class="info-box-number">
-                    {{ number_format($today_sales_fnb) }}
+                    {{ number_format($today_sales_voucher + $today_sales_etc + $today_sales_fnb) }}
                 </span>
                 <span class="info-box-number"> 
-                    <i class="fa fa-car"></i> {{ $today_no_fnb_mobil }}  &nbsp &nbsp
-                    <i class="fa fa-motorcycle"></i> {{ $today_no_fnb_motor }} 
+                    <i class="fa fa-ticket"></i> {{ $today_sales_voucher/1000 }}K  &nbsp &nbsp
+                    <i class="fa fa-glass"></i> {{ $today_sales_fnb/1000 }}K 
                 </span>
                 @endif
               </div><!-- /.info-box-content -->

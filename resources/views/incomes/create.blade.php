@@ -947,7 +947,7 @@
         });
 
         function setPayment(type){
-            if (type.value="Voucher"){
+            if (type.value==6){
                 $('#amount').val('0');
                 $('textarea#note').val('Voucher');
                 updateTotal();    
@@ -955,7 +955,7 @@
         };
 
         function setPayment2(type){
-            if (type.value="Voucher"){
+            if (type.value==6){
                 $('#amount2').val('0');
                 $('textarea#note2').val('Voucher');
                 updateTotal2();    
