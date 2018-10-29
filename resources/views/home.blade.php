@@ -1,15 +1,36 @@
+@extends('partials.print')
+    @section('printSection')
+    <div style="text-align:center; font-size:18px;">
+        <p>{{ date('l, d-M-Y', strtotime($now_date)) }}</p>
+        <p id="rcpt">Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) }}</p>
+        <p id="date">Bikewash: {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) }}</p>
+        <p id="vehicle">Wax: {{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) }}</p>
+        <p id="kategori">Voucher: {{ number_format($today_sales_voucher) }}</p>
+        <p id="wax">F&B: {{ number_format($today_sales_fnb) }}</p>
+        <p id="fnb">Lain-lain: {{ number_format($today_sales_etc) }}</p>
+        
+        <p id="total"></p> 
+    </div>
+    @endsection
+
 @extends('layouts.app')
 
 @section('content')
     {!! Form::open(['method' => 'get']) !!}
         <div class="row">
-            <div class="col-xs-6 col-md-2 form-group">
+            <div class="col-md-3 form-group">
                 {!! Form::label('req_date','Date',['class' => 'control-label']) !!}
                 {!! Form::text('req_date', old('req_date', $now_date), ['class' => 'form-control date', 'placeholder' => '']) !!}
             </div>
-            <div class="col-xs-6">
+            <div class="col-md-3">
                 <label class="control-label">&nbsp;</label><br>
                 {!! Form::submit('Select',['class' => 'btn btn-primary']) !!}
+                <button type="button" id="printButton" class="btn btn-primary" data-toggle="modal" data-target="#printModal">
+                Closing Harian
+              </button>
+            </div>
+            <div class="col-md-3">
+              
             </div>
         </div>
     {!! Form::close() !!}
