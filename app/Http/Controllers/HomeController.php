@@ -54,6 +54,11 @@ class HomeController extends Controller
                         ->where('entry_date', $today)
                         ->sum('amount');
 
+         $today_expense_debit = Expense::where('branch_id', session('branch_id'))
+                        ->where('entry_date', $today)
+                        ->where('from_id', '!=',1)
+                        ->sum('amount');
+
         $today_sales_debit = Income::with('income_category')
                         ->whereBetween('entry_date', [$today, $now])
                         ->where('branch_id', session('branch_id'))
@@ -119,6 +124,12 @@ class HomeController extends Controller
                         ->where('income_category_id', 6)
                         ->where('branch_id', session('branch_id'))
                         ->sum('amount');
+
+        $today_sales_voucher_no = Income::with('income_category')
+                        ->whereBetween('entry_date', [$today, $now])
+                        ->where('income_category_id', 6)
+                        ->where('branch_id', session('branch_id'))
+                        ->count();
 
         $today_sales_etc = Income::with('income_category')
                         ->whereBetween('entry_date', [$today, $now])
@@ -410,7 +421,9 @@ class HomeController extends Controller
                             'today_expense_dollar',
                             'today_sales_voucher',
                             'today_sales_etc',
-                            'today_sales_no_voucher'
+                            'today_sales_no_voucher',
+                            'today_sales_voucher_no',
+                            'today_expense_debit'
                             ));
     }
 

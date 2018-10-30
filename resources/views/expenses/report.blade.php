@@ -36,6 +36,7 @@
                         <th>@lang('quickadmin.expense.fields.entry-date')</th>
                         <th>Tipe</th>
                         <th>@lang('quickadmin.expense.fields.expense-category')</th>
+                        <th>Ttd</th>
                         <th>@lang('quickadmin.expense.fields.note')</th>
                         <th>@lang('quickadmin.expense.fields.amount')</th>
                         <th>Sumber</th>
@@ -74,6 +75,7 @@
                         { data: 'entry_date' },
                         { data: 'expense_category.parent_category'},
                         { data: 'expense_category.name'},
+                        { data: 'signature'},
                         { data: 'note', name: 'note' },
                         { data: 'amount', name:'amount' },
                         { data: 'from.name'},

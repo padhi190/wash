@@ -1,14 +1,25 @@
 @extends('partials.print')
     @section('printSection')
-    <div style="text-align:center; font-size:18px;">
-        <p>{{ date('l, d-M-Y', strtotime($now_date)) }}</p>
-        <p id="rcpt">Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) }}</p>
-        <p id="date">Bikewash: {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) }}</p>
-        <p id="vehicle">Wax: {{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) }}</p>
-        <p id="kategori">Voucher: {{ number_format($today_sales_voucher) }}</p>
-        <p id="wax">F&B: {{ number_format($today_sales_fnb) }}</p>
-        <p id="fnb">Lain-lain: {{ number_format($today_sales_etc) }}</p>
-        
+    <div style="text-align:center; font-size:16px;">
+        <p style="font-size:18px"><strong>{{ date('l, d-M-Y', strtotime($now_date)) }}</strong></p>
+        <p style="font-size:18px"><strong>Penjualan</strong></p>
+        <p style="font-weight:500">Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) . " (" . number_format($carwash_no[sizeof($carwash_no)-1], 0) .")"}}</p>
+        <p style="font-weight:500">Bikewash: {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) . " (" . $bikewash_no[sizeof($bikewash_no)-1] .")" }}</p>
+        <p style="font-weight:500">Wax: {{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) . " (" .number_format($wax_no[sizeof($wax_no)-1], 0) .")"}}</p>
+        <p style="font-weight:500">Detailing: {{number_format($today_sales_detailing,0). " (" . $today_sales_no_detailing .")"}}</p>
+        <p style="font-weight:500">Voucher: {{ number_format($today_sales_voucher) ." (" . $today_sales_voucher_no . ")"}}</p>
+        <p style="font-weight:500">F&B: {{ number_format($today_sales_fnb) }}</p>
+        <p style="font-weight:500">Lain-lain: {{ number_format($today_sales_etc) }}</p>
+        <p style="font-size:18px"><strong>Total: {{ number_format($today_sales_dollar)}}</strong></p>
+        <p style="font-size:18px"><strong>Debit: {{ number_format($today_sales_debit)}}</strong></p>
+        <p style="font-size:18px"><strong>Kas Masuk: {{ number_format($today_sales_dollar - $today_sales_debit)}}</strong></p>
+        <p style="font-size:18px"><strong>-------------------------------</strong></p>
+        <p style="font-size:18px"><strong>Pengeluaran: {{ number_format($today_expense_dollar)}}</strong></p>
+        <p style="font-size:18px"><strong>Debit: {{ number_format($today_expense_debit)}}</strong></p>
+        <p style="font-size:18px"><strong>Kas Keluar: {{ number_format($today_expense_dollar - $today_expense_debit)}}</strong></p>
+        <p style="font-size:18px"><strong>-------------------------------</strong></p>
+        <p style="font-size:18px"><strong>Total Kas: {{ number_format(($today_sales_dollar - $today_sales_debit)-($today_expense_dollar - $today_expense_debit))}}</strong></p>
+        <p style="font-size:18px"><strong>Used Voucher: {{ number_format($today_sales_no_voucher)}}</strong></p>
         <p id="total"></p> 
     </div>
     @endsection
@@ -57,7 +68,7 @@
               <div class="info-box-content">
                 <span class="info-box-text">Today Expenses</span>
                 <span class="info-box-number">{{ number_format($today_expense_dollar, 0)}}</span>            
-                    
+                <span class="info-box-number"><i class="fa fa-credit-card"></i> {{ number_format($today_expense_debit, 0)}}</span>    
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
