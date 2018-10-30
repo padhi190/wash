@@ -86,7 +86,8 @@
             });
             
             $('#expense-table').DataTable({
-                    dom: 'Bfrtip',
+                    dom: 'Blfrtip',
+                    lengthMenu: [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
                     buttons: [
                         'copy', 'csv', 'excel', 'pdf', 'print'
                     ],
