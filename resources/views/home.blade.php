@@ -1,30 +1,31 @@
-@extends('partials.print')
+@extends('partials.print2')
     @section('printSection')
-    <div style="text-align:center; font-size:16px;">
-        <p style="font-size:18px"><strong>{{ date('l, d-M-Y', strtotime($now_date)) }}</strong></p>
-        <p style="font-size:18px"><strong>Penjualan</strong></p>
-        <p style="font-weight:500">Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) . " (" . number_format($carwash_no[sizeof($carwash_no)-1], 0) .")"}}</p>
-        <p style="font-weight:500">Bikewash: {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) . " (" . $bikewash_no[sizeof($bikewash_no)-1] .")" }}</p>
-        <p style="font-weight:500">Wax: {{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) . " (" .number_format($wax_no[sizeof($wax_no)-1], 0) .")"}}</p>
-        <p style="font-weight:500">Detailing: {{number_format($today_sales_detailing,0). " (" . $today_sales_no_detailing .")"}}</p>
-        <p style="font-weight:500">Voucher: {{ number_format($today_sales_voucher) ." (" . $today_sales_voucher_no . ")"}}</p>
-        <p style="font-weight:500">F&B: {{ number_format($today_sales_fnb) }}</p>
-        <p style="font-weight:500">Lain-lain: {{ number_format($today_sales_etc) }}</p>
-        <p style="font-size:18px"><strong>Total: {{ number_format($today_sales_dollar)}}</strong></p>
-        <p style="font-size:18px"><strong>Debit: {{ number_format($today_sales_debit)}}</strong></p>
-        <p style="font-size:18px"><strong>Kas Masuk: {{ number_format($today_sales_dollar - $today_sales_debit)}}</strong></p>
-        <p style="font-size:18px"><strong>-------------------------------</strong></p>
-        <p style="font-size:18px"><strong>Pengeluaran: {{ number_format($today_expense_dollar)}}</strong></p>
-        <p style="font-size:18px"><strong>Debit: {{ number_format($today_expense_debit)}}</strong></p>
-        <p style="font-size:18px"><strong>Kas Keluar: {{ number_format($today_expense_dollar - $today_expense_debit)}}</strong></p>
-        <p style="font-size:18px"><strong>-------------------------------</strong></p>
-        <p style="font-size:18px"><strong>Total Kas: {{ number_format(($today_sales_dollar - $today_sales_debit)-($today_expense_dollar - $today_expense_debit))}}</strong></p>
-        <p style="font-size:18px"><strong>Used Voucher: {{ number_format($today_sales_no_voucher)}}</strong></p>
+    <div style="text-align:center; font-size:16px; font-weight:normal">
+        <p><strong>{{ date('l, d-M-Y', strtotime($now_date)) }}</strong></p>
+        <p><strong>Penjualan</strong></p>
+        <p>Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) . " (" . number_format($carwash_no[sizeof($carwash_no)-1], 0) .")"}}</p>
+        <p>Bikewash: {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) . " (" . $bikewash_no[sizeof($bikewash_no)-1] .")" }}</p>
+        <p>Wax: {{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) . " (" .number_format($wax_no[sizeof($wax_no)-1], 0) .")"}}</p>
+        <p>Detailing: {{number_format($today_sales_detailing,0). " (" . $today_sales_no_detailing .")"}}</p>
+        <p>Voucher: {{ number_format($today_sales_voucher) ." (" . $today_sales_voucher_no . ")"}}</p>
+        <p>F&B: {{ number_format($today_sales_fnb) }}</p>
+        <p>Lain-lain: {{ number_format($today_sales_etc) }}</p>
+        <p><strong>Total Penjualan: {{ number_format($today_sales_dollar)}}</strong></p>
+        <p><strong>Debit: {{ number_format($today_sales_debit)}}</strong></p>
+        <p><strong>Kas Masuk: {{ number_format($today_sales_dollar - $today_sales_debit)}}</strong></p>
+        <p><strong>-------------------------------</strong></p>
+        <p><strong>Pengeluaran: {{ number_format($today_expense_dollar)}}</strong></p>
+        <p><strong>Debit: {{ number_format($today_expense_debit)}}</strong></p>
+        <p><strong>Kas Keluar: {{ number_format($today_expense_dollar - $today_expense_debit)}}</strong></p>
+        <p><strong>-------------------------------</strong></p>
+        <p><strong>Total Kas: {{ number_format(($today_sales_dollar - $today_sales_debit)-($today_expense_dollar - $today_expense_debit))}}</strong></p>
+        <p><strong>Used Voucher: {{ number_format($today_sales_no_voucher)}}</strong></p>
         <p id="total"></p> 
     </div>
     @endsection
 
 @extends('layouts.app')
+
 
 @section('content')
     {!! Form::open(['method' => 'get']) !!}
@@ -268,7 +269,9 @@
         </div>
         <!-- /.col (RIGHT) -->
     </div>
+
 @endsection
+
 
 @section('javascript')
     <script>
