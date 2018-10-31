@@ -50,6 +50,7 @@
                         <th>@lang('quickadmin.income.fields.vehicle')</th>
                         <th>Kategori</th>
                         <th>Jumlah</th>
+                        <th>Plat No.</th>
                         <th>Type</th>
                         <th>Model</th>
                         <th>Warna</th>
@@ -102,6 +103,7 @@
                         { data: 'full_vehicle' , searchable: false},
                         { data: 'income_category_name_full', name: 'income_category_name_full' , searchable: false},
                         { data: 'total_amount_formatted', searchable: false},
+                        { data: 'vehicle.license_plate', visible:false},
                         { data: 'vehicle.type', name:'vehicle.type', visible:false},
                         { data: 'vehicle.model', name: 'vehicle.model', visible:false},
                         { data: 'vehicle.color', name: 'vehicle.color', visible:false},
