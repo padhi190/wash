@@ -1,6 +1,6 @@
 @extends('partials.print2')
     @section('printSection')
-    <div style="text-align:center; font-size:16px; font-weight:normal">
+    <div style="text-align:center; font-size:12px; font-weight:normal">
         <p><strong>{{ date('l, d-M-Y', strtotime($now_date)) }}</strong></p>
         <p><strong>Penjualan</strong></p>
         <p>Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) . " (" . number_format($carwash_no[sizeof($carwash_no)-1], 0) .")"}}</p>
