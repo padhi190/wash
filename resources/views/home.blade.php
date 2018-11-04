@@ -82,9 +82,9 @@
                 <span class="info-box-text">Today Sales</span>
                 <span class="info-box-number">{{ number_format($today_sales_dollar, 0)}}</span>
                 <span class="info-box-number">
-                    <i class="fa fa-car"></i> <strong>{{ number_format($today_sales_dollar_mobil, 0) }}</strong> &nbsp &nbsp
-                    <i class="fa fa-motorcycle"></i> <strong> {{ number_format($today_sales_dollar_motor, 0) }} </strong>  &nbsp &nbsp
-                    <i class="fa fa-credit-card"></i> <strong> {{ number_format($today_sales_debit, 0) }} &nbsp &nbsp
+                    <i class="fa fa-car"></i> <strong>{{ number_format($today_sales_dollar_mobil/1000, 0) }}K</strong> &nbsp &nbsp
+                    <i class="fa fa-motorcycle"></i> <strong> {{ number_format($today_sales_dollar_motor/1000, 0) }}K </strong>  &nbsp &nbsp
+                    <i class="fa fa-credit-card"></i> <strong> {{ number_format($today_sales_debit/1000, 0) }}K &nbsp &nbsp
                     <i class="fa fa-ticket"></i> <strong> {{ $today_sales_no_voucher }} </strong>  
                 </span>               
                     
