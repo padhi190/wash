@@ -19,9 +19,17 @@
     @can('income_create')
     <p>
         <a href="{{ route('incomes.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
-        <a href="#" id="today" class="btn btn-info">Hari Ini</a>
+        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+            <i class="fa fa-calendar"></i>&nbsp;
+            <span></span> <i class="fa fa-caret-down"></i>
+        </div>
     </p>
     @endcan
+
+    <p>
+        {{ Form::hidden('startdate', old('startdate', Carbon\Carbon::today()->subDays(14)->format('d-m-Y')), ['id' => 'startdate']) }}
+        {{ Form::hidden('enddate', old('enddate', Carbon\Carbon::today()->format('d-m-Y')), ['id' => 'enddate']) }}
+    </p>
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -64,6 +72,8 @@
 
 
 @section('javascript') 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> 
     <script>
         @can('income_delete')
             window.route_mass_crud_entries_destroy = '{{ route('incomes.mass_destroy') }}';
@@ -77,7 +87,7 @@
             $('input[type=search]').focus();
 
             $(function() {
-                $('#income-table').DataTable({
+                var dtable = $('#income-table').DataTable({
                     dom: 'Blfrtip',
                     lengthMenu: [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
                     buttons: [
@@ -88,7 +98,13 @@
                     processing: true,
                     serverSide: true,
                     order: [[1, 'desc']],
-                    ajax: '{!! route($ajaxurl) !!}',
+                    ajax: {
+                        url: '{!! route($ajaxurl) !!}',
+                        data: function(d) {
+                            d.startdate = $('input[name=startdate]').val();
+                            d.enddate = $('input[name=enddate]').val();
+                        }
+                    },
                     columns: [
                         { data: 'nobon', searchable: true },
                         { data: 'entry_date', searchable: true },
@@ -107,7 +123,32 @@
                        
                     ]
                 });
-            });
+
+                var start = moment().startOf('month');
+                var end = moment().endOf('month');
+
+                function cb(start, end) {
+                    $('#reportrange span').html(start.format('D MMMM, YYYY') + ' - ' + end.format('D MMMM, YYYY'));
+                    $('input[name=startdate]').val(start.format('D-M-YYYY'));
+                    $('input[name=enddate]').val(end.format('D-M-YYYY'));
+                    dtable.draw();
+                }
+
+                $('#reportrange').daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                       'Hari ini': [moment(), moment()],
+                       'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                       '7 Hari terakhir': [moment().subtract(6, 'days'), moment()],
+                       '14 Hari terakhir': [moment().subtract(14, 'days'), moment()],
+                       'Bulan ini': [moment().startOf('month'), moment().endOf('month')],
+                       'Bulan kemarin': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                }, cb);
+
+                cb(start, end);
+                });
         });
 
         
