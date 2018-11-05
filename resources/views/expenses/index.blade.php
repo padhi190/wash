@@ -29,7 +29,9 @@
     <p>
         @if($title != 'Trashed')
         <a href="{{ route('expenses.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
+        @if($title != 'Last 14 Days')
         <a href="#" id="today" class="btn btn-info">Hari Ini</a>
+        @endif
         @if($title !='Full')
         <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
             <i class="fa fa-calendar"></i>&nbsp;
