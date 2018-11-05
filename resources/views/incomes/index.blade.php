@@ -236,7 +236,7 @@
                 });
         
             new $.fn.dataTable.FixedHeader( dtable );
-            var start = moment().subtract(14, 'days');
+            var start = moment();
             var end = moment();
 
             function cb(start, end) {
