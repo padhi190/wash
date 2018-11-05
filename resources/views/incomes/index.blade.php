@@ -33,6 +33,11 @@
         @endif
     </p>
     @endcan
+    <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+        <i class="fa fa-calendar"></i>&nbsp;
+        <span></span> <i class="fa fa-caret-down"></i>
+    </div>
+
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -71,7 +76,12 @@
 
 
 
-@section('javascript') 
+@section('javascript')
+    <script src="{{ url('quickadmin/js') }}/timepicker.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> 
     <script>
         @can('income_delete')
             window.route_mass_crud_entries_destroy = '{{ route('incomes.mass_destroy') }}';
@@ -84,8 +94,8 @@
 
             $('input[type=search]').focus();
 
-            $(function() {
-                $('#income-table').DataTable({
+            
+            var dtable = $('#income-table').DataTable({
                     dom: 'Blfrtip',
                     lengthMenu: [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
                     buttons: [
@@ -111,8 +121,33 @@
                         { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });
-            });
+        
+            
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                   'Hari ini': [moment(), moment()],
+                   'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                   '7 Hari terakhir': [moment().subtract(6, 'days'), moment()],
+                   '14 Hari terakhir': [moment().subtract(29, 'days'), moment()],
+                   'Bulan ini': [moment().startOf('month'), moment().endOf('month')],
+                   'Bulan kemarin': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
         });
+
+        
 
         
 
