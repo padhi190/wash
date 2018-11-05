@@ -267,6 +267,8 @@
                             $("#fnb_dollar").number(result['fnb_dollar']/1000);
                             $("#voucher_dollar").number(result['voucher_dollar']/1000);
                             $("#total_etc").number(result['total_etc']/1000);
+                            $("#expense_dollar").number(result['expense_dollar']);
+                            $("#expense_debit").number(result['expense_debit']);
 
                         }
                     });
