@@ -46,6 +46,102 @@
         {{ Form::hidden('startdate', old('startdate', Carbon\Carbon::today()->subDays(14)->format('d-m-Y')), ['id' => 'startdate']) }}
         {{ Form::hidden('enddate', old('enddate', Carbon\Carbon::today()->format('d-m-Y')), ['id' => 'enddate']) }}
     </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="info-box">
+              <!-- Apply any bg-* class to to the icon to color it -->
+              <span class="info-box-icon bg-green"><i class="fa fa-dollar"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Sales</span>
+                <span class="info-box-number number" id="sales_dollar"></span>
+                <span class="info-box-number">
+                    <i class="fa fa-credit-card"></i> <strong id="sales_debit"> 0 </strong>K  &nbsp &nbsp
+                    <i class="fa fa-ticket"></i> <strong id="used_voucher"> 0 </strong>  
+                </span>               
+                    
+              </div><!-- /.info-box-content -->
+            </div><!-- /.info-box -->
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+              <!-- Apply any bg-* class to to the icon to color it -->
+              <span class="info-box-icon bg-blue"><i class="fa fa-shower"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Carwash/Bikewash</span>
+                <span class="info-box-number">
+                    <i class="fa fa-car"></i>  &nbsp
+                    <span id="carwash_dollar">0</span> (<span id="carwash_no"></span>)
+                </span>
+                <span class="info-box-number"> 
+                    <i class="fa fa-motorcycle"></i> &nbsp
+                    <span id="bikewash_dollar">0</span> (<span id="bikewash_no"></span>)
+                </span>
+              </div><!-- /.info-box-content -->
+            </div><!-- /.info-box -->
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+              <!-- Apply any bg-* class to to the icon to color it -->
+              <span class="info-box-icon bg-yellow"><i class="fa fa-paint-brush"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Wax</span>
+    
+                <span class="info-box-number"><span id="wax_dollar">0</span></span>
+                <span class="info-box-number"><i class="fa fa-car"></i> <span id="wax_no">0</span></span>
+                
+              </div><!-- /.info-box-content -->
+            </div><!-- /.info-box -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="info-box">
+              <!-- Apply any bg-* class to to the icon to color it -->
+              <span class="info-box-icon bg-red"><i class="fa fa-dollar"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Expenses</span>
+                <span class="info-box-number"><span id="expense_dollar">0</span></span>            
+                <span class="info-box-number"><i class="fa fa-credit-card"></i> <span id="expense_debit">0</span></span>    
+              </div><!-- /.info-box-content -->
+            </div><!-- /.info-box -->
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+              <!-- Apply any bg-* class to to the icon to color it -->
+              <span class="info-box-icon bg-aqua"><i class="fa fa-camera"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Detailing</span>
+                <span class="info-box-number"><span id="detailing_dollar">0</span></span>
+                <span class="info-box-number"><i class="fa fa-car"></i> <span id="detailing_no">0</span></span>
+              </div><!-- /.info-box-content -->
+            </div><!-- /.info-box -->
+        </div>
+
+        <div class="col-md-4">
+            <div class="info-box">
+              <!-- Apply any bg-* class to to the icon to color it -->
+              <span class="info-box-icon bg-maroon"><i class="fa fa-ticket"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">OTHERS</span>
+               
+                <span class="info-box-number">
+                    <span id="total_etc">0</span>
+                </span>
+                <span class="info-box-number"> 
+                    <i class="fa fa-ticket"></i> <span id="voucher_dollar">0</span>K  &nbsp &nbsp
+                    <i class="fa fa-glass"></i> <span id="fnb_dollar">0</span>K &nbsp &nbsp
+                    <i class="fa fa-handshake-o"></i> <span id="etc_dollar">0</span>K 
+                </span>
+        
+              </div><!-- /.info-box-content -->
+            </div><!-- /.info-box -->
+        </div>        
+    </div>
     
 
 
@@ -127,9 +223,9 @@
                     columns: [
                         { data: 'nobon' },
                         { data: 'entry_date' },
-                        { data: 'full_vehicle' , searchable: false},
-                        { data: 'income_category_name_full', name: 'income_category_name_full' , searchable: false},
-                        { data: 'total_amount_formatted', searchable: false},
+                        { data: 'full_vehicle' , searchable: false, orderable:false},
+                        { data: 'income_category_name_full', name: 'income_category_name_full' , searchable: false, orderable:false},
+                        { data: 'total_amount_formatted', searchable: false, orderable: false},
                         { data: 'vehicle.license_plate', visible:false},
                         { data: 'vehicle.type', name:'vehicle.type', visible:false},
                         { data: 'vehicle.model', name: 'vehicle.model', visible:false},
@@ -147,6 +243,33 @@
                 $('#reportrange span').html(start.format('D MMMM, YYYY') + ' - ' + end.format('D MMMM, YYYY'));
                 $('input[name=startdate]').val(start.format('D-M-YYYY'));
                 $('input[name=enddate]').val(end.format('D-M-YYYY'));
+                var date_data = {
+                    startdate: $('input[name=startdate]').val(),
+                    enddate: $('input[name=enddate]').val(),
+                };
+                $.ajax(
+                    {
+                        url: "{!! route('loadDashboardData') !!}",
+                        data: date_data,
+                        success: function(result){
+                            $("#sales_dollar").number(result['sales_dollar']);
+                            $("#sales_debit").number(result['sales_debit']/1000);
+                            $("#used_voucher").number(result['used_voucher']);
+                            $("#carwash_dollar").number(result['carwash_dollar']);
+                            $("#carwash_no").number(result['carwash_no']);
+                            $("#bikewash_dollar").number(result['bikewash_dollar']);
+                            $("#bikewash_no").number(result['bikewash_no']);
+                            $("#wax_dollar").number(result['wax_dollar']);
+                            $("#wax_no").number(result['wax_no']);
+                            $("#detailing_dollar").number(result['detailing_dollar']);
+                            $("#detailing_no").number(result['detailing_no']);
+                            $("#etc_dollar").number(result['etc_dollar']/1000);
+                            $("#fnb_dollar").number(result['fnb_dollar']/1000);
+                            $("#voucher_dollar").number(result['voucher_dollar']/1000);
+                            $("#total_etc").number(result['total_etc']/1000);
+
+                        }
+                    });
                 dtable.draw();
             }
 
@@ -164,7 +287,6 @@
             }, cb);
 
             cb(start, end);
-
         });
 
         
