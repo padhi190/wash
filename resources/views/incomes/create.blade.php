@@ -900,6 +900,7 @@
 
         $(document).ready(function(){
             $('.cari').select2({
+                minimumInputLength: 3, 
                 placeholder:'Cari...',
                 ajax: {
                   url: "{!! route('loadVehiclesData') !!}",

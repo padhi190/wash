@@ -27,7 +27,7 @@
         </div>
 
         <div class="panel-body">
-            <table id="vehicle-table" class="table table-bordered table-striped">
+            <table id="vehicle-table" class="table table-bordered table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>Customer</th>
@@ -57,11 +57,12 @@
         @endcan
         $( document ).ready(function() {
             $(function() {
-                $('#vehicle-table').DataTable({
+                var dtable = $('#vehicle-table').DataTable({
                     dom: 'Bfrtip',
                     buttons: [
                         'copy', 'csv', 'excel', 'pdf', 'print'
                     ],
+                    responsive: true,
                     pageLength: '10',
                     searchDelay: 450,
                     processing: true,
@@ -78,6 +79,8 @@
                         { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });
+                
+                new $.fn.dataTable.FixedHeader( dtable );
             });
         });
     </script>

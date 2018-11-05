@@ -25,7 +25,7 @@
         </div>
 
         <div class="panel-body">
-            <table class="table table-bordered table-striped @can('customer_delete') dt-select @endcan" id="customer-table">
+            <table class="table table-bordered table-striped @can('customer_delete') dt-select @endcan" id="customer-table" style="width:100%">
                 <thead>
                     <tr>
                         <th>@lang('quickadmin.customer.fields.name')</th>
@@ -52,11 +52,12 @@
         });
 
         $(function() {
-            $('#customer-table').DataTable({
+            var dtable = $('#customer-table').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
+                responsive: true, 
                 pageLength: '20',
                 processing: true,
                 serverSide: true,
@@ -68,6 +69,8 @@
                     { data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });
+
+            new $.fn.dataTable.FixedHeader( dtable );
         });
     </script>
 @endsection

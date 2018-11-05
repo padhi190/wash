@@ -60,7 +60,7 @@
         </div>
 
         <div class="panel-body">
-            <table class="table table-bordered table-striped" id="expense-table">
+            <table class="table table-bordered table-striped" id="expense-table" style="width:100%">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -103,6 +103,7 @@
                     buttons: [
                         'copy', 'csv', 'excel', 'pdf', 'print'
                     ],
+                    responsive: true,
                     pageLength: '10',
                     searchDelay: 450,
                     processing: true,
@@ -128,6 +129,8 @@
                         { data: 'actions', name: 'actions', searchable: false, sortable: false}
                     ]
                 });
+
+            new $.fn.dataTable.FixedHeader( dtable );
 
             var start = moment().subtract(14, 'days');
             var end = moment();
