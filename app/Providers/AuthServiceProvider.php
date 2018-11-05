@@ -417,5 +417,9 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [2]);
         });
 
+        Gate::define('access_trashed', function($user){
+            return in_array($user->role_id, [1]);
+        });
+
     }
 }

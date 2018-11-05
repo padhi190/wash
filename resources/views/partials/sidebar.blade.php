@@ -73,6 +73,7 @@
             </li>
             @endcan
 
+            @can('access_trashed')
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-trash"></i>
@@ -108,7 +109,8 @@
                     </li>
                 </ul>
             </li>
-            
+            @endcan
+
             @can('monthly_report_access')
             <li class="treeview">
                 <a href="#">
