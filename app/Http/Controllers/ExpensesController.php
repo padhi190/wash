@@ -37,13 +37,20 @@ class ExpensesController extends Controller
         return view('expenses.index', compact('ajaxurl', 'title'));
     }
 
-    public function loadExpensesData()
+    public function loadExpensesData(Request $request)
     {
-        $to = Carbon::now();
-        $from = clone $to;
-        $from->subDays(14);
-        $from->hour=5;
-        $from->minute=0;
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+        // $to = Carbon::now();
+        // $from = clone $to;
+        // $from->subDays(14);
+        // $from->hour=5;
+        // $from->minute=0;
 
         $query = Expense::query();
         $query->whereBetween('entry_date',[$from, $to])->where('branch_id', session('branch_id'));
