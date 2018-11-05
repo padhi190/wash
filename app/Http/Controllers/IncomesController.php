@@ -37,13 +37,19 @@ class IncomesController extends Controller
         return view('incomes.index', compact('ajaxurl', 'title'));
     }
 
-    public function loadIncomesData()
+    public function loadIncomesData(Request $request)
     {
-        $to = Carbon::now();
-        $from = clone $to;
-        $from->subDays(14);
-        $from->hour=5;
-        $from->minute=0;
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+        // $from->subDays(14);
+        // $from->hour=5;
+        // $from->minute=0;
+        // dd($request->input('enddate'));
         $query = Income::query();
         $query->between($from, $to)->where('branch_id', session('branch_id'))->with('income_category', 'vehicle');
         $query->select('incomes.*');
