@@ -557,4 +557,82 @@ class HomeController extends Controller
                                         ));
     }
 
+    public function loadIncomeStatementData(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+
+       
+        $sales_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('branch_id', session('branch_id'))
+                        ->sum(DB::raw('IFNULL(amount,0) + IFNULL(fnb_amount,0) + IFNULL(wax_amount,0)'));
+
+        $carwash_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [1])
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');    
+
+        $bikewash_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [5])
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');
+
+        $wax_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('wax_amount', '>', '0')
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('wax_amount');                         
+
+        $detailing_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 3)
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');
+
+        $expense_dollar = Expense::where('branch_id', session('branch_id'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->sum('amount');
+
+        $fnb_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('fnb_amount', '>', '0')
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('fnb_amount');
+
+        $voucher_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 6)
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');
+
+        $etc_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 7)
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('amount');
+
+        $total_etc = $fnb_dollar + $voucher_dollar + $etc_dollar;
+
+        return response()->json(compact('sales_dollar',
+                                        'carwash_dollar',
+                                        'bikewash_dollar',
+                                        'wax_dollar',
+                                        'detailing_dollar',
+                                        'expense_dollar',
+                                        'fnb_dollar',
+                                        'voucher_dollar',
+                                        'etc_dollar',
+                                        'total_etc'
+                                        ));
+
+    }
+
 }

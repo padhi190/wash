@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('incomes', 'IncomesController');
     Route::get('/loadVehiclesData', 'IncomesController@loadVehiclesData')->name('loadVehiclesData');
     Route::get('/loadDashboardData', 'HomeController@loadDashboardData')->name('loadDashboardData');
+    Route::get('/loadIncomeStatementData', 'HomeController@loadIncomeStatementData')->name('loadIncomeStatementData');
     Route::get('/loadExpensesData', 'ExpensesController@loadExpensesData')->name('loadExpensesData');
     Route::get('/loadTrashedVehiclesDataTables', 'VehiclesController@loadTrashedVehiclesDataTables')->name('loadTrashedVehiclesDataTables');
     Route::get('/loadTrashedIncomesData', 'IncomesController@loadTrashedIncomesData')->name('loadTrashedIncomesData');
