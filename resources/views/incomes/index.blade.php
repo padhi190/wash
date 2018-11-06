@@ -160,6 +160,7 @@
                         <th>@lang('quickadmin.income.fields.entry-date')</th>
                         <th>@lang('quickadmin.income.fields.vehicle')</th>
                         <th>Kategori</th>
+                        <th>Cara Pembayaran</th>
                         <th>Jumlah</th>
                         <th>Plat No.</th>
                         <th>Type</th>
@@ -225,6 +226,7 @@
                         { data: 'entry_date' },
                         { data: 'full_vehicle' , searchable: false, orderable:false},
                         { data: 'income_category_name_full', name: 'income_category_name_full' , searchable: false, orderable:false},
+                        { data: 'payment_type.name', name: 'payment_type.name'},
                         { data: 'total_amount_formatted', searchable: false, orderable: false},
                         { data: 'vehicle.license_plate', visible:false},
                         { data: 'vehicle.type', name:'vehicle.type', visible:false},
@@ -235,7 +237,7 @@
                     ]
                 });
         
-            new $.fn.dataTable.FixedHeader( dtable );
+            
             var start = moment();
             var end = moment();
 

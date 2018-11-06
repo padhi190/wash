@@ -51,7 +51,7 @@ class IncomesController extends Controller
         // $from->minute=0;
         // dd($request->input('enddate'));
         $query = Income::query();
-        $query->between($from, $to)->where('branch_id', session('branch_id'))->with('income_category', 'vehicle');
+        $query->between($from, $to)->where('branch_id', session('branch_id'))->with('income_category', 'vehicle','payment_type');
         $query->select('incomes.*');
         $template = 'actionsTemplate';
 
