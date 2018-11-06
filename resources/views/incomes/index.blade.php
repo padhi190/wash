@@ -57,7 +57,8 @@
                 <span class="info-box-number number" id="sales_dollar"></span>
                 <span class="info-box-number">
                     <i class="fa fa-credit-card"></i> <strong id="sales_debit"> 0 </strong>K  &nbsp &nbsp
-                    <i class="fa fa-ticket"></i> <strong id="used_voucher"> 0 </strong>  
+                    <i class="fa fa-ticket"></i> <strong id="used_voucher"> 0 </strong> &nbsp &nbsp
+                    <i class="fa fa-money"></i> <strong id="kas_masuk"> 0 </strong>   
                 </span>               
                     
               </div><!-- /.info-box-content -->
@@ -257,6 +258,7 @@
                             $("#sales_dollar").number(result['sales_dollar']);
                             $("#sales_debit").number(result['sales_debit']/1000);
                             $("#used_voucher").number(result['used_voucher']);
+                            $("#kas_masuk").number(result['sales_dollar']-result['sales_debit']);
                             $("#carwash_dollar").number(result['carwash_dollar']);
                             $("#carwash_no").number(result['carwash_no']);
                             $("#bikewash_dollar").number(result['bikewash_dollar']);
