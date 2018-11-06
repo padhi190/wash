@@ -51,7 +51,7 @@
                     @endif
                     <div class="btn-group btn-group-lg" data-toggle="buttons">
                       @foreach($income_categories as $key => $cat)
-                        @if(in_array($cat,array('Carwash','Detailing','Bikewash','Voucher','Lain-lain')))
+                        @if(in_array($cat,array('Carwash','Detailing','Bikewash','Beli Voucher','Lain-lain')))
                         <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}">
                             <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
                             {{$cat == 'Carwash' ? 'checked' : ''}}
@@ -406,7 +406,7 @@
                         @endif
                         <div class="btn-group btn-group-justified" data-toggle="buttons">
                           @foreach($income_categories as $key => $cat)
-                            @if(in_array($cat,array('Carwash','Detailing','Bikewash','Voucher')))
+                            @if(in_array($cat,array('Carwash','Detailing','Bikewash','Beli Voucher')))
                             <label class="btn btn-primary {{$cat == 'Carwash' ? 'active' : ''}}" id="{{$cat}}2">
                                 <input type="radio" name="income_category_id" value={{$key}} data-name="{{$cat}}" autocomplete="off" 
                                 {{$cat == 'Carwash' ? 'checked' : ''}}
