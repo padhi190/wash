@@ -601,11 +601,37 @@ class HomeController extends Controller
                         ->whereBetween('entry_date', [$from, $to])
                         ->sum('amount');
 
+        $expenses       = Expense::where('branch_id', session('branch_id'))
+                        ->select('expenses.id', 'expense_categories.parent_category', \DB::raw('sum(amount) as total'))
+                        ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
+                        ->where('expense_categories.name', '!=', 'Restock Minuman')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->groupby('expense_categories.parent_category')
+                        ->get();
+
+        $fnb_restock    = Expense::where('branch_id', session('branch_id'))
+                        ->select('expenses.id', 'expense_categories.parent_category', \DB::raw('sum(amount) as total'))
+                        ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
+                        ->where('expense_categories.name', 'Restock Minuman')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->groupby('expense_categories.parent_category')
+                        ->get();
+
+        $fnb_restock_total = 0;
+        if(sizeof($fnb_restock))
+        {
+            $fnb_restock_total = $fnb_restock[0]['total'];
+        }
+
+        
+
         $fnb_dollar = Income::with('income_category')
                         ->whereBetween('entry_date', [$from, $to])
                         ->where('fnb_amount', '>', '0')
                         ->where('branch_id', session('branch_id'))
                         ->sum('fnb_amount');
+
+        $fnb_profit = $fnb_dollar - $fnb_restock_total;
 
         $voucher_dollar = Income::with('income_category')
                         ->whereBetween('entry_date', [$from, $to])
@@ -626,13 +652,21 @@ class HomeController extends Controller
                                         'bikewash_dollar',
                                         'wax_dollar',
                                         'detailing_dollar',
-                                        'expense_dollar',
+                                        'fnb_profit',
                                         'fnb_dollar',
+                                        'fnb_restock_total',
                                         'voucher_dollar',
                                         'etc_dollar',
-                                        'total_etc'
+                                        'total_etc',
+                                        'expense_dollar',
+                                        'expenses'
                                         ));
 
+    }
+
+    public function viewIncomeStatement()
+    {
+        return view('reports.incomestatement');
     }
 
 }
