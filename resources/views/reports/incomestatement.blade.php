@@ -29,7 +29,7 @@
             <div class="panel-body">
                 <div class="panel-body">
                     <h3>Revenue <span class="pull-right" id="sales_dollar">0</span></h3>
-                    <div class="panel-group" id="accordion21">
+                    <div class="panel-group" id="accordion21" style="font-size:16px">
                         <div class="panel">
                             <a data-toggle="collapse" href="#collapseCarwash" id="carwash">Carwash <span class="pull-right" id="carwash_dollar">0</span>
                             </a>
@@ -93,7 +93,7 @@
                         </div>
 
                         <div class="panel ">
-                            <a data-toggle="collapse"  href="#collapseLain2">Lain <span id="etc_dollar" class="pull-right">0</span>
+                            <a data-toggle="collapse"  href="#collapseLain2">Lain-lain <span id="etc_dollar" class="pull-right">0</span>
                             </a>
                             <div id="collapseLain2" class="panel-collapse collapse">
                                 <div class="panel-body" id="lain2_details">
@@ -103,6 +103,18 @@
 
                     </div>
                 </div>
+
+                <div class="panel-body">
+                	<h3>Expense <span class="pull-right" id="expense_dollar">0</span></h3>
+                	<div class="panel-group" id="expense_category" style="font-size:16px">
+                		
+                	</div>
+                </div>
+
+                <div class="panel-body">
+                	<h3>Profit <span class="pull-right" id="total_profit">0</span></h3>
+                </div>
+
             </div>
         </div>
     </div>
@@ -129,6 +141,9 @@
                 {
                     url: "{!! route('loadIncomeStatementData') !!}",
                     data: date_data,
+                    beforeSend: function(){
+                    	$('#expense_category').html('Processing...');
+                    },
                     success: function(result){
                        $("#sales_dollar").number(result['sales_dollar']);
                        $("#carwash_dollar").number(result['carwash_dollar']);
@@ -139,6 +154,31 @@
                        $("#fnb_dollar").number(result['fnb_dollar']);
                        $("#fnb_restock_total").number(result['fnb_restock_total']);
                        $("#etc_dollar").number(result['etc_dollar']);
+                       $("#expense_dollar").number(result['expense_dollar']);
+                       $("#total_profit").number(result['total_profit']);
+
+                       $('#expense_category').html('');
+                       $.each(result['expenses'],function(key,value){
+                       		// alert(value['parent_category']);
+                       		$parcat_string = value['parent_category'].split(' ').join('');
+                       		$append1 = '<div class="panel"> <a data-toggle="collapse" href="#collapse' +$parcat_string;
+                       		$append1 = $append1 + '">' + value['parent_category'] + '<span class="pull-right" id="' + $parcat_string;
+                       		$append1 = $append1 + '">' + $.number(value['amount']) + '</span> </a> </div>';
+                       		$append1 = $append1 + '<div id="collapse' +$parcat_string + '" class="panel-collapse collapse"> <div class="panel-body" id="';
+                       		$append1 = $append1 + $parcat_string + '_details"></div></div>';
+
+                       		$('#expense_category').append($append1);
+                       });
+
+                       $.each(result['expenses'],function(key,value){
+                       	   $parcat_string = value['parent_category'].split(' ').join('');
+	                       $('#collapse'+$parcat_string).on('show.bs.collapse', function() {
+	                       		  $parcat_string = value['parent_category'].split(' ').join('');
+								  alert($parcat_string);
+								});
+	                   });
+
+
 
                     }
                 });
@@ -190,6 +230,8 @@
 		$('#collapseLain2').on('show.bs.collapse', function() {
 		  sendIncomeDataRequest("lain2", 'lain2_details');
 		});
+
+		
 
   //       $(document).on("click", "#carwash", function() {
 		//   sendIncomeDataRequest(1, 'carwash_details');

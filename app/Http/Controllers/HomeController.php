@@ -602,7 +602,7 @@ class HomeController extends Controller
                         ->sum('amount');
 
         $expenses       = Expense::where('branch_id', session('branch_id'))
-                        ->select('expenses.id', 'expense_categories.parent_category', \DB::raw('sum(amount) as total'))
+                        ->select('expenses.id', 'expense_categories.parent_category', \DB::raw('sum(amount) as amount'))
                         ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
                         ->where('expense_categories.name', '!=', 'Restock Minuman/Rokok')
                         ->whereBetween('entry_date', [$from, $to])
@@ -647,6 +647,8 @@ class HomeController extends Controller
 
         $total_etc = $fnb_dollar + $voucher_dollar + $etc_dollar;
 
+        $total_profit = $sales_dollar - $expense_dollar;
+
         return response()->json(compact('sales_dollar',
                                         'carwash_dollar',
                                         'bikewash_dollar',
@@ -659,7 +661,8 @@ class HomeController extends Controller
                                         'etc_dollar',
                                         'total_etc',
                                         'expense_dollar',
-                                        'expenses'
+                                        'expenses',
+                                        'total_profit'
                                         ));
 
     }
