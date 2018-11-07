@@ -734,6 +734,30 @@ class HomeController extends Controller
         return response()->json(compact('data'));
     }
 
+    public function loadExpenseDataByCategory(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $category = $request->input('category');
+
+        $to = $enddate;
+        $from = $startdate;
+
+        $data       = Expense::where('branch_id', session('branch_id'))
+                        ->select('expenses.signature', 'expense_categories.name','expenses.note' , \DB::raw('sum(amount) as amount, DATE(entry_date) as date'))
+                        ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
+                        ->where('expense_categories.parent_category', $category)
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->groupby('date','expense_categories.name')
+                        ->get();
+
+        return response()->json(compact('data'));
+
+    }
+
     public function viewIncomeStatement()
     {
         return view('reports.incomestatement');

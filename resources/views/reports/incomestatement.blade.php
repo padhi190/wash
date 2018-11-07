@@ -59,6 +59,15 @@
                         </div>
 
                         <div class="panel ">
+                            <a data-toggle="collapse"  href="#collapseVoucher">Voucher <span id="voucher_dollar" class="pull-right">0</span>
+                            </a>
+                            <div id="collapseVoucher" class="panel-collapse collapse">
+                                <div class="panel-body" id="voucher_details">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel ">
                             <a data-toggle="collapse"  href="#collapseDetailing">Detailing <span id="detailing_dollar" class="pull-right">0</span>
                             </a>
                             <div id="collapseDetailing" class="panel-collapse collapse">
@@ -154,6 +163,7 @@
                        $("#fnb_dollar").number(result['fnb_dollar']);
                        $("#fnb_restock_total").number(result['fnb_restock_total']);
                        $("#etc_dollar").number(result['etc_dollar']);
+                       $("#voucher_dollar").number(result['voucher_dollar']);
                        $("#expense_dollar").number(result['expense_dollar']);
                        $("#total_profit").number(result['total_profit']);
 
@@ -174,8 +184,10 @@
                        	   $parcat_string = value['parent_category'].split(' ').join('');
 	                       $('#collapse'+$parcat_string).on('show.bs.collapse', function() {
 	                       		  $parcat_string = value['parent_category'].split(' ').join('');
-								  alert($parcat_string);
-								});
+            								  // alert($parcat_string);
+                              $details=$parcat_string+'_details';
+                              sendExpenseDataByCategory(value['parent_category'], $details);
+            								});
 	                   });
 
 
@@ -231,6 +243,16 @@
 		  sendIncomeDataRequest("lain2", 'lain2_details');
 		});
 
+    $('#collapseVoucher').on('show.bs.collapse', function() {
+      sendIncomeDataRequest("voucher", 'voucher_details');
+    });
+
+
+
+    $('#collapseFnBRestock').on('show.bs.collapse', function() {
+      sendExpenseDataByCategory("Restock Minuman/Rokok", 'fnb_restock_details');
+    });
+
 		
 
   //       $(document).on("click", "#carwash", function() {
@@ -263,6 +285,33 @@
                     }
                 });
 		}
+
+    function sendExpenseDataByCategory(category, target_id)
+    {
+      var date_data = {
+                startdate: $('input[name=startdate]').val(),
+                enddate: $('input[name=enddate]').val(),
+                category: category
+            };
+      $.ajax(
+                {
+                    url: "{!! route('loadExpenseDataByCategory') !!}",
+                    data: date_data,
+                    beforeSend: function(){
+                      $('#' + target_id).html('Processing..');
+                    }, 
+                    success: function(result){
+                      $('#' + target_id).html('');
+                      $.each(result.data, function(key, value){
+                        var amount = $.number(value['amount']);
+                        var date = moment(value['date']).format('D-MMM-YYYY (dddd)');
+                        $('#' + target_id).append('<span>'+date + ' - ' + value['name'] + ' ' + value['signature']  + ' ' + value['note'] +  ' <span class="pull-right">' + amount + '</span></span><br>');
+                      });
+                       // $('#' + target_id).append(result.data[0].amount);
+
+                    }
+                });
+    }
 
 	</script>
 
