@@ -154,7 +154,7 @@
                     	$('#expense_category').html('Processing...');
                     },
                     success: function(result){
-                       $("#sales_dollar").number(result['sales_dollar']);
+                       $("#sales_dollar").number(result['sales_dollar']-result['fnb_restock_total']);
                        $("#carwash_dollar").number(result['carwash_dollar']);
                        $("#bikewash_dollar").number(result['bikewash_dollar']);
                        $("#wax_dollar").number(result['wax_dollar']);
@@ -164,7 +164,7 @@
                        $("#fnb_restock_total").number(result['fnb_restock_total']);
                        $("#etc_dollar").number(result['etc_dollar']);
                        $("#voucher_dollar").number(result['voucher_dollar']);
-                       $("#expense_dollar").number(result['expense_dollar']);
+                       $("#expense_dollar").number(result['expense_dollar']-result['fnb_restock_total']);
                        $("#total_profit").number(result['total_profit']);
 
                        $('#expense_category').html('');
