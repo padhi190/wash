@@ -122,9 +122,9 @@
                 </a>
                 <ul class="treeview-menu">
                     <li class="{{ $request->segment(1) == 'monthly_reports' ? 'active active-sub' : '' }}">
-                        <a href="{{ route('monthly_reports.index') }}">
+                        <a href="{{ route('monthly_reports.incomestatement') }}">
                             <i class="fa fa-line-chart"></i>
-                            <span class="title">@lang('quickadmin.monthly-report.title')</span>
+                            <span class="title">Income Statement</span>
                         </a>
                     </li>
                     <li class="{{ $request->segment(2) == 'incomes_report' ? 'active active-sub' : '' }}">

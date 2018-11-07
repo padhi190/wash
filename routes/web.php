@@ -24,7 +24,7 @@ $this->patch('change_password', 'Auth\ChangePasswordController@changePassword')-
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index');
-    Route::get('/reports/income_statement', 'HomeController@viewIncomeStatement');
+    Route::get('/monthly_reports/income_statement', 'HomeController@viewIncomeStatement')->name('monthly_reports.incomestatement');
     Route::get('/history/income', ['uses' => 'HistoryController@income', 'as' => 'history.income']);
     Route::get('/history/expense', ['uses' => 'HistoryController@expense', 'as' => 'history.expense']);
     Route::get('/change_branch/{branch_id}', 'ChangeBranchController@index');
@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/loadVehiclesData', 'IncomesController@loadVehiclesData')->name('loadVehiclesData');
     Route::get('/loadDashboardData', 'HomeController@loadDashboardData')->name('loadDashboardData');
     Route::get('/loadIncomeStatementData', 'HomeController@loadIncomeStatementData')->name('loadIncomeStatementData');
+    Route::get('/loadIncomeDataByDate', 'HomeController@loadIncomeDataByDate')->name('loadIncomeDataByDate');
     Route::get('/loadExpensesData', 'ExpensesController@loadExpensesData')->name('loadExpensesData');
     Route::get('/loadTrashedVehiclesDataTables', 'VehiclesController@loadTrashedVehiclesDataTables')->name('loadTrashedVehiclesDataTables');
     Route::get('/loadTrashedIncomesData', 'IncomesController@loadTrashedIncomesData')->name('loadTrashedIncomesData');

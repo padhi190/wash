@@ -604,7 +604,7 @@ class HomeController extends Controller
         $expenses       = Expense::where('branch_id', session('branch_id'))
                         ->select('expenses.id', 'expense_categories.parent_category', \DB::raw('sum(amount) as total'))
                         ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
-                        ->where('expense_categories.name', '!=', 'Restock Minuman')
+                        ->where('expense_categories.name', '!=', 'Restock Minuman/Rokok')
                         ->whereBetween('entry_date', [$from, $to])
                         ->groupby('expense_categories.parent_category')
                         ->get();
@@ -612,7 +612,7 @@ class HomeController extends Controller
         $fnb_restock    = Expense::where('branch_id', session('branch_id'))
                         ->select('expenses.id', 'expense_categories.parent_category', \DB::raw('sum(amount) as total'))
                         ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
-                        ->where('expense_categories.name', 'Restock Minuman')
+                        ->where('expense_categories.name', 'Restock Minuman/Rokok')
                         ->whereBetween('entry_date', [$from, $to])
                         ->groupby('expense_categories.parent_category')
                         ->get();
@@ -662,6 +662,73 @@ class HomeController extends Controller
                                         'expenses'
                                         ));
 
+    }
+
+    public function loadIncomeDataByDate(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+
+        $category = $request->input('category');
+
+        switch ($category) {
+            case 'carwash':
+                $cat_id = 1;
+                break;
+            
+            case 'bikewash':
+                $cat_id = 5;
+                break;
+
+            case 'detailing':
+                $cat_id = 3;
+                break;
+
+            case 'voucher':
+                $cat_id = 6;
+                break;
+
+            case 'lain2':
+                $cat_id = 7;
+                break;
+
+            case 'wax':
+                $cat_variable = 'wax_amount';
+                break;
+
+            case 'fnb':
+                $cat_variable = 'fnb_amount';
+                break;
+
+            default:
+                $cat_id =1;
+                break;
+        }
+
+        $to = $enddate;
+        $from = $startdate;
+
+        if(in_array($category, ["carwash", "bikewash", "voucher", "detailing", "lain2"]))
+        {
+            $data = Income::select(\DB::raw('sum(amount) as amount,DATE(entry_date) as date'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [$cat_id])
+                        ->where('branch_id', session('branch_id'))
+                        ->groupby('date')->get();
+        }
+        else{
+            $raw = 'sum(' . $cat_variable .') as amount, DATE(entry_date) as date';
+          
+            $data = Income::select(\DB::raw($raw))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where($cat_variable, '>', '0')
+                        ->where('branch_id', session('branch_id'))
+                        ->groupby('date')->get();
+        }
+
+        return response()->json(compact('data'));
     }
 
     public function viewIncomeStatement()

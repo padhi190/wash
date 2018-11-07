@@ -7,6 +7,10 @@
         <i class="fa fa-calendar"></i>&nbsp;
         <span></span> <i class="fa fa-caret-down"></i>
     </div>
+    <p>
+        {{ Form::hidden('startdate', old('startdate', Carbon\Carbon::today()->subDays(14)->format('d-m-Y')), ['id' => 'startdate']) }}
+        {{ Form::hidden('enddate', old('enddate', Carbon\Carbon::today()->format('d-m-Y')), ['id' => 'enddate']) }}
+    </p>
     <br>
     <br>
 	<div class="panel panel-default">
@@ -27,19 +31,76 @@
                     <h3>Revenue <span class="pull-right" id="sales_dollar">0</span></h3>
                     <div class="panel-group" id="accordion21">
                         <div class="panel">
-                            <a data-toggle="collapse" href="#collapseOneOne">Carwash <span class="pull-right" id="carwash_dollar">Jumlah</span>
+                            <a data-toggle="collapse" href="#collapseCarwash" id="carwash">Carwash <span class="pull-right" id="carwash_dollar">0</span>
                             </a>
-                            <div id="collapseOneOne" class="panel-collapse collapse">
-                                <div class="panel-body">Details 1</div>
+                            <div id="collapseCarwash" class="panel-collapse collapse">
+                                <div class="panel-body" id="carwash_details">
+
+                                </div>
                             </div>
                         </div>
+
                         <div class="panel ">
-                            <a data-toggle="collapse"  href="#collapseTwoTwo">View details 2.2 &raquo;
+                            <a data-toggle="collapse"  href="#collapseBikewash">Bikewash <span id="bikewash_dollar" class="pull-right">0</span>
                             </a>
-                            <div id="collapseTwoTwo" class="panel-collapse collapse">
-                                <div class="panel-body">Details 2</div>
+                            <div id="collapseBikewash" class="panel-collapse collapse">
+                                <div class="panel-body" id="bikewash_details">
+                                </div>
                             </div>
                         </div>
+
+                        <div class="panel ">
+                            <a data-toggle="collapse"  href="#collapseWax">Wax <span id="wax_dollar" class="pull-right">0</span>
+                            </a>
+                            <div id="collapseWax" class="panel-collapse collapse">
+                                <div class="panel-body" id="wax_details">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel ">
+                            <a data-toggle="collapse"  href="#collapseDetailing">Detailing <span id="detailing_dollar" class="pull-right">0</span>
+                            </a>
+                            <div id="collapseDetailing" class="panel-collapse collapse">
+                                <div class="panel-body" id="detailing_details">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel ">
+                            <a data-toggle="collapse"  href="#collapseFnBProfit">F&B Profit <span id="fnb_profit" class="pull-right">0</span>
+                            </a>
+                            <div id="collapseFnBProfit" class="panel-collapse collapse">
+                            	<div class="panel">
+	                                <a data-toggle="collapse" href="#collapseFnBRevenue" class="panel-body">
+	                                	F&B Revenue	<span id="fnb_dollar" class="pull-right">0</span>
+	                                </a>
+	                                <div id="collapseFnBRevenue" class="panel-collapse collapse">
+	                                	<div class="panel-body" id="fnb_details"></div>
+	                                </div>
+                                </div>
+
+                                <div class="panel">
+	                                <a data-toggle="collapse" href="#collapseFnBRestock" class="panel-body">
+	                                	F&B Restock	<span id="fnb_restock_total" class="pull-right">0</span><span class="pull-right">-</span>
+	                                </a>
+	                                <div id="collapseFnBRestock" class="panel-collapse collapse">
+	                                	<div class="panel-body" id="fnb_restock_details"></div>
+	                                </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="panel ">
+                            <a data-toggle="collapse"  href="#collapseLain2">Lain <span id="etc_dollar" class="pull-right">0</span>
+                            </a>
+                            <div id="collapseLain2" class="panel-collapse collapse">
+                                <div class="panel-body" id="lain2_details">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -71,6 +132,13 @@
                     success: function(result){
                        $("#sales_dollar").number(result['sales_dollar']);
                        $("#carwash_dollar").number(result['carwash_dollar']);
+                       $("#bikewash_dollar").number(result['bikewash_dollar']);
+                       $("#wax_dollar").number(result['wax_dollar']);
+                       $("#detailing_dollar").number(result['detailing_dollar']);
+                       $("#fnb_profit").number(result['fnb_profit']);
+                       $("#fnb_dollar").number(result['fnb_dollar']);
+                       $("#fnb_restock_total").number(result['fnb_restock_total']);
+                       $("#etc_dollar").number(result['etc_dollar']);
 
                     }
                 });
@@ -98,6 +166,61 @@
         }, cb);
 
         cb(start, end);
+
+        $('#collapseCarwash').on('show.bs.collapse', function() {
+		  sendIncomeDataRequest("carwash", 'carwash_details');
+		});
+
+		$('#collapseBikewash').on('show.bs.collapse', function() {
+		  sendIncomeDataRequest("bikewash", 'bikewash_details');
+		});
+
+		$('#collapseWax').on('show.bs.collapse', function() {
+		  sendIncomeDataRequest("wax", 'wax_details');
+		});
+
+		$('#collapseDetailing').on('show.bs.collapse', function() {
+		  sendIncomeDataRequest("detailing", 'detailing_details');
+		});
+
+		$('#collapseFnBRevenue').on('show.bs.collapse', function() {
+		  sendIncomeDataRequest("fnb", 'fnb_details');
+		});
+
+		$('#collapseLain2').on('show.bs.collapse', function() {
+		  sendIncomeDataRequest("lain2", 'lain2_details');
+		});
+
+  //       $(document).on("click", "#carwash", function() {
+		//   sendIncomeDataRequest(1, 'carwash_details');
+		// });
+
+		function sendIncomeDataRequest(category, target_id)
+		{
+			var date_data = {
+                startdate: $('input[name=startdate]').val(),
+                enddate: $('input[name=enddate]').val(),
+                category: category
+            };
+			$.ajax(
+                {
+                    url: "{!! route('loadIncomeDataByDate') !!}",
+                    data: date_data,
+                    beforeSend: function(){
+                    	$('#' + target_id).html('Processing..');
+                    }, 
+                    success: function(result){
+                    	$('#' + target_id).html('');
+                    	$.each(result.data, function(key, value){
+                    		var amount = $.number(value['amount']);
+                    		var date = moment(value['date']).format('D-MMM-YYYY (dddd)');
+                    		$('#' + target_id).append('<span>'+date + ' <span class="pull-right">' + amount + '</span></span><br>');
+                    	});
+                       // $('#' + target_id).append(result.data[0].amount);
+
+                    }
+                });
+		}
 
 	</script>
 
