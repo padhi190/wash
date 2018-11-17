@@ -127,10 +127,8 @@
               <span class="info-box-icon bg-aqua"><i class="fa fa-camera"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Detailing</span>
-                <!-- @if( sizeof($today_sales_detailing)>0) -->
                 <span class="info-box-number" id="detailing_dollar"></span>
                 <span class="info-box-number"><i class="fa fa-car"></i> <span id="detailing_no"></span></span>
-                <!-- @endif -->
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
@@ -215,7 +213,7 @@
               </div>
             </div>
             <div class="box-body">
-              <div class="chart">
+              <div class="chart" id="sales14daysContainer">
                 <canvas id="sales14daysChart" style="height:250px"></canvas>
               </div>
             </div>
@@ -256,10 +254,11 @@
 
     $(document).ready(function(){
       var start = moment();
-      var sub_14 = moment().subtract(14, 'days');
+      
       function cb(start) {
           $('#reportrange span, #date_bon').html(start.format('D MMMM, YYYY'));
           $('input[name=startdate]').val(start.format('D-M-YYYY'));
+          var sub_14 = start.subtract(14, 'days');
           var date_data = {
               startdate: $('input[name=startdate]').val(),
               enddate: $('input[name=startdate]').val(),
@@ -335,15 +334,16 @@
                 });
                 
                 // alert(JSON.stringify(chartdata));
+                $("#sales14daysChart").remove();
+                $("#sales14daysContainer").append('<canvas id="sales14daysChart" style="height:250px"></canvas>');
                 var sales14daysctx = $("#sales14daysChart");
-                var startHour = moment().set({'hour':7, 'minute':0});
                 var sales14daysChart = new Chart(sales14daysctx,{
                     type: 'bar',
                     data: {
                       datasets: [{
                           data: chartdata,
                           label: "Sales",
-                          backgroundColor: "rgba(0, 0, 150, 0.8)",
+                          backgroundColor: "rgba(60,141,188,0.9)",
                       }]         
                     },
                     options: {
@@ -356,7 +356,10 @@
                             }],
                             yAxes: [{
                                 ticks: {
-                                    beginAtZero:true
+                                    beginAtZero:true,
+                                     callback: function(label, index, labels) {
+                                          return $.number(label);
+                                      }
                                 }
                             }]
                         },
@@ -365,9 +368,17 @@
                             labels: {
                                 fontColor: 'rgb(255, 99, 132)'
                             }
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    return $.number(tooltipItem.yLabel);
+                                }
+                            }
                         }
                     }
                 });
+
               }
           });
           
