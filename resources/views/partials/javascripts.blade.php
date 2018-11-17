@@ -16,10 +16,11 @@
 <script src="{{ url('quickadmin/js') }}/main.js"></script>
 
 <script src="{{ url('adminlte/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
-<script src="{{ url('adminlte/plugins/chartjs/Chart.min.js') }}"></script>
+<!-- <script src="{{ url('adminlte/plugins/chartjs/Chart.min.js') }}"></script> -->
 <script src="{{ url('adminlte/plugins/fastclick/fastclick.js') }}"></script>
 <script src="{{ url('adminlte/js/app.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 <script src="https://datatables.yajrabox.com/js/handlebars.js"></script>
 <script src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>

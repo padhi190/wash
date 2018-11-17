@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/loadDashboardData', 'HomeController@loadDashboardData')->name('loadDashboardData');
     Route::get('/loadIncomeStatementData', 'HomeController@loadIncomeStatementData')->name('loadIncomeStatementData');
     Route::get('/loadIncomeDataByDate', 'HomeController@loadIncomeDataByDate')->name('loadIncomeDataByDate');
+    Route::get('/loadVehiclesDataByHour', 'HomeController@loadVehiclesDataByHour')->name('loadVehiclesDataByHour');
     Route::get('/loadExpenseDataByCategory', 'HomeController@loadExpenseDataByCategory')->name('loadExpenseDataByCategory');
     Route::get('/loadExpensesData', 'ExpensesController@loadExpensesData')->name('loadExpensesData');
     Route::get('/loadTrashedVehiclesDataTables', 'VehiclesController@loadTrashedVehiclesDataTables')->name('loadTrashedVehiclesDataTables');
