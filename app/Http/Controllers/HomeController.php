@@ -489,9 +489,19 @@ class HomeController extends Controller
                         ->where('branch_id', session('branch_id'))
                         ->sum('wax_amount');                         
         
-        $wax_no = Income::with('income_category')
+        $wax_no_mobil = Income::with('income_category')
                         ->whereBetween('entry_date', [$from, $to])
+                        ->join('vehicles', 'vehicles.id', '=', 'vehicle_id')
                         ->where('wax_amount', '>', '0')
+                        ->where('type', 'mobil')
+                        ->where('branch_id', session('branch_id'))
+                        ->count();
+
+        $wax_no_motor = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->join('vehicles', 'vehicles.id', '=', 'vehicle_id')
+                        ->where('wax_amount', '>', '0')
+                        ->where('type', 'motor')
                         ->where('branch_id', session('branch_id'))
                         ->count();
 
@@ -536,6 +546,13 @@ class HomeController extends Controller
 
         $total_etc = $fnb_dollar + $voucher_dollar + $etc_dollar;
 
+
+        $total_mobil = $carwash_no + $detailing_no;
+
+        $total_motor = $bikewash_no;
+
+        $total_vehicle = $total_mobil + $total_motor;
+
         return response()->json(compact('sales_no', 
                                         'sales_dollar',
                                         'sales_debit',
@@ -545,7 +562,8 @@ class HomeController extends Controller
                                         'bikewash_dollar',
                                         'bikewash_no',
                                         'wax_dollar',
-                                        'wax_no',
+                                        'wax_no_mobil',
+                                        'wax_no_motor',
                                         'detailing_dollar',
                                         'detailing_no',
                                         'expense_dollar',
@@ -553,7 +571,10 @@ class HomeController extends Controller
                                         'fnb_dollar',
                                         'voucher_dollar',
                                         'etc_dollar',
-                                        'total_etc'
+                                        'total_etc',
+                                        'total_motor',
+                                        'total_mobil',
+                                        'total_vehicle'
                                         ));
     }
 
@@ -706,18 +727,24 @@ class HomeController extends Controller
                 break;
 
             default:
-                $cat_id =1;
+                $cat_id =[1,3,5,6,7];
                 break;
         }
 
         $to = $enddate;
         $from = $startdate;
-
         if(in_array($category, ["carwash", "bikewash", "voucher", "detailing", "lain2"]))
         {
             $data = Income::select(\DB::raw('sum(amount) as amount,DATE(entry_date) as date'))
                         ->whereBetween('entry_date', [$from, $to])
                         ->whereIn('income_category_id', [$cat_id])
+                        ->where('branch_id', session('branch_id'))
+                        ->groupby('date')->get();
+        }
+        elseif($category == "total")
+        {
+            $data = Income::select(\DB::raw('sum(amount) as amount, sum(wax_amount) as wax_amount, sum(fnb_amount) as fnb_amount, (amount + wax_amount + fnb_amount) as total, DATE(entry_date) as date'))
+                        ->whereBetween('entry_date', [$from, $to])
                         ->where('branch_id', session('branch_id'))
                         ->groupby('date')->get();
         }

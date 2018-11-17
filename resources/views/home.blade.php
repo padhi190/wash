@@ -1,25 +1,25 @@
 @extends('partials.print2')
     @section('printSection')
     <div style="text-align:center; font-size:12px; font-weight:normal">
-        <p><strong>{{ date('l, d-M-Y', strtotime($now_date)) }}</strong></p>
+        <p><strong><span id="date_bon"></span></strong></p>
         <p><strong>Penjualan</strong></p>
-        <p>Carwash: {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) . " (" . number_format($carwash_no[sizeof($carwash_no)-1], 0) .")"}}</p>
-        <p>Bikewash: {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) . " (" . $bikewash_no[sizeof($bikewash_no)-1] .")" }}</p>
-        <p>Wax: {{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) . " (" .number_format($wax_no[sizeof($wax_no)-1], 0) .")"}}</p>
-        <p>Detailing: {{number_format($today_sales_detailing,0). " (" . $today_sales_no_detailing .")"}}</p>
-        <p>Voucher: {{ number_format($today_sales_voucher) ." (" . $today_sales_voucher_no . ")"}}</p>
-        <p>F&B: {{ number_format($today_sales_fnb) }}</p>
-        <p>Lain-lain: {{ number_format($today_sales_etc) }}</p>
-        <p><strong>Total Penjualan: {{ number_format($today_sales_dollar)}}</strong></p>
-        <p><strong>Debit: {{ number_format($today_sales_debit)}}</strong></p>
-        <p><strong>Kas Masuk: {{ number_format($today_sales_dollar - $today_sales_debit)}}</strong></p>
+        <p>Carwash: <span id="carwash_dollar_bon"></span> (<span id="carwash_no_bon"></span>)</p>
+        <p>Bikewash: <span id="bikewash_dollar_bon"></span> (<span id="bikewash_no_bon"></span>)</p>
+        <p>Wax: <span id="wax_dollar_bon"></span> (<span id="wax_no_mobil_bon"></span> mbl <span id="wax_no_motor_bon"></span> mtr)</p>
+        <p>Detailing: <span id="detailing_dollar_bon"></span> (<span id="detailing_no_bon"></span>)</p>
+        <p>Voucher: <span id="voucher_dollar_bon"></span>K</p>
+        <p>F&B: <span id="fnb_dollar_bon"></span>K</p>
+        <p>Lain-lain: <span id="etc_dollar_bon"></span>K</p>
+        <p><strong>Total Penjualan: <span id="sales_dollar_bon"></span></strong></p>
+        <p><strong>Debit: <span id="sales_debit_bon"></span>K</strong></p>
+        <p><strong>Kas Masuk: <span id="kas_masuk_bon"></span></strong></p>
         <p><strong>-------------------------------</strong></p>
-        <p><strong>Pengeluaran: {{ number_format($today_expense_dollar)}}</strong></p>
-        <p><strong>Debit: {{ number_format($today_expense_debit)}}</strong></p>
-        <p><strong>Kas Keluar: {{ number_format($today_expense_dollar - $today_expense_debit)}}</strong></p>
+        <p><strong>Pengeluaran: <span id="expense_dollar_bon"></span></strong></p>
+        <p><strong>Debit: <span id="expense_debit_bon"></span></strong></p>
+        <p><strong>Kas Keluar: <span id="kas_keluar_bon"></span></strong></p>
         <p><strong>-------------------------------</strong></p>
-        <p><strong>Total Kas: {{ number_format(($today_sales_dollar - $today_sales_debit)-($today_expense_dollar - $today_expense_debit))}}</strong></p>
-        <p><strong>Used Voucher: {{ number_format($today_sales_no_voucher)}}</strong></p>
+        <p><strong>Total Kas: <span id="total_kas_bon"></span></strong></p>
+        <p><strong>Used Voucher: <span id="used_voucher_bon"></span></strong></p>
         <p id="total"></p> 
     </div>
     @endsection
@@ -28,24 +28,22 @@
 
 
 @section('content')
-    {!! Form::open(['method' => 'get']) !!}
-        <div class="row">
-            <div class="col-md-3 form-group">
-                {!! Form::label('req_date','Date',['class' => 'control-label']) !!}
-                {!! Form::text('req_date', old('req_date', $now_date), ['class' => 'form-control date', 'placeholder' => '']) !!}
-            </div>
-            <div class="col-md-3">
-                <label class="control-label">&nbsp;</label><br>
-                {!! Form::submit('Select',['class' => 'btn btn-primary']) !!}
-                <button type="button" id="printButton" class="btn btn-primary" data-toggle="modal" data-target="#printModal">
-                Closing Harian
-              </button>
-            </div>
-            <div class="col-md-3">
-              
-            </div>
+    <div class="row">
+        <div class="col-md-4" id="reportrange" style="background: #fff; cursor: pointer; margin-left:15px; padding: 5px 10px; border: 1px solid #ccc; ">
+            <i class="fa fa-calendar"></i>&nbsp;
+            <span></span> <i class="fa fa-caret-down"></i>
         </div>
-    {!! Form::close() !!}
+        <div class="col-md-6">
+            <button type="button" id="printButton" class="btn btn-primary" data-toggle="modal" data-target="#printModal">
+            Closing Harian
+          </button>
+        </div>
+       
+    </div>
+    <p>
+        {{ Form::hidden('startdate', old('startdate', Carbon\Carbon::today()->subDays(14)->format('d-m-Y')), ['id' => 'startdate']) }}
+        {{ Form::hidden('enddate', old('enddate', Carbon\Carbon::today()->format('d-m-Y')), ['id' => 'enddate']) }}
+    </p>
     <div class="row">
         <div class="col-md-3">
             <div class="info-box">
@@ -53,10 +51,10 @@
               <span class="info-box-icon bg-blue"><i class="fa fa-car"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Vehicles</span>
-                <span class="info-box-number"> {{ $today_sales_no }}</span>
+                <span class="info-box-number" id="total_vehicle"></span>
                 <span class="info-box-number"> 
-                    <i class="fa fa-car"></i> {{ $today_sales_no_mobil }} &nbsp &nbsp
-                    <i class="fa fa-motorcycle"></i> {{ $today_sales_no_motor }} 
+                    <i class="fa fa-car"></i> <span id="total_mobil"></span> &nbsp &nbsp
+                    <i class="fa fa-motorcycle"></i> <span id="total_motor"></span> 
                 </span>
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
@@ -68,8 +66,8 @@
               <span class="info-box-icon bg-red"><i class="fa fa-dollar"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Today Expenses</span>
-                <span class="info-box-number">{{ number_format($today_expense_dollar, 0)}}</span>            
-                <span class="info-box-number"><i class="fa fa-credit-card"></i> {{ number_format($today_expense_debit, 0)}}</span>    
+                <span class="info-box-number" id="expense_dollar"></span>            
+                <span class="info-box-number"><i class="fa fa-credit-card"></i> <span id="expense_debit"> </span></span>    
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
@@ -80,12 +78,10 @@
               <span class="info-box-icon bg-green"><i class="fa fa-dollar"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Today Sales</span>
-                <span class="info-box-number">{{ number_format($today_sales_dollar, 0)}}</span>
+                <span class="info-box-number" id="sales_dollar"></span>
                 <span class="info-box-number">
-                    <i class="fa fa-car"></i> <strong>{{ number_format($today_sales_dollar_mobil/1000, 0) }}K</strong> &nbsp &nbsp
-                    <i class="fa fa-motorcycle"></i> <strong> {{ number_format($today_sales_dollar_motor/1000, 0) }}K </strong>  &nbsp &nbsp
-                    <i class="fa fa-credit-card"></i> <strong> {{ number_format($today_sales_debit/1000, 0) }}K &nbsp &nbsp
-                    <i class="fa fa-ticket"></i> <strong> {{ $today_sales_no_voucher }} </strong>  
+                    <i class="fa fa-credit-card"></i> <strong> <span id="sales_debit"></span>K &nbsp &nbsp
+                    <i class="fa fa-ticket"></i> <strong> <span id="used_voucher"></span> </strong>  
                 </span>               
                     
               </div><!-- /.info-box-content -->
@@ -99,16 +95,14 @@
               <span class="info-box-icon bg-blue"><i class="fa fa-shower"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Carwash/Bikewash</span>
-                @if( sizeof($carwash_no)>0)
                 <span class="info-box-number">
                     <i class="fa fa-car"></i>  &nbsp
-                    {{ number_format($carwash_dollar[sizeof($carwash_dollar)-1],0) . " (" . number_format($carwash_no[sizeof($carwash_no)-1], 0) .")"}}
+                    <span id="carwash_dollar"></span> (<span id="carwash_no"></span>)
                 </span>
                 <span class="info-box-number"> 
                     <i class="fa fa-motorcycle"></i> &nbsp
-                    {{ number_format($bikewash_dollar[sizeof($bikewash_dollar)-1],0) ." (" . $bikewash_no[sizeof($bikewash_no)-1] .")"}}
+                    <span id="bikewash_dollar"></span> (<span id="bikewash_no"></span>)
                 </span>
-                @endif
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
@@ -119,10 +113,10 @@
               <span class="info-box-icon bg-yellow"><i class="fa fa-paint-brush"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Wax</span>
-                @if( sizeof($wax_no)>0)
-                <span class="info-box-number">{{ number_format($wax_dollar[sizeof($wax_dollar)-1],0) }}</span>
-                <span class="info-box-number"><i class="fa fa-car"></i> {{ number_format($wax_no[sizeof($wax_no)-1], 0) }}</span>
-                @endif
+                <span class="info-box-number" id="wax_dollar"></span>
+                <span class="info-box-number"><i class="fa fa-car"></i> <span id="wax_no_mobil"></span> &nbsp &nbsp
+                <i class="fa fa-motorcycle"></i> <span id="wax_no_motor"></span>
+              </span>
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
@@ -134,8 +128,8 @@
               <div class="info-box-content">
                 <span class="info-box-text">Detailing</span>
                 <!-- @if( sizeof($today_sales_detailing)>0) -->
-                <span class="info-box-number">{{ number_format($today_sales_detailing,0) }}</span>
-                <span class="info-box-number"><i class="fa fa-car"></i> {{ $today_sales_no_detailing }}</span>
+                <span class="info-box-number" id="detailing_dollar"></span>
+                <span class="info-box-number"><i class="fa fa-car"></i> <span id="detailing_no"></span></span>
                 <!-- @endif -->
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
@@ -147,15 +141,13 @@
               <span class="info-box-icon bg-maroon"><i class="fa fa-ticket"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">OTHERS</span>
-                @if( sizeof($carwash_no)>0)
-                <span class="info-box-number">
-                    {{ number_format($today_sales_voucher + $today_sales_etc + $today_sales_fnb) }}
+                <span class="info-box-number" id="total_etc">
+                    
                 </span>
                 <span class="info-box-number"> 
-                    <i class="fa fa-ticket"></i> {{ $today_sales_voucher/1000 }}K  &nbsp &nbsp
-                    <i class="fa fa-glass"></i> {{ $today_sales_fnb/1000 }}K 
+                    <i class="fa fa-ticket"></i> <span id="voucher_dollar"></span>K  &nbsp &nbsp
+                    <i class="fa fa-glass"></i> <span id="fnb_dollar"></span>K &nbsp &nbsp
                 </span>
-                @endif
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>        
@@ -233,7 +225,7 @@
               <h3 class="box-title">Sales - Last 14 Days</h3>
 
               <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                <button type="button" class="btn btn-box-to ol" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
                 <!-- <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
               </div>
@@ -274,7 +266,102 @@
 
 
 @section('javascript')
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> 
     <script>
+
+    $(document).ready(function(){
+      var start = moment();
+      var sub_14 = moment().subtract(14, 'days');
+      function cb(start) {
+          $('#reportrange span, #date_bon').html(start.format('D MMMM, YYYY'));
+          $('input[name=startdate]').val(start.format('D-M-YYYY'));
+          var date_data = {
+              startdate: $('input[name=startdate]').val(),
+              enddate: $('input[name=startdate]').val(),
+              category: "total"
+          };
+          $.ajax(
+                    {
+                        url: "{!! route('loadDashboardData') !!}",
+                        data: date_data,
+                        beforeSend: function(){
+                            var processingText = '...'
+                            $("#sales_dollar, #sales_dollar_bon").html(processingText);
+                            $("#sales_debit, #sales_debit_bon").html(processingText);
+                            $("#used_voucher, #used_voucher_bon").html(processingText);
+                            $("#kas_masuk, #kas_masuk_bon").html(processingText);
+                            $("#carwash_dollar, #carwash_dollar_bon").html(processingText);
+                            $("#carwash_no, #carwash_no_bon").html(processingText);
+                            $("#bikewash_dollar, #bikewash_dollar_bon").html(processingText);
+                            $("#bikewash_no, #bikewash_no_bon").html(processingText);
+                            $("#wax_dollar, #wax_dollar_bon").html(processingText);
+                            $("#wax_no_mobil, #wax_no_mobil_bon").html(processingText);
+                            $("#wax_no_motor, #wax_no_motor_bon").html(processingText);
+                            $("#detailing_dollar, #detailing_dollar_bon").html(processingText);
+                            $("#detailing_no, #detailing_no_bon").html(processingText);
+                            $("#etc_dollar, #etc_dollar_bon").html(processingText);
+                            $("#fnb_dollar, #fnb_dollar_bon").html(processingText);
+                            $("#voucher_dollar, #voucher_dollar_bon").html(processingText);
+                            $("#total_etc, #total_etc_bon").html(processingText);
+                            $("#expense_dollar, #expense_dollar_bon").html(processingText);
+                            $("#expense_debit").html(processingText);
+                            $("#total_vehicle").html(processingText);
+                            $("#total_mobil").html(processingText);
+                            $("#total_motor").html(processingText);
+                        },
+                        success: function(result){
+                            $("#sales_dollar, #sales_dollar_bon").number(result['sales_dollar']);
+                            $("#sales_debit, #sales_debit_bon").number(result['sales_debit']/1000);
+                            $("#used_voucher, #used_voucher_bon").number(result['used_voucher']);
+                            $("#kas_masuk, #kas_masuk_bon").number(result['sales_dollar']-result['sales_debit']);
+                            $("#kas_keluar, #kas_keluar_bon").number(result['expense_dollar']-result['expense_debit']);
+                            $("#total_kas, #total_kas_bon").number((result['sales_dollar']-result['sales_debit'])-(result['expense_dollar']-result['expense_debit']));
+                            $("#carwash_dollar, #carwash_dollar_bon").number(result['carwash_dollar']);
+                            $("#carwash_no, #carwash_no_bon").number(result['carwash_no']);
+                            $("#bikewash_dollar, #bikewash_dollar_bon").number(result['bikewash_dollar']);
+                            $("#bikewash_no, #bikewash_no_bon").number(result['bikewash_no']);
+                            $("#wax_dollar, #wax_dollar_bon").number(result['wax_dollar']);
+                            $("#wax_no_mobil, #wax_no_mobil_bon").number(result['wax_no_mobil']);
+                            $("#wax_no_motor, #wax_no_motor_bon").number(result['wax_no_motor']);
+                            $("#detailing_dollar, #detailing_dollar_bon").number(result['detailing_dollar']);
+                            $("#detailing_no, #detailing_no_bon").number(result['detailing_no']);
+                            $("#etc_dollar, #etc_dollar_bon").number(result['etc_dollar']/1000);
+                            $("#fnb_dollar, #fnb_dollar_bon").number(result['fnb_dollar']/1000);
+                            $("#voucher_dollar, #voucher_dollar_bon").number(result['voucher_dollar']/1000);
+                            $("#total_etc, #total_etc_bon").number(result['total_etc']);
+                            $("#expense_dollar, #expense_dollar_bon").number(result['expense_dollar']);
+                            $("#expense_debit, #expense_debit_bon").number(result['expense_debit']);
+                            $("#total_vehicle").number(result['total_vehicle']);
+                            $("#total_mobil").number(result['total_mobil']);
+                            $("#total_motor").number(result['total_motor']);
+
+                        }
+                    });
+        date_data['startdate'] = sub_14.format('D-M-YYYY');
+        $.ajax(
+          {
+              url: "{!! route('loadIncomeDataByDate') !!}",
+              data: date_data,
+              success: function(result){
+
+                alert: JSON.stringify(result);
+              }
+          });
+          
+      }
+
+      $('#reportrange').daterangepicker({
+                singleDatePicker: true,
+                showDrowdowns: true,
+                startDate: start
+                
+            }, cb);
+
+      
+
+      cb(start);
+    });
   $(function () {
     var date_labels = {!! json_encode($date) !!}
     var sales_no = {{ json_encode($sales_no) }}
@@ -313,6 +400,26 @@
         }
       ]
     };
+
+
+
+    var lineChartData = {
+      // labels: ["January", "February", "March", "April", "May", "June", "July"],
+      labels: date_labels,
+      datasets: [
+        {
+          label: "Sales",
+          fillColor: "rgba(60,141,188,0.9)",
+          strokeColor: "rgba(60,141,188,0.8)",
+          pointColor: "#3b8bba",
+          pointStrokeColor: "rgba(60,141,188,1)",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(60,141,188,1)",
+          data: sales_dollar
+        }
+      ]
+    };
+
     var areaChartOptions = {
       //Boolean - If we should show the scale at all
       showScale: true,
