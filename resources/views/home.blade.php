@@ -334,14 +334,16 @@
                   chartdata.push({x : value['date'], y: value['amount'] + value['wax_amount'] + value['fnb_amount']});
                 });
                 
-                alert(JSON.stringify(chartdata));
+                // alert(JSON.stringify(chartdata));
                 var sales14daysctx = $("#sales14daysChart");
                 var startHour = moment().set({'hour':7, 'minute':0});
                 var sales14daysChart = new Chart(sales14daysctx,{
                     type: 'bar',
                     data: {
                       datasets: [{
-                         data: chartdata
+                          data: chartdata,
+                          label: "Sales",
+                          backgroundColor: "rgba(0, 0, 150, 0.8)",
                       }]         
                     },
                     options: {
@@ -357,6 +359,12 @@
                                     beginAtZero:true
                                 }
                             }]
+                        },
+                        legend: {
+                            display: false,
+                            labels: {
+                                fontColor: 'rgb(255, 99, 132)'
+                            }
                         }
                     }
                 });
