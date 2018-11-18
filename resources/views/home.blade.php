@@ -157,7 +157,7 @@
           <!-- BAR CHART -->
           <div class="box box-success">
             <div class="box-header with-border">
-              <h3 class="box-title">Vehicles - Today</h3>
+              <h3 class="box-title">Vehicles - <span id="today_date"></span></h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -166,8 +166,8 @@
               </div>
             </div>
             <div class="box-body">
-              <div class="chart">
-                <canvas id="barChart2" style="height:250px"></canvas>
+              <div class="chart" id="vehiclesHourlyContainer">
+                <canvas id="vehiclesHourlyChart" style="height:250px"></canvas>
               </div>
             </div>
             <!-- /.box-body -->
@@ -186,8 +186,8 @@
               </div>
             </div>
             <div class="box-body">
-              <div class="chart">
-                <canvas id="vehiclesHourlyChart" style="height:250px"></canvas>
+              <div class="chart" id="vehiclesLast14DaysContainer">
+                <canvas id="vehiclesLast14DaysChart" style="height:250px"></canvas>
               </div>
             </div>
             <!-- /.box-body -->
@@ -256,14 +256,15 @@
       var start = moment();
       
       function cb(start) {
-          $('#reportrange span, #date_bon').html(start.format('D MMMM, YYYY'));
+          $('#reportrange span, #date_bon, #today_date').html(start.format('dddd D MMMM, YYYY'));
           $('input[name=startdate]').val(start.format('D-M-YYYY'));
-          var sub_14 = start.subtract(14, 'days');
+          
           var date_data = {
               startdate: $('input[name=startdate]').val(),
               enddate: $('input[name=startdate]').val(),
               category: "total"
           };
+          //ajax request for info-box
           $.ajax(
                     {
                         url: "{!! route('loadDashboardData') !!}",
@@ -321,7 +322,86 @@
 
                         }
                     });
+          //ajax request for vehicles hourly chart
+          $.ajax({
+              url: "{!! route('loadVehiclesDataByHour') !!}",
+              data: date_data,
+              success: function(result){
+                var vehiclesdata = [];
+                var waxdata = [];
+
+                $.each(result.data, function(key, value){
+                  // alert(JSON.stringify(date_data['enddate']));
+                  var x = moment(date_data['enddate'],'DD-MM-YYYY');
+                  x.set({hour:value['hour'], minute: 0, second: 0, millisecond: 0});
+                  x.toISOString();
+                  x.format();
+                  vehiclesdata.push({x : x, y: value['no_vehicles']});
+                  waxdata.push({x : x, y: value['wax_amount']});
+                });
+                // alert(JSON.stringify(vehiclesdata));
+                $("#vehiclesHourlyChart").remove();
+                $("#vehiclesHourlyContainer").append('<canvas id="vehiclesHourlyChart" style="height:250px"></canvas>');
+                var vehicleshourlyctx = $("#vehiclesHourlyChart");
+                var vehiclesHourlyChart = new Chart(vehicleshourlyctx,{
+                    type: 'bar',
+                    data: {
+                      datasets: [
+                      {
+                        data: vehiclesdata,
+                        label: "Vehicles",
+                        backgroundColor: "rgba(60,141,188,0.9)",
+                      },
+                      {
+                        data: waxdata,
+                        label: "Wax",
+                        backgroundColor: "rgba(180,0,0,0.9)",
+                      },
+                      ]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                offset: true, 
+                                time: {
+                                    unit: 'hour'
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true,
+                                     callback: function(label, index, labels) {
+                                          return $.number(label);
+                                      }
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: false,
+                            labels: {
+                                fontColor: 'rgb(255, 99, 132)'
+                            }
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    
+                                    return label + $.number(tooltipItem.yLabel);
+                                }
+                            }
+                        }
+                    }
+                });
+              }
+          });
+          var sub_14 = start.subtract(14, 'days');
           date_data['startdate'] = sub_14.format('D-M-YYYY');
+          //ajax request for chart Sales - last 14 days
           $.ajax(
           {
               url: "{!! route('loadIncomeDataByDate') !!}",
@@ -330,7 +410,7 @@
                 var chartdata = [];
 
                 $.each(result.data, function(key, value){
-                  chartdata.push({x : value['date'], y: value['amount'] + value['wax_amount'] + value['fnb_amount']});
+                  chartdata.push({x : moment(value['date']), y: value['amount'] + value['wax_amount'] + value['fnb_amount']});
                 });
                 
                 // alert(JSON.stringify(chartdata));
@@ -350,6 +430,7 @@
                         scales: {
                             xAxes: [{
                                 type: 'time',
+                                offset: true,
                                 time: {
                                     unit: 'day'
                                 }
@@ -372,7 +453,9 @@
                         tooltips: {
                             callbacks: {
                                 label: function(tooltipItem, data) {
-                                    return $.number(tooltipItem.yLabel);
+                                    var date = moment(tooltipItem.xLabel) ;
+                                    
+                                    return date.format('dddd :') + $.number(tooltipItem.yLabel);
                                 }
                             }
                         }
@@ -381,6 +464,79 @@
 
               }
           });
+          //ajax request for chart Vehicles - Last 14 days
+          $.ajax(
+          {
+            url: "{!! route('loadVehiclesDataByDate') !!}",
+            data: date_data,
+            success: function(result){
+              // alert(JSON.stringify(result));
+              var chartdata = [];
+              var waxdata = [];
+
+              $.each(result.data, function(key, value){
+                chartdata.push({x : moment(value['date']), y: value['no_vehicles']});
+                waxdata.push({x : moment(value['date']), y: value['wax_amount']});
+              });
+
+              $("#vehiclesLast14DaysChart").remove();
+              $("#vehiclesLast14DaysContainer").append('<canvas id="vehiclesLast14DaysChart" style="height:250px"></canvas>')
+              var vehiclesLast14Daysctx = $("#vehiclesLast14DaysChart");
+              var vehiclesLast14DaysChart = new Chart(vehiclesLast14Daysctx,{
+                    type: 'bar',
+                    data: {
+                      datasets: [
+                      {
+                          data: chartdata,
+                          label: "Vehicles",
+                          backgroundColor: "rgba(60,141,188,0.9)",
+                      },
+                      {
+                        data: waxdata,
+                        label: "Wax",
+                        backgroundColor: "rgba(180,0,0,0.9)",
+                      }
+                      ]        
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                offset: true,
+                                time: {
+                                    unit: 'day'
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true,
+                                     callback: function(label, index, labels) {
+                                          return $.number(label);
+                                      }
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: false,
+                            labels: {
+                                fontColor: 'rgb(255, 99, 132)'
+                            }
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var date = moment(tooltipItem.xLabel) ;
+                                    
+                                    return date.format('dddd :') + $.number(tooltipItem.yLabel);
+                                }
+                            }
+                        }
+                    }
+                }); 
+
+            }
+          });
+
           
       }
 
