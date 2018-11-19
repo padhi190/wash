@@ -453,10 +453,13 @@
                         },
                         tooltips: {
                             callbacks: {
-                                label: function(tooltipItem, data) {
-                                    var date = moment(tooltipItem.xLabel) ;
-                                    
-                                    return date.format('dddd :') + $.number(tooltipItem.yLabel);
+                                title: function(tooltipItems, data) {
+                                    //Return value for title
+                                    var date = moment(tooltipItems[0].xLabel,"MMM DD, YYYY").format("ddd, DD-MMM-YYYY");
+                                    return date;
+                                },
+                                label: function(tooltipItem, data) {                                    
+                                    return $.number(tooltipItem.yLabel);
                                 }
                             }
                         }
@@ -528,6 +531,11 @@
                         tooltips: {
                             mode: 'index',
                             callbacks: {
+                                title: function(tooltipItems, data) {
+                                    //Return value for title
+                                    var date = moment(tooltipItems[0].xLabel,"MMM DD, YYYY").format("ddd, DD-MMM-YYYY");
+                                    return date;
+                                },
                                 label: function(tooltipItem, data) {
                                     var label = data.datasets[tooltipItem.datasetIndex].label || '';
 
