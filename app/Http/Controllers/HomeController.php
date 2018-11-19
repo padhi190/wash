@@ -432,6 +432,24 @@ class HomeController extends Controller
         return response()->json(compact('data'));
     }
 
+    public function loadVehiclesDataByMonth(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+
+        $data = Income::select(\DB::raw('count(id) as no_vehicles, sum(wax_amount > 0) as wax_amount, MONTH(entry_date) as month'))
+                        ->whereBetween('entry_date', [$startdate, $enddate])
+                        ->whereIn('income_category_id', [1, 5, 3])
+                        ->where('branch_id', session('branch_id'))
+                        ->groupby('month')->get();
+
+        
+
+        return response()->json(compact('data'));
+    }
+
 
 
     public function viewIncomeStatement()

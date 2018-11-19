@@ -91,7 +91,11 @@
                 <span class="info-box-text">Wax</span>
     
                 <span class="info-box-number"><span id="wax_dollar">0</span></span>
-                <span class="info-box-number"><i class="fa fa-car"></i> <span id="wax_no">0</span></span>
+                <span class="info-box-number">
+                    <i class="fa fa-car"></i> <span id="wax_no_mobil">0</span> &nbsp &nbsp
+                    <i class="fa fa-motorcycle"></i> <span id="wax_no_motor">0</span>
+                </span>
+                
                 
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
@@ -264,7 +268,8 @@
                             $("#bikewash_dollar").number(result['bikewash_dollar']);
                             $("#bikewash_no").number(result['bikewash_no']);
                             $("#wax_dollar").number(result['wax_dollar']);
-                            $("#wax_no").number(result['wax_no']);
+                            $("#wax_no_mobil").number(result['wax_no_mobil']);
+                            $("#wax_no_motor").number(result['wax_no_motor']);
                             $("#detailing_dollar").number(result['detailing_dollar']);
                             $("#detailing_no").number(result['detailing_no']);
                             $("#etc_dollar").number(result['etc_dollar']/1000);

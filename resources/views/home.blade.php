@@ -233,8 +233,8 @@
               </div>
             </div>
             <div class="box-body">
-              <div class="chart">
-                <canvas id="barChart3" style="height:250px"></canvas>
+              <div class="chart" id="vehicles4weeksContainer">
+                <canvas id="vehicles4weeksChart" style="height:250px"></canvas>
               </div>
             </div>
             <!-- /.box-body -->
@@ -384,6 +384,7 @@
                             }
                         },
                         tooltips: {
+                            mode: 'index',
                             callbacks: {
                                 label: function(tooltipItem, data) {
                                     var label = data.datasets[tooltipItem.datasetIndex].label || '';
@@ -475,7 +476,7 @@
               var waxdata = [];
 
               $.each(result.data, function(key, value){
-                chartdata.push({x : moment(value['date']), y: value['no_vehicles']});
+                chartdata.push({x : moment(value['date']), y: value['no_vehicles']-value['wax_amount']});
                 waxdata.push({x : moment(value['date']), y: value['wax_amount']});
               });
 
@@ -487,14 +488,14 @@
                     data: {
                       datasets: [
                       {
-                          data: chartdata,
-                          label: "Vehicles",
-                          backgroundColor: "rgba(60,141,188,0.9)",
-                      },
-                      {
                         data: waxdata,
                         label: "Wax",
                         backgroundColor: "rgba(180,0,0,0.9)",
+                      },
+                      {
+                          data: chartdata,
+                          label: "Vehicles",
+                          backgroundColor: "rgba(60,141,188,0.9)",
                       }
                       ]        
                     },
@@ -503,11 +504,13 @@
                             xAxes: [{
                                 type: 'time',
                                 offset: true,
+                                stacked: true,
                                 time: {
                                     unit: 'day'
                                 }
                             }],
                             yAxes: [{
+                                stacked: true,
                                 ticks: {
                                     beginAtZero:true,
                                      callback: function(label, index, labels) {
@@ -523,11 +526,26 @@
                             }
                         },
                         tooltips: {
+                            mode: 'index',
                             callbacks: {
                                 label: function(tooltipItem, data) {
-                                    var date = moment(tooltipItem.xLabel) ;
+                                    var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                                    if (label) {
+                                        label += ': ';
+                                    }
                                     
-                                    return date.format('dddd :') + $.number(tooltipItem.yLabel);
+                                    if (tooltipItem.datasetIndex != data.datasets.length - 1) {
+                                      return label + $.number(tooltipItem.yLabel);
+                                    }
+                                    else
+                                    {
+                                      // return JSON.stringify(tooltipItem);
+                                      var total = $.number(parseInt(data.datasets[0].data[tooltipItem.index].y) + parseInt(tooltipItem.yLabel));
+                                      var total_label = 'Vehicles: ' + total;
+
+                                      return [total_label];
+                                    }
                                 }
                             }
                         }
@@ -536,7 +554,101 @@
 
             }
           });
+          //ajax request for chart Vehicles - Last 4 weeks
+          
+          var sub_4_weeks = start.subtract(4, 'month').startOf('month');
+          date_data['startdate'] = sub_4_weeks.format('D-M-YYYY');
+          $.ajax(
+          {
+            url: "{!! route('loadVehiclesDataByMonth') !!}",
+            data: date_data,
+            success: function(result){
+              // alert(JSON.stringify(result));
+              var chartdata = [];
+              var waxdata = [];
 
+              $.each(result.data, function(key, value){
+                var date = moment().month(value['month']-1).endOf('month').set({hour:0, minute:0, second:0, millisecond:0});
+                chartdata.push({x : date, y: value['no_vehicles']-value['wax_amount']});
+                waxdata.push({x : date, y: value['wax_amount']});
+              });
+              // alert(JSON.stringify(chartdata));
+
+              $("#vehicles4weeksChart").remove();
+              $("#vehicles4weeksContainer").append('<canvas id="vehicles4weeksChart" style="height:250px"></canvas>');
+
+              var vehicles4weeksctx = $("#vehicles4weeksChart");
+              var vehicles4weeksChart = new Chart(vehicles4weeksctx,{
+                  type: 'bar',
+                    data: {
+                      datasets: [
+                      {
+                        data: waxdata,
+                        label: "Wax",
+                        backgroundColor: "rgba(180,0,0,0.9)",
+                      },
+                      {
+                          data: chartdata,
+                          label: "Vehicles",
+                          backgroundColor: "rgba(60,141,188,0.9)",
+                      }
+                      ]        
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                distribution: 'series',
+                                offset: true,
+                                stacked: true,
+                                time: {
+                                    unit: 'month'
+                                }
+                            }],
+                            yAxes: [{
+                                stacked: true,
+                                ticks: {
+                                    beginAtZero:true,
+                                     callback: function(label, index, labels) {
+                                          return $.number(label);
+                                      }
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: false,
+                            labels: {
+                                fontColor: 'rgb(255, 99, 132)'
+                            }
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    
+                                    if (tooltipItem.datasetIndex != data.datasets.length - 1) {
+                                      return label + $.number(tooltipItem.yLabel);
+                                    }
+                                    else
+                                    {
+                                      // return JSON.stringify(tooltipItem);
+                                      var total = $.number(parseInt(data.datasets[0].data[tooltipItem.index].y) + parseInt(tooltipItem.yLabel));
+                                      var total_label = 'Vehicles: ' + total;
+
+                                      return [total_label];
+                                    }
+                                }
+                            }
+                        }
+                    }
+              });
+            }
+          });
           
       }
 
