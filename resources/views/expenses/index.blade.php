@@ -17,7 +17,7 @@
 
 @section('content')
     <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') - {{$title}}</h3>
-    @can('expense_create')
+    
     <div class="flash-message">
                 @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                   @if(Session::has('alert-' . $msg))
@@ -27,11 +27,15 @@
                 @endforeach
     </div> 
     <p>
+       
         @if($title != 'Trashed')
+         @can('expense_create')
         <a href="{{ route('expenses.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
+        @endcan
         @if($title != 'Last 14 Days')
         <a href="#" id="today" class="btn btn-info">Hari Ini</a>
         @endif
+        
         @if($title !='Full')
         <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
             <i class="fa fa-calendar"></i>&nbsp;
@@ -50,7 +54,7 @@
             {!! Form::close() !!}
         @endif
     </p>
-    @endcan
+    
 
     <div class="row">
         <div class="col-md-4">
@@ -95,7 +99,10 @@
                 <span class="info-box-text">Wax</span>
     
                 <span class="info-box-number"><span id="wax_dollar">0</span></span>
-                <span class="info-box-number"><i class="fa fa-car"></i> <span id="wax_no">0</span></span>
+                <span class="info-box-number">
+                    <i class="fa fa-car"></i> <span id="wax_no_mobil">0</span>&nbsp &nbsp 
+                    <i class="fa fa-motorcycle"></i> <span id="wax_no_motor">0</span>
+                </span>
                 
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
@@ -254,7 +261,8 @@
                             $("#bikewash_dollar").number(result['bikewash_dollar']);
                             $("#bikewash_no").number(result['bikewash_no']);
                             $("#wax_dollar").number(result['wax_dollar']);
-                            $("#wax_no").number(result['wax_no']);
+                            $("#wax_no_mobil").number(result['wax_no_mobil']);
+                            $("#wax_no_motor").number(result['wax_no_motor']);
                             $("#detailing_dollar").number(result['detailing_dollar']);
                             $("#detailing_no").number(result['detailing_no']);
                             $("#etc_dollar").number(result['etc_dollar']/1000);

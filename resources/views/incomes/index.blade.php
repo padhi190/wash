@@ -16,10 +16,12 @@
 @extends('layouts.app')
 @section('content')
     <h3 class="page-title"><i class="fa fa-shopping-cart"></i> @lang('quickadmin.income.title') - {{$title}}</h3>
-    @can('income_create')
+    
     <p>
         @if($title !='Trashed')
+        @can('income_create')
         <a href="{{ route('incomes.create') }}" class="btn btn-success">@lang('quickadmin.add_new')</a>
+        @endcan
         @if($title != 'Last 14 Days')
         <a href="#" id="today" class="btn btn-info">Hari Ini</a>
         @endif
@@ -40,7 +42,7 @@
             {!! Form::close() !!}
         @endif
     </p>
-    @endcan
+    
     
     <p>
         {{ Form::hidden('startdate', old('startdate', Carbon\Carbon::today()->subDays(14)->format('d-m-Y')), ['id' => 'startdate']) }}

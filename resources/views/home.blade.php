@@ -1,6 +1,6 @@
 @extends('partials.print2')
     @section('printSection')
-    <div style="text-align:center; font-size:12px; font-weight:normal">
+    <div style="text-align:center; font-weight:normal">
         <p><strong><span id="date_bon"></span></strong></p>
         <p><strong>Penjualan</strong></p>
         <p>Carwash: <span id="carwash_dollar_bon"></span> (<span id="carwash_no_bon"></span>)</p>
