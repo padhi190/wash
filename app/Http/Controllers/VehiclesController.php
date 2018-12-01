@@ -309,6 +309,15 @@ class VehiclesController extends Controller
         ]);
         $datatables->editColumn('customer.name', function($q){
                     return $q->customer->name;
+                    // return $q->sales->count('amount');
+                });
+        $datatables->editColumn('sales', function($q){
+                    // return $q->customer->name;
+                    $sum = 0;
+                    foreach ($q->sales as $key => $sales) {
+                        $sum += $sales->total_amount;
+                    }
+                    return $q->sales->count('amount') .' sales (' . number_format($sum) . ')';
                 });
         $datatables->editColumn('type', function($q){
                     return $q->full_vehicle;

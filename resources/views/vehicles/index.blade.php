@@ -33,6 +33,7 @@
                         <th>Customer</th>
                         <th>Kendaraan</th>
                         <th>Phone</th>
+                        <th>Sales</th>
                         <th>@lang('quickadmin.vehicle.fields.type')</th>
                         <th>@lang('quickadmin.vehicle.fields.model')</th>
                         <th>@lang('quickadmin.vehicle.fields.color')</th>
@@ -73,6 +74,7 @@
                         { data: 'customer.name', name:'customer.name' },
                         { data: 'type', name:'type' },
                         { data: 'customer.phone', name:'customer.phone' },
+                        { data: 'sales', name:'sales' , searchable: false, sortable: false},
                         { data: 'license_plate', name:'license_plate', visible: false },
                         { data: 'model', name: 'model', visible: false },
                         { data: 'color', name: 'color', visible: false },
