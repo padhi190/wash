@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Transfer;
+use App\Income;
+use App\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
