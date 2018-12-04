@@ -168,7 +168,7 @@
             <table class="table table-bordered table-striped" id="expense-table" style="width:100%">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style="width:40px">ID</th>
                         <th>@lang('quickadmin.expense.fields.entry-date')</th>
                         <th>Parent Category</th>
                         <th>@lang('quickadmin.expense.fields.expense-category')</th>
@@ -180,10 +180,24 @@
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
-                
+                <tfoot>
+                    <tr>
+                        <th><input type="text" placeholder="NoBon" size="5"/></th>
+                        <th><input type="text" placeholder="YYYY-MM-DD" size="10" /></th>
+                        <th><input type="text" placeholder="Parent Category" size="12" /></th>
+                        <th><input type="text" placeholder="Category" size="12" /></th>
+                        <th><input type="text" placeholder="Ttd" size="8"/></th>
+                        <th><input type="text" placeholder="Note" size="15"/></th>
+                        <th>@lang('quickadmin.expense.fields.amount')</th>
+                        <th><input type="text" placeholder="Sumber" size="5"/></th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
                 <tbody>
                     
                 </tbody>
+                
             </table>
         </div>
     </div>
@@ -235,7 +249,22 @@
                     ]
                 });
 
-            new $.fn.dataTable.FixedHeader( dtable );
+            // $('#expense-table tfoot th').each( function () {
+            //     var title = $(this).text();
+            //     $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            // } );
+            // new $.fn.dataTable.FixedHeader( dtable );
+            dtable.columns().every( function () {
+                var that = this;
+         
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
 
             var start = moment();
             var end = moment();
