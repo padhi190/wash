@@ -73,6 +73,15 @@
             </li>
             @endcan
 
+            @can('expense_access')
+            <li class="{{ $request->segment(2) == 'cashflow' ? 'active' : '' }}">
+                <a href="{{ route('monthly_reports.cashflow') }}">
+                    <i class="fa fa-list"></i>
+                    <span class="title">Cashflow</span>
+                </a>
+            </li>
+            @endcan
+
             @can('access_trashed')
             <li class="treeview">
                 <a href="#">
@@ -121,7 +130,7 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ $request->segment(1) == 'monthly_reports' ? 'active active-sub' : '' }}">
+                    <li class="{{ $request->segment(2) == 'income_statement' ? 'active active-sub' : '' }}">
                         <a href="{{ route('monthly_reports.incomestatement') }}">
                             <i class="fa fa-line-chart"></i>
                             <span class="title">Income Statement</span>

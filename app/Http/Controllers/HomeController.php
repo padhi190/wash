@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use DB;
 use App\Income;
 use App\Expense;
+use App\Transfer;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
+use DateInterval;
+use DatePeriod;
 
 class HomeController extends Controller
 {
@@ -445,7 +448,81 @@ class HomeController extends Controller
                         ->where('branch_id', session('branch_id'))
                         ->groupby('month')->get();
 
+        return response()->json(compact('data'));
+    }
+
+    public function loadCashFlowData(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        $interval = new DateInterval('P1D');
+        $daterange = new DatePeriod($startdate, $interval ,$enddate);
+
+        $incomes = Income::select(\DB::raw('sum(amount + wax_amount + fnb_amount) as amount, DATE(entry_date) as date'))
+                        ->whereBetween('entry_date', [$startdate, $enddate])
+                        ->join('accounts','payment_type_id', '=', 'accounts.id')
+                        ->where('accounts.name', 'Cash')
+                        ->where('branch_id', session('branch_id'))
+                        ->groupby('date')->get();
+
+        $expenses       = Expense::where('branch_id', session('branch_id'))
+                        ->select(\DB::raw('sum(amount) as amount, DATE(entry_date) as date'))
+                        ->join('accounts', 'from_id', '=', 'accounts.id')
+                        ->where('accounts.name', 'cash')
+                        ->whereBetween('entry_date', [$startdate, $enddate])
+                        ->groupby('date')->get();
         
+        $transfers_out  =   Transfer::where('branch_id', session('branch_id'))
+                        ->select('note',\DB::raw('sum(jumlah) as amount, DATE(tanggal) as date'))
+                        ->whereBetween('tanggal', [$startdate, $enddate])
+                        ->join('accounts', 'dari_id', '=', 'accounts.id')
+                        ->where('accounts.name', 'Cash')
+                        ->groupby('date')->get();
+
+        $transfers_in  =   Transfer::where('branch_id', session('branch_id'))
+                        ->select('note',\DB::raw('sum(jumlah) as amount, DATE(tanggal) as date'))
+                        ->whereBetween('tanggal', [$startdate, $enddate])
+                        ->join('accounts', 'ke_id', '=', 'accounts.id')
+                        ->where('accounts.name', 'Cash')
+                        ->groupby('date')->get();
+
+        $data = [];
+        $i=0;
+        $kas = 0;
+        foreach ($daterange as $date) {
+            
+            $date_string = $date->format('Y-m-d');
+            $expense = $expenses->first(function($item) use ($date_string){
+                return $item->date == $date_string ;
+            });
+
+            $income = $incomes->first(function($item) use ($date_string){
+                return $item->date == $date_string ;
+            });
+
+
+            $transfer_out = $transfers_out->first(function($item) use ($date_string){
+                return $item->date == $date_string ;
+            });
+
+            $transfer_in = $transfers_in->first(function($item) use ($date_string){
+                return $item->date == $date_string ;
+            });
+
+            $data[$i]['date'] = $date_string;
+            $data[$i]['cash_expense'] = $expense['amount'];
+            $data[$i]['cash_income'] = $income['amount'];
+            $data[$i]['transfer_out'] = $transfer_out['amount'];
+            $data[$i]['transfer_out_note'] = $transfer_out['note'];
+            $data[$i]['transfer_in'] = $transfer_in['amount'];
+            $data[$i]['transfer_in_note'] = $transfer_in['note'];
+
+            $kas = $kas + $income['amount'] - $expense['amount'] + $transfer_in['amount'] - $transfer_out['amount'];
+            $data[$i]['kas'] = $kas;
+            $i++;
+        };
 
         return response()->json(compact('data'));
     }
@@ -455,6 +532,11 @@ class HomeController extends Controller
     public function viewIncomeStatement()
     {
         return view('reports.incomestatement');
+    }
+
+    public function viewCashFlow()
+    {
+        return view('reports.cashflow');
     }
 
 }

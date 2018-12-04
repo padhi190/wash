@@ -25,6 +25,8 @@ $this->patch('change_password', 'Auth\ChangePasswordController@changePassword')-
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index');
     Route::get('/monthly_reports/income_statement', 'HomeController@viewIncomeStatement')->name('monthly_reports.incomestatement');
+    Route::get('/monthly_reports/cashflow', 'HomeController@viewCashFlow')->name('monthly_reports.cashflow');
+    Route::get('/loadCashFlowData', 'HomeController@loadCashFlowData')->name('loadCashFlowData');
     Route::get('/history/income', ['uses' => 'HistoryController@income', 'as' => 'history.income']);
     Route::get('/history/expense', ['uses' => 'HistoryController@expense', 'as' => 'history.expense']);
     Route::get('/change_branch/{branch_id}', 'ChangeBranchController@index');
