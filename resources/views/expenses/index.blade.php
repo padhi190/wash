@@ -16,7 +16,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') - {{$title}}</h3>
+    <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') :
+        @if($title != 'Trashed')
+            <span id="date"></span>
+        @else
+            {{$title}}
+        @endif
+    </h3>
     
     <div class="flash-message">
                 @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -270,7 +276,7 @@
             var end = moment();
 
             function cb(start, end) {
-                $('#reportrange span').html(start.format('D MMMM, YYYY') + ' - ' + end.format('D MMMM, YYYY'));
+                $('#reportrange span, #date').html(start.format('D MMMM, YYYY') + ' - ' + end.format('D MMMM, YYYY'));
                 $('input[name=startdate]').val(start.format('D-M-YYYY'));
                 $('input[name=enddate]').val(end.format('D-M-YYYY'));
                 var date_data = {

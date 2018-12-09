@@ -31,7 +31,7 @@ class CustomersController extends Controller
 
     public function loadCustomersData()
     {
-        $query = Customer::select('id','branch_id','name','phone','email');
+        $query = Customer::select('id','branch_id','name','phone','email', 'created_at')->orderBy('created_at', 'desc');
         $template = 'actionsTemplate2';
         return Datatables::of($query)
                 ->editColumn('actions', function ($row) use ($template) {
@@ -39,6 +39,9 @@ class CustomersController extends Controller
                 $routeKey = 'customers';
 
                 return view($template, compact('row', 'gateKey', 'routeKey'));
+                })
+                ->editColumn('vehicles', function($query){
+                  return $query->first_vehicle;  
                 })
                 ->rawColumns(['actions'])
                 ->make(true);

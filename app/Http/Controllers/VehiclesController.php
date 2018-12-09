@@ -301,7 +301,7 @@ class VehiclesController extends Controller
     {
         $query    = Vehicle::query();
         $query->with('customer','sales');
-        $query->select('vehicles.*');
+        $query->select('vehicles.*')->orderBy('created_at', 'desc');
         $template = 'actionsTemplate2';
         $datatables = Datatables::of($query);
         $datatables->setRowAttr([
