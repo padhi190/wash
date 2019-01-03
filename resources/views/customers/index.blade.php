@@ -31,6 +31,7 @@
                         <th>@lang('quickadmin.customer.fields.name')</th>
                         <th>@lang('quickadmin.customer.fields.phone')</th>
                         <th>@lang('quickadmin.customer.fields.email')</th>
+                        <th>Vehicles</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -66,6 +67,7 @@
                     { data: 'name' },
                     { data: 'phone' },
                     { data: 'email' },
+                    { data: 'vehicles', name: 'vehicles', orderable: false, searchable: false},
                     { data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });

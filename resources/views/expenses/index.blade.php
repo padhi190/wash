@@ -16,7 +16,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') - {{$title}}</h3>
+    <h3 class="page-title"><i class="fa fa-calculator"></i> @lang('quickadmin.expense.title') :
+        @if($title != 'Trashed')
+            <span id="date"></span>
+        @else
+            {{$title}}
+        @endif
+    </h3>
     
     <div class="flash-message">
                 @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -168,7 +174,7 @@
             <table class="table table-bordered table-striped" id="expense-table" style="width:100%">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style="width:40px">ID</th>
                         <th>@lang('quickadmin.expense.fields.entry-date')</th>
                         <th>Parent Category</th>
                         <th>@lang('quickadmin.expense.fields.expense-category')</th>
@@ -180,10 +186,24 @@
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
-                
+                <tfoot>
+                    <tr>
+                        <th><input type="text" placeholder="NoBon" size="5"/></th>
+                        <th><input type="text" placeholder="YYYY-MM-DD" size="10" /></th>
+                        <th><input type="text" placeholder="Parent Category" size="12" /></th>
+                        <th><input type="text" placeholder="Category" size="12" /></th>
+                        <th><input type="text" placeholder="Ttd" size="8"/></th>
+                        <th><input type="text" placeholder="Note" size="15"/></th>
+                        <th>@lang('quickadmin.expense.fields.amount')</th>
+                        <th><input type="text" placeholder="Sumber" size="5"/></th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
                 <tbody>
                     
                 </tbody>
+                
             </table>
         </div>
     </div>
@@ -235,13 +255,28 @@
                     ]
                 });
 
-            new $.fn.dataTable.FixedHeader( dtable );
+            // $('#expense-table tfoot th').each( function () {
+            //     var title = $(this).text();
+            //     $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            // } );
+            // new $.fn.dataTable.FixedHeader( dtable );
+            dtable.columns().every( function () {
+                var that = this;
+         
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
 
             var start = moment();
             var end = moment();
 
             function cb(start, end) {
-                $('#reportrange span').html(start.format('D MMMM, YYYY') + ' - ' + end.format('D MMMM, YYYY'));
+                $('#reportrange span, #date').html(start.format('D MMMM, YYYY') + ' - ' + end.format('D MMMM, YYYY'));
                 $('input[name=startdate]').val(start.format('D-M-YYYY'));
                 $('input[name=enddate]').val(end.format('D-M-YYYY'));
                 var date_data = {

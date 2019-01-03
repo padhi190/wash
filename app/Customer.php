@@ -107,7 +107,7 @@ class Customer extends Model
         }
         
 
-        return $this->name . " : " . strtoupper($first_vehicle);
+        return strtoupper($first_vehicle);
     }
     
 }
