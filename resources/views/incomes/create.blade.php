@@ -953,12 +953,10 @@
 
         function GetAntrianData(data){
             if(data['customer'] == 'Existing'){
-                // alert('test');
                 $('.cari').select2("open");
-                // $('.cari').select2("search","11");
                 $('.select2-search__field').val(data['license_plate']);
                 $('.select2-search').find('input').trigger('input');
-                // $('.cari').trigger('change.select2');
+                $(".control-sidebar").removeClass('control-sidebar-open');
             }
             else
                 InsertAntrianData(data);

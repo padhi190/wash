@@ -23,7 +23,10 @@ class ChangeBranchController extends Controller
         }
 
         $branch = Branch::findOrFail($branch_id);
-        session(['branch_id' => $branch_id, 'branch_name' => $branch['branch_name'], 'branch' => $branch]);
+        $antrian = \App\Antrian::where('branch_id', $branch_id)->get();
+        session(['branch_id' => $branch_id, 'branch_name' => $branch['branch_name'], 'branch' => $branch, 
+            'antrian' => $antrian]);
+        
         return redirect()->back();;
     }
 

@@ -425,13 +425,23 @@
     <ul class="sidebar-menu">
         @foreach( Session::get('antrian') as $antrian)
         <li>
-            <a href="#" onclick="GetAntrianData({{$antrian}})">
+            <a href="#">
                 <i class="fa {{$antrian->type == 'MOBIL' ? 'fa-car' : 'fa-motorcycle' }}"></i>
-                <span class="title">{{$antrian->license_plate}} {{$antrian->model}} {{$antrian->customer}}</span>
+                <span class="title" onclick="GetAntrianData({{$antrian}})">
+                    {{$antrian->license_plate}} {{$antrian->model}} {{$antrian->color}}
+                </span>
+                <span class="glyphicon glyphicon-trash pull-right" style="color:red"></span>
             </a>
+
         </li>
         @endforeach
+        
+        <button type="button" class="btn btn-success" style="margin-left: 15px">
+            +Antrian
+        </button>    
+        
     </ul>
+
 </section>
 </aside>
 <!-- The sidebar's background -->

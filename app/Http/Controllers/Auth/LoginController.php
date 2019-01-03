@@ -42,7 +42,7 @@ class LoginController extends Controller
     {
         // $user = Auth::user();
         $branches = \App\Branch::all();
-        $antrian = \App\Antrian::all();
+        $antrian = \App\Antrian::where('branch_id', $user['branch_id'])->get();
         session(['user' => $user, 
                 'branch_name' => $user->branch->branch_name,
                 'branch' => $user->branch,

@@ -24,7 +24,7 @@
 <![endif]-->
 
 <link href="{{ url('adminlte/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-<link href="{{ url('adminlte/css/AdminLTE.min.css') }}" rel="stylesheet">
+<link href="{{ url('adminlte/css/AdminLTE.css') }}" rel="stylesheet">
 <link href="{{ url('adminlte/css/skins/skin-yellow.min.css') }}" rel="stylesheet">
 <!-- <link rel="stylesheet"
       href="{{ url('quickadmin/css') }}/select2.min.css"/> -->
