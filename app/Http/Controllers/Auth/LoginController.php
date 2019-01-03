@@ -42,11 +42,13 @@ class LoginController extends Controller
     {
         // $user = Auth::user();
         $branches = \App\Branch::all();
+        $antrian = \App\Antrian::all();
         session(['user' => $user, 
                 'branch_name' => $user->branch->branch_name,
                 'branch' => $user->branch,
                 'branch_id' => $user['branch_id'],
-                'branches' => $branches
+                'branches' => $branches,
+                'antrian' => $antrian
                 ]);
         if($user['role_id'] == 2){
 

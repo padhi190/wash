@@ -418,3 +418,22 @@
 {!! Form::open(['route' => 'auth.logout', 'style' => 'display:none;', 'id' => 'logout']) !!}
 <button type="submit">@lang('quickadmin.logout')</button>
 {!! Form::close() !!}
+
+<aside class="control-sidebar control-sidebar-dark">
+<!-- Content of the sidebar goes here -->
+<section class="sidebar" style="height: 100%">
+    <ul class="sidebar-menu">
+        @foreach( Session::get('antrian') as $antrian)
+        <li>
+            <a href="#" onclick="GetAntrianData({{$antrian}})">
+                <i class="fa {{$antrian->type == 'MOBIL' ? 'fa-car' : 'fa-motorcycle' }}"></i>
+                <span class="title">{{$antrian->license_plate}} {{$antrian->model}} {{$antrian->customer}}</span>
+            </a>
+        </li>
+        @endforeach
+    </ul>
+</section>
+</aside>
+<!-- The sidebar's background -->
+<!-- This div must placed right after the sidebar for it to work-->
+<div class="control-sidebar-bg"></div>

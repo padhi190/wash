@@ -24,6 +24,9 @@
         <a href="{!!route('incomes.index')!!}" class="btn btn-primary btn-lg">
               <i class="fa fa-list"></i> List Penjualan</a>
         </a>
+
+        <button class="btn btn-primary btn-lg" data-toggle="control-sidebar">Antrian</button>
+
        
     </p>
     @endcan
@@ -79,7 +82,7 @@
             <div class="row">
                 <div class="col-xs-6 form-group">
                     {!! Form::label('vehicle_id', 'Kendaraan*', ['class' => 'control-label']) !!}
-                    {!! Form::select('vehicle_id', ["" => "Cari"], null, ['class' => 'form-control cari']) !!}
+                    {!! Form::select('vehicle_id', ["" => "Cari"], null, ['class' => 'form-control cari', 'id' => 'vehicle_id']) !!}
                     <!-- <select class="cari form-control select2" style="width:500px;" name="vehicle_id"; id="cari" ></select> -->
                     <p class="help-block"></p>
                     @if($errors->has('vehicle_id'))
@@ -933,6 +936,7 @@
             @if(Session::has('alert-success'))
                 $('#printModal').modal('show');
             @endif
+
         });
 
         $('.datetime').datetimepicker({
@@ -946,6 +950,28 @@
             showMillisec:false,
             showMicrosec:false
         });
+
+        function GetAntrianData(data){
+            if(data['customer'] == 'Existing'){
+                // alert('test');
+                $('.cari').select2("open");
+                // $('.cari').select2("search","11");
+                $('.select2-search__field').val(data['license_plate']);
+                $('.select2-search').find('input').trigger('input');
+                // $('.cari').trigger('change.select2');
+            }
+            else
+                InsertAntrianData(data);
+        };
+
+        function InsertAntrianData(data){
+            // alert(data['license_plate']);
+            $('#formModal').modal('show');
+            $('#formModal #license_plate').val(data['license_plate']);
+            $('#formModal #brand').val(data['brand']);
+            $('#formModal #model').val(data['model']);
+            $('#formModal #color').val(data['color']);
+        };
 
         function setPayment(type){
             if (type.value==6){
