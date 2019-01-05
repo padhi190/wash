@@ -426,17 +426,27 @@
         @foreach( Session::get('antrian') as $antrian)
         <li>
             <a href="#">
-                <i class="fa {{$antrian->type == 'MOBIL' ? 'fa-car' : 'fa-motorcycle' }}"></i>
+                <i class="fa {{strtoupper($antrian->type) == 'MOBIL' ? 'fa-car' : 'fa-motorcycle' }}" onclick="GetAntrianData({{$antrian}})"></i>
                 <span class="title" onclick="GetAntrianData({{$antrian}})">
-                    {{$antrian->license_plate}} {{$antrian->model}} {{$antrian->color}}
+                    {{strtoupper($antrian->license_plate)}} {{strtoupper($antrian->model)}} {{strtoupper($antrian->color)}} {{substr($antrian->arrival_time, -8, -3)}}
                 </span>
-                <span class="glyphicon glyphicon-trash pull-right" style="color:red"></span>
+                <!-- <span class="glyphicon glyphicon-trash pull-right" style="color:red"> -->
+                    {!! Form::open(array(
+                        'style' => 'display: inline-block;',
+                        'method' => 'DELETE',
+                        'onsubmit' => "return confirm('". 'Hapus ' .$antrian->license_plate . ' dari antrian?'. "');",
+                        'class' => 'pull-right',
+                        'route' => ['antrians.destroy', $antrian->id])) !!}
+                    {!! Form::button('<span class="glyphicon glyphicon-trash pull-right" style="color:red"></span>', array('type'=>'submit' ,'class' => 'btn btn-xs', 'style' => 'background-color: Transparent;')) !!}
+                    {!! Form::close() !!}
+                <!-- </span> -->
+                <!-- <span class="glyphicon glyphicon-pencil pull-right"></span> -->
             </a>
 
         </li>
         @endforeach
         
-        <button type="button" class="btn btn-success" style="margin-left: 15px">
+        <button type="button" class="btn btn-success" style="margin-left: 15px" data-toggle="modal" data-target="#antrianForm">
             +Antrian
         </button>    
         

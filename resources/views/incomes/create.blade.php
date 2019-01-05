@@ -883,13 +883,16 @@
         
     @stop
 
+    @extends('partials.antrianForm', ['title' => 'Antrian', 'formId' => 'antrianForm'])
+
 
 @stop
 
 @section('javascript')
     @parent
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> 
     <script src="{{ url('quickadmin/js') }}/timepicker.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
     <script>
@@ -903,7 +906,8 @@
 
         $(document).ready(function(){
             $('.cari').select2({
-                minimumInputLength: 3, 
+                minimumInputLength: 3,
+                width: 'resolve', 
                 placeholder:'Cari...',
                 ajax: {
                   url: "{!! route('loadVehiclesData') !!}",
@@ -937,14 +941,72 @@
                 $('#printModal').modal('show');
             @endif
 
+
+            // for antrian
+
+            $('#vehicle_search').select2({
+                minimumInputLength: 3,
+                width: 'resolve', 
+                placeholder:'Cari...',
+                ajax: {
+                  url: "{!! route('loadVehiclesData') !!}",
+                  dataType: 'json',
+                  delay: 250,
+                  processResults: function (data) {
+                    var results = [];
+                    $.each(data, function (index, vehicles) {
+                        results.push({
+                            id: vehicles.id,
+                            text: vehicles.license_plate + " | " + vehicles.brand.toUpperCase() + ", " +vehicles.model.toUpperCase() + ", " + vehicles.color.toUpperCase() + " | " + vehicles.customer.name + ", " + vehicles.customer.phone + ", " +vehicles.type.toUpperCase() 
+                        });
+                    });
+
+                    return {
+                        results: results
+                    };
+                  },
+                }
+            }).on('select2:open', () => {
+                    $(".select2-results:not(:has(a))").append('<a data-toggle="modal" href="#formModal" style="padding: 6px;height: 20px;display: inline-table;">Tambahkan Kendaraan Lama</a>');
+            }).on('select2:select', function (e) {
+                var data = e.params.data;
+                var s_text = data['text'];
+                var split_text = s_text.split('|');
+                var license_plate = split_text[0];
+                var brand = split_text[1].split(',')[0];
+                var model = split_text[1].split(',')[1];
+                var color = split_text[1].split(',')[2];
+                var type = $.trim(split_text[2].split(',')[2]);
+                var name = $.trim(split_text[2].split(',')[0]);
+                var phone = $.trim(split_text[2].split(',')[1]);
+                // alert(data['text']);
+                $('#antrian_license_plate').val($.trim(license_plate));
+                $('#antrian_brand').val($.trim(brand));
+                $('#antrian_model').val($.trim(model));
+                $('#antrian_color').val($.trim(color));
+                $('#antrian_name').val(name);
+                $('#antrian_phone').val(phone);
+
+                if(type == 'MOTOR')
+                    $('#antrian_motor').button('toggle');
+                else
+                    $('#antrian_mobil').button('toggle');
+
+                $('#antrian_existing').button('toggle');
+            });
+
+
         });
+
+        var maxDate = new Date();
+        maxDate.setMinutes(maxDate.getMinutes() + 60);
 
         $('.datetime').datetimepicker({
             autoclose: true,
             dateFormat: "{{ config('app.date_format_js') }}",
             timeFormat: "HH:mm",
-            maxDate:0,
-            stepMinute: 5,
+            maxDate:maxDate,
+            stepMinute: 1,
             showSecond: false,
             controlType: 'select',
             showMillisec:false,
@@ -953,10 +1015,17 @@
 
         function GetAntrianData(data){
             if(data['customer'] == 'Existing'){
+                if(data['type'] == 'MOTOR')
+                    $('#Bikewash').button('toggle');
+                else
+                    $('#Carwash').button('toggle');
+                $('.cari').val(null).trigger('change');
                 $('.cari').select2("open");
                 $('.select2-search__field').val(data['license_plate']);
                 $('.select2-search').find('input').trigger('input');
                 $(".control-sidebar").removeClass('control-sidebar-open');
+                $('.select2-search').find('input').trigger('input');
+
             }
             else
                 InsertAntrianData(data);
@@ -969,6 +1038,12 @@
             $('#formModal #brand').val(data['brand']);
             $('#formModal #model').val(data['model']);
             $('#formModal #color').val(data['color']);
+            $('#formModal #name').val(data['name']);
+            $('#formModal #phone').val(data['phone']);
+            if(data['type'].toUpperCase() == 'MOTOR')
+                $('#formModal #motor').button('toggle');
+            else
+                $('#formModal #mobil').button('toggle');
         };
 
         function setPayment(type){

@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/history/expense', ['uses' => 'HistoryController@expense', 'as' => 'history.expense']);
     Route::get('/change_branch/{branch_id}', 'ChangeBranchController@index');
     Route::resource('roles', 'RolesController');
+    Route::resource('antrians', 'AntrianController');
     Route::post('roles_mass_destroy', ['uses' => 'RolesController@massDestroy', 'as' => 'roles.mass_destroy']);
     Route::resource('users', 'UsersController');
     Route::post('users_mass_destroy', ['uses' => 'UsersController@massDestroy', 'as' => 'users.mass_destroy']);

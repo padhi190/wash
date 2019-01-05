@@ -21,7 +21,9 @@ class CreateAntriansTable extends Migration
             $table->string('model')->nullable();
             $table->string('color')->nullable();
             $table->string('size')->nullable();
-            $table->date('arrival_time')->nullable();
+            $table->string('name')->nullable();
+            $table->string('phone')->nullable();
+            $table->dateTime('arrival_time')->nullable();
             $table->enum('status', ["Ditunggu","Ditinggal"])->nullable();
             $table->enum('customer', ["New","Existing"])->nullable();
             $table->integer('branch_id')->unsigned()->nullable();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Antrian;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AntrianController extends Controller
@@ -36,6 +37,10 @@ class AntrianController extends Controller
     public function store(Request $request)
     {
         //
+        // $date = Carbon::createFromFormat(config('app.date_format') . ' H:i', $request->arrival_time)->format('Y-m-d H:i');
+        // dd($date);
+        $antrian = Antrian::create($request->all());
+        return redirect()->back();
     }
 
     /**
@@ -78,8 +83,11 @@ class AntrianController extends Controller
      * @param  \App\Antrian  $antrian
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Antrian $antrian)
+    public function destroy($id)
     {
-        //
+        $antrian = Antrian::findOrFail($id);
+        $antrian->delete();
+
+        return redirect()->back();
     }
 }

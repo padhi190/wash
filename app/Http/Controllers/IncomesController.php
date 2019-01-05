@@ -111,41 +111,14 @@ class IncomesController extends Controller
             return \App\Product::get();
         });
 
-        // $vehicles = \App\Vehicle::with('customer')->get();
-        // $vehicles = Cache::remember('vehicles', $minutes, function() {
-        //     return \App\Vehicle::with('customer')->get();
-        // });
-            
-
-        // $vehiclesAndCustomer = $vehicles->mapWithKeys(function($item,$key){
-            
-        //     return [$item['id'] => $item['customer']['name'] . ': ' .$item['full_vehicle']];
-        // });
-
-        // dd($vehiclesAndCustomer);
-
-        // $customers = \App\Customer::with('latestVehicle')->get();
-
-        // $customers = Cache::remember('customers', $minutes, function(){
-        //     return \App\Customer::with('latestVehicle')->get();
-        // });
-        
-        
-        // $customersAndCar = $customers->mapWithKeys(function($item,$key){
-            
-        //     return [$item['id'] => $item['name'] . ': ' .$item['latestVehicle']['full_vehicle']];
-        // });
-
         $last_sales = Income::orderBy('created_at','desc')->where('branch_id', session('branch_id'))->first();
 
 
         
 
         $relations = [
-            // 'customers' => $customersAndCar->all(),
             'customer_id' => null,
             'branches' => $branches,
-            // 'vehicles' => $vehiclesAndCustomer->all(),
             'income_categories' => $income_categories->pluck('name','id'),
             'products' => $products->pluck('name', 'id')->prepend('Please select', ''),
             'payment_types' => $payment_types->pluck('name', 'id'),
@@ -154,7 +127,11 @@ class IncomesController extends Controller
             'prices' => config('pricelist'.session('branch_id')),
             'last_sales' => $last_sales,
         ];
-        // dd($relations);
+
+        $antrian = \App\Antrian::where('branch_id',session('branch_id'))->orderBy('arrival_time', 'asc')->get();
+        session([
+                'antrian' => $antrian
+                ]);
 
         return view('incomes.create', $relations);
     }
