@@ -891,7 +891,8 @@
 @section('javascript')
     @parent
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.0/locale/id.js"></script> 
     <script src="{{ url('quickadmin/js') }}/timepicker.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>

@@ -72,9 +72,13 @@ class AntrianController extends Controller
      * @param  \App\Antrian  $antrian
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Antrian $antrian)
+    public function update(Request $request, $id)
     {
-        //
+        dd($request);
+        $antrian = Antrian::findOrFail($id);
+        $antrian->update($request->all());
+
+        return redirect()->back();
     }
 
     /**

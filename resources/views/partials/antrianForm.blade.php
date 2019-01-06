@@ -7,7 +7,17 @@
         <h4 class="modal-title" id="myModalLabel">{{$title}}</h4>
       </div>
       <div class="modal-body">
-        {!! Form::open(['method' => 'POST', 'route' => ['antrians.store']]) !!}
+        @if(isset($antrian))
+            {!! Form::model($antrian, array('route' => array('antrians.update', $antrian->id), 'method' => 'PUT')); !!}
+        @else
+            {!! Form::open(['id' => 'antriForm', 'method' => 'POST', 'route' => ['antrians.store']]) !!}
+        @endif
+
+        @if(isset($antrian))
+          <h4 class="modal-title">{{$antrian->license_plate}}</h4>
+        @else
+          <h4 class="modal-title">Add New</h4>
+        @endif
         <div class="panel panel-default">
             
           <div class="panel-body">
