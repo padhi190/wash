@@ -74,7 +74,7 @@ class AntrianController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request);
+        // dd($request);
         $antrian = Antrian::findOrFail($id);
         $antrian->update($request->all());
 

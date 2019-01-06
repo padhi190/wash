@@ -440,7 +440,7 @@
                     {!! Form::button('<span class="glyphicon glyphicon-trash pull-right" style="color:red"></span>', array('type'=>'submit' ,'class' => 'btn btn-xs', 'style' => 'background-color: Transparent;')) !!}
                     {!! Form::close() !!}
                 <!-- </span> -->
-                <button class="btn btn-xs pull-right" data-toggle="modal" data-target="#antrianForm" data-route="{{route('antrians.update',$antrian->id)}}" style="background-color: transparent;" onclick="populateEditData({{$antrian}})">
+                <button class="btn btn-xs pull-right" data-toggle="modal" data-target="#editAntrianForm" data-route="{{route('antrians.update',$antrian->id)}}" data-antrian="{{$antrian}}" style="background-color: transparent;">
                     <span class="glyphicon glyphicon-pencil pull-right"></span>
                 </button>
             </a>
@@ -448,7 +448,7 @@
         </li>
         @endforeach
         
-        <button type="button" class="btn btn-success" style="margin-left: 15px" data-toggle="modal" data-target="#antrianForm" onclick="clearAntrianForm()">
+        <button type="button" class="btn btn-success" style="margin-left: 15px" data-toggle="modal" data-target="#antrianForm">
             +Antrian
         </button>    
         

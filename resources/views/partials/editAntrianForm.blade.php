@@ -7,17 +7,10 @@
         <h4 class="modal-title" id="myModalLabel">{{$title}}</h4>
       </div>
       <div class="modal-body">
-        @if(isset($antrian))
-            {!! Form::model($antrian, array('route' => array('antrians.update', $antrian->id), 'method' => 'PUT')); !!}
-        @else
-            {!! Form::open(['id' => 'antriForm', 'method' => 'POST', 'route' => ['antrians.store']]) !!}
-        @endif
-
-        @if(isset($antrian))
-          <h4 class="modal-title">{{$antrian->license_plate}}</h4>
-        @else
-          <h4 class="modal-title">Add New</h4>
-        @endif
+        
+        {!! Form::open(array('route' => array('antrians.update', 'test'), 'method' => 'PUT', 'id' => 'antriForm')); !!}
+            
+        <h4 class="modal-title">Edit</h4>
         <div class="panel panel-default">
             
           <div class="panel-body">
@@ -26,7 +19,7 @@
             <div class="row">
               <div class="col-md-12 form-group">
                 {!! Form::label('vehicle_id', 'Cari Kendaraan*', ['class' => 'control-label']) !!}
-                {!! Form::select('vehicle_id', ["" => "Cari"], null, ['class' => 'form-control vehicle_search', 'id' => 'new_vehicle_search', 'style' => 'width:100%']) !!}
+                {!! Form::select('vehicle_id', ["" => "Cari"], null, ['class' => 'form-control vehicle_search', 'id' => 'vehicle_search', 'style' => 'width:100%']) !!}
               </div>
             </div>
 

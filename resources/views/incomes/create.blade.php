@@ -25,7 +25,7 @@
               <i class="fa fa-list"></i> List Penjualan</a>
         </a>
 
-        <button class="btn btn-primary btn-lg" data-toggle="control-sidebar">Antrian</button>
+        <button class="btn btn-primary btn-lg" data-toggle="control-sidebar" id="antrianButton">Antrian</button>
 
        
     </p>
@@ -884,6 +884,7 @@
     @stop
 
     @extends('partials.antrianForm', ['title' => 'Antrian', 'formId' => 'antrianForm'])
+    @extends('partials.editAntrianForm', ['title' => 'Antrian', 'formId' => 'editAntrianForm'])
 
 
 @stop
@@ -906,6 +907,7 @@
         @endif
 
         $(document).ready(function(){
+            $('#antrianButton').click();
             $('.cari').select2({
                 minimumInputLength: 3,
                 width: 'resolve', 
@@ -945,7 +947,7 @@
 
             // for antrian
 
-            $('#vehicle_search').select2({
+            $('.vehicle_search').select2({
                 minimumInputLength: 3,
                 width: 'resolve', 
                 placeholder:'Cari...',
@@ -981,19 +983,34 @@
                 var name = $.trim(split_text[2].split(',')[0]);
                 var phone = $.trim(split_text[2].split(',')[1]);
                 // alert(data['text']);
-                $('#antrian_license_plate').val($.trim(license_plate));
-                $('#antrian_brand').val($.trim(brand));
-                $('#antrian_model').val($.trim(model));
-                $('#antrian_color').val($.trim(color));
-                $('#antrian_name').val(name);
-                $('#antrian_phone').val(phone);
+                $('#antrianForm #antrian_license_plate').val($.trim(license_plate));
+                $('#antrianForm #antrian_brand').val($.trim(brand));
+                $('#antrianForm #antrian_model').val($.trim(model));
+                $('#antrianForm #antrian_color').val($.trim(color));
+                $('#antrianForm #antrian_name').val(name);
+                $('#antrianForm #antrian_phone').val(phone);
 
                 if(type == 'MOTOR')
-                    $('#antrian_motor').button('toggle');
+                    $('#antrianForm #antrian_motor').button('toggle');
                 else
-                    $('#antrian_mobil').button('toggle');
+                    $('#antrianForm #antrian_mobil').button('toggle');
 
-                $('#antrian_existing').button('toggle');
+                $('#antrianForm #antrian_existing').button('toggle');
+
+                //edit form populate
+                $('#editAntrianForm #antrian_license_plate').val($.trim(license_plate));
+                $('#editAntrianForm #antrian_brand').val($.trim(brand));
+                $('#editAntrianForm #antrian_model').val($.trim(model));
+                $('#editAntrianForm #antrian_color').val($.trim(color));
+                $('#editAntrianForm #antrian_name').val(name);
+                $('#editAntrianForm #antrian_phone').val(phone);
+
+                if(type == 'MOTOR')
+                    $('#editAntrianForm #antrian_motor').button('toggle');
+                else
+                    $('#editAntrianForm #antrian_mobil').button('toggle');
+
+                $('#editAntrianForm #antrian_existing').button('toggle');
             });
 
 
@@ -1046,6 +1063,40 @@
             else
                 $('#formModal #mobil').button('toggle');
         };
+
+        $('#editAntrianForm').on('show.bs.modal', function (e) {
+            var route = $(e.relatedTarget).data('route');
+            var antrian = $(e.relatedTarget).data('antrian');
+
+            // alert(route);
+
+            $('#editAntrianForm #antriForm').attr('action', route);
+
+            $('#editAntrianForm #antrian_license_plate').val(antrian['license_plate']);
+            $('#editAntrianForm #antrian_brand').val(antrian['brand']);
+            $('#editAntrianForm #antrian_model').val(antrian['model']);
+            $('#editAntrianForm #antrian_color').val(antrian['color']);
+            $('#editAntrianForm #antrian_name').val(antrian['name']);
+            $('#editAntrianForm #antrian_phone').val(antrian['phone']);
+            if(antrian['type'].toUpperCase() == 'MOTOR')
+                $('#editAntrianForm #antrian_motor').button('toggle');
+            else
+                $('#editAntrianForm #antrian_mobil').button('toggle');
+
+            if(antrian['customer'].toUpperCase() == 'NEW')
+                $('#editAntrianForm #antrian_new').button('toggle');
+            else
+                $('#editAntrianForm #antrian_existing').button('toggle');
+
+            if(antrian['status'].toUpperCase() == 'DITUNGGU')
+                $('#editAntrianForm #antrian_tunggu').button('toggle');
+            else
+                $('#editAntrianForm #antrian_tinggal').button('toggle');
+            var arrival_time = moment(antrian['arrival_time']).toDate();
+            // alert(arrival_time);
+            $("#editAntrianForm #datepicker").datetimepicker("setDate", arrival_time);
+        });
+
 
         function setPayment(type){
             if (type.value==6){
