@@ -1072,6 +1072,11 @@
                 $('.select2-search').find('input').trigger('input');
                 $(".control-sidebar").removeClass('control-sidebar-open');
                 $('.select2-search').find('input').trigger('input');
+                $('#entry_date').datetimepicker('setDate', new Date());
+                if(data['type'].toUpperCase() == 'MOTOR')
+                    $('#Bikewash').button('toggle');
+                else
+                    $('#Carwash').button('toggle');
 
             }
             else

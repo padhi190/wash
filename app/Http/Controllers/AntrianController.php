@@ -25,7 +25,7 @@ class AntrianController extends Controller
      */
     public function create()
     {
-        //
+        return view('antrians.create');
     }
 
     /**
