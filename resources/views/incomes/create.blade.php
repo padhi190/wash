@@ -970,7 +970,7 @@
                   },
                 }
             }).on('select2:open', () => {
-                    $(".select2-results:not(:has(a))").append('<a href="#" style="padding: 6px;height: 20px;display: inline-table;" onclick="copyData()">Tambahkan Kendaraan Lama</a>');
+                    $(".select2-results:not(:has(a))").append('<a href="#" style="padding: 6px;height: 20px;display: inline-table;" onclick="copyData()">Copy Plat No</a>');
             }).on('select2:select', function (e) {
                 var data = e.params.data;
                 var s_text = data['text'];
@@ -1035,13 +1035,28 @@
             var searchtext = $("#new_vehicle_search").data("select2").dropdown.$search.val()
             // alert(searchtext);
             $('#antrianForm #antrian_license_plate').val(searchtext);
-            // $('#formModal #brand').val('');
-            // $('#formModal #model').val('');
-            // $('#formModal #color').val('');
-            // $('#formModal #name').val('');
-            // $('#formModal #phone').val('');
-            // $('#formModal #mobil').button('toggle');
-            // $("#formModal #datepicker").datetimepicker("setDate", new Date());
+            $('#new_vehicle_search').select2("close");
+            $('#antrianForm #antrian_brand').val('');
+            $('#antrianForm #antrian_model').val('');
+            $('#antrianForm #antrian_color').val('');
+            $('#antrianForm #antrian_name').val('');
+            $('#antrianForm #antrian_phone').val('');
+            $('#antrianForm #antrian_mobil').button('toggle');
+            $('#antrianForm #antrian_new').button('toggle');
+            $("#antrianForm #datepicker").datetimepicker("setDate", new Date());
+
+            var searchtext2 = $("#vehicle_search").data("select2").dropdown.$search.val()
+            // alert(searchtext);
+            $('#editAntrianForm #antrian_license_plate').val(searchtext2);
+            $('#vehicle_search').select2("close");
+            $('#editAntrianForm #antrian_brand').val('');
+            $('#editAntrianForm #antrian_model').val('');
+            $('#editAntrianForm #antrian_color').val('');
+            $('#editAntrianForm #antrian_name').val('');
+            $('#editAntrianForm #antrian_phone').val('');
+            $('#editAntrianForm #antrian_mobil').button('toggle');
+            $('#editAntrianForm #antrian_new').button('toggle');
+            $("#editAntrianForm #datepicker").datetimepicker("setDate", new Date());
 
         };
 

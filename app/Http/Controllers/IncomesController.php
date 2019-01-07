@@ -129,8 +129,12 @@ class IncomesController extends Controller
         ];
 
         $antrian = \App\Antrian::where('branch_id',session('branch_id'))->orderBy('arrival_time', 'asc')->get();
+        $antrian_mobil = \App\Antrian::where('branch_id',session('branch_id'))->where('type', 'mobil')->count();
+        $antrian_motor = \App\Antrian::where('branch_id',session('branch_id'))->where('type', 'motor')->count();
         session([
-                'antrian' => $antrian
+                'antrian' => $antrian,
+                'antrian_mobil' => $antrian_mobil,
+                'antrian_motor' => $antrian_motor
                 ]);
 
         return view('incomes.create', $relations);

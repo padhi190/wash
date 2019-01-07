@@ -43,12 +43,16 @@ class LoginController extends Controller
         // $user = Auth::user();
         $branches = \App\Branch::all();
         $antrian = \App\Antrian::where('branch_id', $user['branch_id'])->get();
+        $antrian_mobil = \App\Antrian::where('branch_id',session('branch_id'))->where('type', 'mobil')->count();
+        $antrian_motor = \App\Antrian::where('branch_id',session('branch_id'))->where('type', 'motor')->count();
         session(['user' => $user, 
                 'branch_name' => $user->branch->branch_name,
                 'branch' => $user->branch,
                 'branch_id' => $user['branch_id'],
                 'branches' => $branches,
-                'antrian' => $antrian
+                'antrian' => $antrian,
+                'antrian_mobil' => $antrian_mobil,
+                'antrian_motor' => $antrian_motor
                 ]);
         if($user['role_id'] == 2){
 

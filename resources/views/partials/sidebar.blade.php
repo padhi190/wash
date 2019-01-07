@@ -423,6 +423,12 @@
 <!-- Content of the sidebar goes here -->
 <section class="sidebar" style="height: 100%">
     <ul class="sidebar-menu">
+        <li>
+            <a href="#" style="text-align:center">
+                <i class="fa fa-car"></i> <span class="title">{{ Session::get('antrian_mobil') }}</span> &nbsp &nbsp
+                <i class="fa fa-motorcycle"></i> <span class="title">{{ Session::get('antrian_motor') }}</span>
+            </a>
+        </li>
         @foreach( Session::get('antrian') as $antrian)
         <li>
             <a href="#">
