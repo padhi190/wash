@@ -970,7 +970,7 @@
                   },
                 }
             }).on('select2:open', () => {
-                    $(".select2-results:not(:has(a))").append('<a data-toggle="modal" href="#formModal" style="padding: 6px;height: 20px;display: inline-table;">Tambahkan Kendaraan Lama</a>');
+                    $(".select2-results:not(:has(a))").append('<a href="#" style="padding: 6px;height: 20px;display: inline-table;" onclick="copyData()">Tambahkan Kendaraan Lama</a>');
             }).on('select2:select', function (e) {
                 var data = e.params.data;
                 var s_text = data['text'];
@@ -1030,6 +1030,20 @@
             showMillisec:false,
             showMicrosec:false
         });
+
+        function copyData(){
+            var searchtext = $("#new_vehicle_search").data("select2").dropdown.$search.val()
+            // alert(searchtext);
+            $('#antrianForm #antrian_license_plate').val(searchtext);
+            // $('#formModal #brand').val('');
+            // $('#formModal #model').val('');
+            // $('#formModal #color').val('');
+            // $('#formModal #name').val('');
+            // $('#formModal #phone').val('');
+            // $('#formModal #mobil').button('toggle');
+            // $("#formModal #datepicker").datetimepicker("setDate", new Date());
+
+        };
 
         function GetAntrianData(data){
             if(data['customer'] == 'Existing'){
