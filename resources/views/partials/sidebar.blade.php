@@ -54,6 +54,13 @@
                 </a>
             </li>
             @endcan
+
+            <li class="{{ $request->segment(1) == 'antrians' ? 'active' : '' }}">
+                <a href="{{ route('antrians.create') }}">
+                    <i class="fa fa-list"></i>
+                    <span class="title">Antrian</span>
+                </a>
+            </li>
             
             @can('income_access')
             <li class="{{ $request->segment(1) == 'incomes' ? 'active' : '' }}">
