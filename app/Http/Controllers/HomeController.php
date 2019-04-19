@@ -65,6 +65,7 @@ class HomeController extends Controller
                         ->whereBetween('entry_date', [$from, $to])
                         ->where('branch_id', session('branch_id'))
                         ->where('payment_type_id', '!=', 1)
+                        ->where('payment_type_id', '!=', 6)
                         ->sum(DB::raw('IFNULL(amount,0) + IFNULL(fnb_amount,0) + IFNULL(wax_amount,0)'));
 
         $used_voucher = Income::with('income_category')
@@ -442,10 +443,11 @@ class HomeController extends Controller
         $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
         $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
 
-        $data = Income::select(\DB::raw('count(id) as no_vehicles, sum(wax_amount > 0) as wax_amount, MONTH(entry_date) as month'))
+        $data = Income::select(\DB::raw('count(id) as no_vehicles, sum(wax_amount > 0) as wax_amount, MONTH(entry_date) as month, YEAR(entry_date) as year'))
                         ->whereBetween('entry_date', [$startdate, $enddate])
                         ->whereIn('income_category_id', [1, 5, 3])
                         ->where('branch_id', session('branch_id'))
+                        ->orderBy('year', 'asc')
                         ->groupby('month')->get();
 
         return response()->json(compact('data'));
