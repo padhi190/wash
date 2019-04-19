@@ -576,7 +576,7 @@
               var waxdata = [];
 
               $.each(result.data, function(key, value){
-                var date = moment().month(value['month']-1).endOf('month').set({hour:0, minute:0, second:0, millisecond:0});
+                var date = moment().year(value['year']).month(value['month']-1).endOf('month').set({hour:0, minute:0, second:0, millisecond:0});
                 chartdata.push({x : date, y: value['no_vehicles']-value['wax_amount']});
                 waxdata.push({x : date, y: value['wax_amount']});
               });
