@@ -610,8 +610,19 @@
                                 offset: true,
                                 stacked: true,
                                 time: {
-                                    unit: 'month'
+                                    unit: 'month',
+                                    displayFormats: {
+                                       'month': 'MMM YYYY',
+                                    }
+                                },
+                                ticks: {
+                                  callback: function(value) {
+                                      var date = moment(value).subtract(1, 'days'); 
+                                      return date.format('MMM YYYY'); 
+                                  },
                                 }
+                              
+
                             }],
                             yAxes: [{
                                 stacked: true,
