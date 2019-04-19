@@ -564,7 +564,7 @@
           });
           //ajax request for chart Vehicles - Last 4 weeks
           
-          var sub_4_weeks = start.subtract(4, 'month').startOf('month');
+          var sub_4_weeks = start.subtract(3, 'month').startOf('month');
           date_data['startdate'] = sub_4_weeks.format('D-M-YYYY');
           $.ajax(
           {
