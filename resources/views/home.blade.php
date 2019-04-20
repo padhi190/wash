@@ -580,7 +580,7 @@
                 chartdata.push({x : date, y: value['no_vehicles']-value['wax_amount']});
                 waxdata.push({x : date, y: value['wax_amount']});
               });
-              alert(JSON.stringify(chartdata));
+              // alert(JSON.stringify(chartdata));
 
               $("#vehicles4weeksChart").remove();
               $("#vehicles4weeksContainer").append('<canvas id="vehicles4weeksChart" style="height:250px"></canvas>');
