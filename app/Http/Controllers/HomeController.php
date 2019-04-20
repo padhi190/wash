@@ -541,4 +541,117 @@ class HomeController extends Controller
         return view('reports.cashflow');
     }
 
+    public function loadAllBranchesRevenue(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+
+        $carwash_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [1])
+                        ->groupby('branch_id')->get();
+
+        $carwash_no = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('count(id) as no'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [1])
+                        ->groupby('branch_id')->get();        
+
+        $bikewash_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [5])
+                        ->groupby('branch_id')->get();
+
+        $bikewash_no = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('count(id) as no'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->whereIn('income_category_id', [5])
+                        ->groupby('branch_id')->get();
+
+        $wax_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(wax_amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('wax_amount', '>', '0')
+                        ->groupby('branch_id')->get();
+
+        $wax_no = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('count(id) as no'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('wax_amount', '>', '0')
+                        ->groupby('branch_id')->get();
+
+        $detailing_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 3)
+                        ->groupby('branch_id')->get();
+
+        $detailing_no = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('count(id) as no'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 3)
+                        ->groupby('branch_id')->get();
+
+        $sales_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(IFNULL(amount,0) + IFNULL(fnb_amount,0) + IFNULL(wax_amount,0)) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->groupby('branch_id')->get();
+
+        $fnb_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(fnb_amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('fnb_amount', '>', '0')
+                        ->groupby('branch_id')->get();
+
+        $voucher_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 6)
+                        ->groupby('branch_id')->get();
+
+        $etc_dollar = Income::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('income_category_id', 7)
+                        ->groupby('branch_id')->get();
+
+        $expense_dollar = Expense::with('branch:id,branch_name')->select('branch_id', \DB::raw('sum(amount) as amount'))
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->groupby('branch_id')->get();
+
+        return response()->json(compact('carwash_dollar', 
+                                        'carwash_no',
+                                        'bikewash_dollar',
+                                        'bikewash_no',
+                                        'wax_no',
+                                        'wax_dollar',
+                                        'detailing_dollar',
+                                        'detailing_no',
+                                        'sales_dollar',
+                                        'fnb_dollar',
+                                        'voucher_dollar',
+                                        'etc_dollar',
+                                        'expense_dollar'));
+    }
+
+    public function loadAllBranchesExpenses(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+
+        $data       = Expense::with('branch:id,branch_name')->select('branch_id','expense_categories.parent_category' , \DB::raw('sum(amount) as amount'))
+                        ->join('expense_categories','expenses.expense_category_id', '=', 'expense_categories.id')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->groupby('branch_id', 'expense_categories.parent_category')
+                        ->get();
+
+        return response()->json(compact('data'));
+
+    }
+
+    public function viewAllBranches()
+    {
+        return view('reports.allbranchesincome');
+    }
+
 }

@@ -143,6 +143,14 @@
                             <span class="title">Income Statement</span>
                         </a>
                     </li>
+                    @can('change_branch')
+                    <li class="{{ $request->segment(2) == 'all_branches' ? 'active active-sub' : '' }}">
+                        <a href="{{ route('monthly_reports.all_branches') }}">
+                            <i class="fa fa-line-chart"></i>
+                            <span class="title">Semua Cabang</span>
+                        </a>
+                    </li>
+                    @endcan
                     <li class="{{ $request->segment(2) == 'incomes_report' ? 'active active-sub' : '' }}">
                         <a href="{{ route('monthly_reports.incomesreport') }}">
                             <i class="fa fa-line-chart"></i>
