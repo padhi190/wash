@@ -122,6 +122,28 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Wax </h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <!-- <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="chart" id="waxContainer">
+                <canvas id="waxChart" style="height:250px"></canvas>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+    </div>
+
           
           <!-- /.box -->
 
@@ -149,7 +171,7 @@
                     url: "{!! route('loadAllBranchesRevenue') !!}",
                     data: date_data,
                     beforeSend: function(){
-                      var processingText = 'Sabar...'
+                      var processingText = 'Wait for it...'
                     	$('#kopo_profit, #banceuy_profit, #bubat_profit').html(processingText);
                       $('#kopo_revenue, #banceuy_revenue, #bubat_revenue').html(processingText);
                       $('#kopo_expense, #banceuy_expense, #bubat_expense').html(processingText);
@@ -588,6 +610,148 @@
                       
 
                     }
+                });
+            $.ajax(
+                {
+                  url: "{!! route('loadVehiclesDataByDate') !!}",
+                  data: date_data,
+                  beforeSend: function(){
+                      
+                    },
+                  success: function(result){
+                    // alert(JSON.stringify(result));
+                      console.log(JSON.stringify(result));
+                      var kopo_vehicles = [];
+                      var kopo_wax = [];
+                      var banceuy_vehicles = [];
+                      var banceuy_wax = [];
+                      var bubat_vehicles = [];
+                      var bubat_wax = [];
+
+                    $.each(result.data, function(key, value){
+                      if(value['branch_id'] == 1){
+                        kopo_vehicles.push({x : moment(value['date']), y: value['no_vehicles']-value['wax_amount']});
+                        kopo_wax.push({x : moment(value['date']), y: value['wax_amount']});  
+                      }
+
+                      if(value['branch_id'] == 3){
+                        banceuy_vehicles.push({x : moment(value['date']), y: value['no_vehicles']-value['wax_amount']});
+                        banceuy_wax.push({x : moment(value['date']), y: value['wax_amount']});  
+                      }
+
+                      if(value['branch_id'] == 2){
+                        bubat_vehicles.push({x : moment(value['date']), y: value['no_vehicles']-value['wax_amount']});
+                        bubat_wax.push({x : moment(value['date']), y: value['wax_amount']});  
+                      }
+
+                    });
+
+                    $("#waxChart").remove();
+                    $("#waxContainer").append('<canvas id="waxChart" style="height:500px"></canvas>');
+                    var waxCtx = $("#waxChart");
+                    var waxChart = new Chart(waxCtx,{
+                        type: 'bar',
+                        data: {
+                          datasets: [
+                            {
+                                data: kopo_wax,
+                                label: "Kopo Wax",
+                                stack: '0',
+                                backgroundColor: "rgba(180,0,0,0.9)",
+                            },
+                            {
+                                data: kopo_vehicles,
+                                label: "Kopo Vehicles",
+                                stack: '0',
+                                backgroundColor: "rgba(255,196,13,1)",
+                            },
+                            {
+                                data: banceuy_wax,
+                                label: "Banceuy Wax",
+                                stack: '1',
+                                backgroundColor: "rgba(180,0,0,0.9)",
+                            },
+                            {
+                                data: banceuy_vehicles,
+                                stack: '1',
+                                label: "Banceuy Vehicles",
+                                backgroundColor: "rgb(30,113,69)",
+                            },
+                            {
+                                data: bubat_wax,
+                                label: "Bubat Wax",
+                                stack: '2',
+                                backgroundColor: "rgba(180,0,0,0.9)",
+                            },
+                            {
+                                data: bubat_vehicles,
+                                stack: '2',
+                                label: "Bubat Vehicles",
+                                backgroundColor: "rgba(60,141,188,0.9)",
+                            }
+
+                          ]        
+                        },
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    type: 'time',
+                                    offset: true,
+                                    stacked: true,
+                                    time: {
+                                        unit: 'day'
+                                    }
+                                }],
+                                yAxes: [{
+                                    stacked: true,
+                                    ticks: {
+                                        beginAtZero:true,
+                                         callback: function(label, index, labels) {
+                                              return $.number(label);
+                                          }
+                                    }
+                                }]
+                            },
+                            legend: {
+                                display: false,
+                                labels: {
+                                    fontColor: 'rgb(255, 99, 132)'
+                                }
+                            },
+                            tooltips: {
+                                mode: 'index',
+                                callbacks: {
+                                    title: function(tooltipItems, data) {
+                                        //Return value for title
+                                        var date = moment(tooltipItems[0].xLabel,"MMM DD, YYYY").format("ddd, DD-MMM-YYYY");
+                                        return date;
+                                    },
+                                    label: function(tooltipItem, data) {
+                                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        
+                                        if (tooltipItem.datasetIndex % 2 == 0) {
+                                          return label + $.number(tooltipItem.yLabel);
+                                        }
+                                        else
+                                        {
+                                          // return JSON.stringify(tooltipItem.datasetIndex);
+                                          // return JSON.stringify(data.datasets[tooltipItem.datasetIndex-1].data[tooltipItem.index].y);
+                                          var total = $.number(parseInt(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].y) + parseInt(data.datasets[tooltipItem.datasetIndex-1].data[tooltipItem.index].y));
+                                          var total_label = label + total;
+
+                                          return [total_label];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }); 
+                  }                    
+
                 });
         }
 

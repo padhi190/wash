@@ -425,11 +425,11 @@ class HomeController extends Controller
         $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
         $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
 
-        $data = Income::select(\DB::raw('count(id) as no_vehicles, sum(wax_amount > 0) as wax_amount, DATE(entry_date) as date'))
+        $data = Income::select(\DB::raw('count(id) as no_vehicles, sum(wax_amount > 0) as wax_amount, DATE(entry_date) as date, branch_id'))
                         ->whereBetween('entry_date', [$startdate, $enddate])
                         ->whereIn('income_category_id', [1, 5, 3])
-                        ->where('branch_id', session('branch_id'))
-                        ->groupby('date')->get();
+                        // ->where('branch_id', session('branch_id'))
+                        ->groupby('date')->groupby('branch_id')->get();
 
         
 

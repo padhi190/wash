@@ -477,10 +477,14 @@
               // alert(JSON.stringify(result));
               var chartdata = [];
               var waxdata = [];
+              var branch_id = '<?php echo session("branch_id") ?>';
+              // alert(branch_id);
 
               $.each(result.data, function(key, value){
-                chartdata.push({x : moment(value['date']), y: value['no_vehicles']-value['wax_amount']});
-                waxdata.push({x : moment(value['date']), y: value['wax_amount']});
+                if(value['branch_id'] == branch_id){
+                  chartdata.push({x : moment(value['date']), y: value['no_vehicles']-value['wax_amount']});
+                  waxdata.push({x : moment(value['date']), y: value['wax_amount']});  
+                }
               });
 
               $("#vehiclesLast14DaysChart").remove();
