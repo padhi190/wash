@@ -492,7 +492,7 @@
                     url: "{!! route('loadAllBranchesExpenses') !!}",
                     data: date_data,
                     beforeSend: function(){
-                      var processingText = 'Sabar...'
+                      var processingText = 'Wait for it...'
                       $('#kopo_profit, #banceuy_profit, #bubat_profit').html(processingText);
                       $('#kopo_revenue, #banceuy_revenue, #bubat_revenue').html(processingText);
                       $('#kopo_expense, #banceuy_expense, #bubat_expense').html(processingText);
@@ -647,7 +647,7 @@
                     });
 
                     $("#waxChart").remove();
-                    $("#waxContainer").append('<canvas id="waxChart" style="height:500px"></canvas>');
+                    $("#waxContainer").append('<canvas id="waxChart" style="height:350px"></canvas>');
                     var waxCtx = $("#waxChart");
                     var waxChart = new Chart(waxCtx,{
                         type: 'bar',
