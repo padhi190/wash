@@ -262,7 +262,8 @@
           var date_data = {
               startdate: $('input[name=startdate]').val(),
               enddate: $('input[name=startdate]').val(),
-              category: "total"
+              category: "total",
+              branch_id: '<?php echo session("branch_id") ?>'
           };
           //ajax request for info-box
           $.ajax(

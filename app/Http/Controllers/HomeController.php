@@ -303,6 +303,21 @@ class HomeController extends Controller
 
     }
 
+    public function loadAllBranchesIncomeByDate(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+
+        $data = Income::select(\DB::raw('sum(amount) as amount, sum(wax_amount) as wax_amount, sum(fnb_amount) as fnb_amount, sum(amount + wax_amount + fnb_amount) as total, DATE(entry_date) as date, branch_id'))
+                        ->whereBetween('entry_date', [$startdate, $enddate])
+                        ->groupby('date')->groupby('branch_id')->get();
+
+        return response()->json(compact('data'));
+
+    }
+
     public function loadIncomeDataByDate(Request $request)
     {
         $arrStart = explode("-", $request->input('startdate'));
@@ -311,6 +326,7 @@ class HomeController extends Controller
         $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
 
         $category = $request->input('category');
+        $branch_id = $request->input('branch_id');
 
         switch ($category) {
             case 'carwash':
@@ -353,14 +369,14 @@ class HomeController extends Controller
             $data = Income::select(\DB::raw('sum(amount) as amount,DATE(entry_date) as date'))
                         ->whereBetween('entry_date', [$from, $to])
                         ->whereIn('income_category_id', [$cat_id])
-                        ->where('branch_id', session('branch_id'))
+                        ->where('branch_id', $branch_id)
                         ->groupby('date')->get();
         }
         elseif($category == "total")
         {
             $data = Income::select(\DB::raw('sum(amount) as amount, sum(wax_amount) as wax_amount, sum(fnb_amount) as fnb_amount, (amount + wax_amount + fnb_amount) as total, DATE(entry_date) as date'))
                         ->whereBetween('entry_date', [$from, $to])
-                        ->where('branch_id', session('branch_id'))
+                        ->where('branch_id', $branch_id)
                         ->groupby('date')->get();
         }
         else{
@@ -369,7 +385,7 @@ class HomeController extends Controller
             $data = Income::select(\DB::raw($raw))
                         ->whereBetween('entry_date', [$from, $to])
                         ->where($cat_variable, '>', '0')
-                        ->where('branch_id', session('branch_id'))
+                        ->where('branch_id', $branch_id)
                         ->groupby('date')->get();
         }
 

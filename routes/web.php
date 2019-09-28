@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/loadVehiclesDataByHour', 'HomeController@loadVehiclesDataByHour')->name('loadVehiclesDataByHour');
     Route::get('/loadVehiclesDataByDate', 'HomeController@loadVehiclesDataByDate')->name('loadVehiclesDataByDate');
     Route::get('/loadVehiclesDataByMonth', 'HomeController@loadVehiclesDataByMonth')->name('loadVehiclesDataByMonth');
+    Route::get('/loadAllBranchesIncomeByDate', 'HomeController@loadAllBranchesIncomeByDate')->name('loadAllBranchesIncomeByDate');
     Route::get('/loadExpenseDataByCategory', 'HomeController@loadExpenseDataByCategory')->name('loadExpenseDataByCategory');
     Route::get('/loadExpensesData', 'ExpensesController@loadExpensesData')->name('loadExpensesData');
     Route::get('/loadTrashedVehiclesDataTables', 'VehiclesController@loadTrashedVehiclesDataTables')->name('loadTrashedVehiclesDataTables');

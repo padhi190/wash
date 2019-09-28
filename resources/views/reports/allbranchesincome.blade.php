@@ -144,6 +144,29 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Cum. Sales </h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <!-- <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="chart" id="salesContainer">
+                <canvas id="salesChart" style="height:250px"></canvas>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+    </div>
+
+
           
           <!-- /.box -->
 
@@ -165,6 +188,7 @@
             var date_data = {
                 startdate: start.format('D-M-YYYY'),
                 enddate: end.format('D-M-YYYY'),
+                category: 'total'
             };
             $.ajax(
                 {
@@ -615,12 +639,9 @@
                 {
                   url: "{!! route('loadVehiclesDataByDate') !!}",
                   data: date_data,
-                  beforeSend: function(){
-                      
-                    },
                   success: function(result){
                     // alert(JSON.stringify(result));
-                      console.log(JSON.stringify(result));
+                      // console.log(JSON.stringify(result));
                       var kopo_vehicles = [];
                       var kopo_wax = [];
                       var banceuy_vehicles = [];
@@ -752,6 +773,122 @@
                     }); 
                   }                    
 
+                });
+            $.ajax(
+                {
+                  url: "{!! route('loadAllBranchesIncomeByDate') !!}",
+                  data: date_data,
+                  success: function(result){
+                    // console.log(JSON.stringify(result));
+                    var kopo_cum_sales = [];
+                    var kopo_temp_cum = 0;
+
+                    var bubat_cum_sales = [];
+                    var bubat_temp_cum = 0;
+
+                    var banceuy_cum_sales = [];
+                    var banceuy_temp_cum = 0;
+
+                    $.each(result.data, function(key, value){
+                      if(value['branch_id'] == 1){
+                        kopo_temp_cum += value['total'];
+                        kopo_cum_sales.push({x : moment(value['date']), y: kopo_temp_cum});
+                      }
+
+                      if(value['branch_id'] == 2){
+                        bubat_temp_cum += value['total'];
+                        bubat_cum_sales.push({x : moment(value['date']), y: bubat_temp_cum});
+                      }
+
+                      if(value['branch_id'] == 3){
+                        banceuy_temp_cum += value['total'];
+                        banceuy_cum_sales.push({x : moment(value['date']), y: banceuy_temp_cum});
+                      }
+
+
+                    });
+                    // console.log(JSON.stringify(bubat_cum_sales));
+
+
+                    $("#salesChart").remove();
+                    $("#salesContainer").append('<canvas id="salesChart" style="height:450px"></canvas>');
+                    var salesCtx = $("#salesChart");
+                    var salesChart = new Chart(salesCtx,{
+                        type: 'line',
+                        data: {
+                          datasets: [
+                            {
+                                data: kopo_cum_sales,
+                                label: "Kopo",
+                                backgroundColor: "rgba(255,196,13,1)",
+                                fill: false
+
+                            },
+                            {
+                                data: bubat_cum_sales,
+                                label: "Bubat",
+                                backgroundColor: "rgba(60,141,188,0.9)",
+                                fill: false
+
+                            },
+                            {
+                                data: banceuy_cum_sales,
+                                label: "Banceuy",
+                                backgroundColor: "rgb(30,113,69)",
+                                fill: false
+
+                            }
+
+                          ]        
+                        },
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    type: 'time',
+                                    offset: true,
+                                    stacked: true,
+                                    time: {
+                                        unit: 'day'
+                                    }
+                                }],
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true,
+                                         callback: function(label, index, labels) {
+                                              return $.number(label);
+                                          }
+                                    }
+                                }]
+                            },
+                            legend: {
+                                display: true,
+                                // labels: {
+                                //     fontColor: 'rgb(255, 99, 132)'
+                                // }
+                            },
+                            tooltips: {
+                                mode: 'index',
+                                callbacks: {
+                                    title: function(tooltipItems, data) {
+                                        //Return value for title
+                                        var date = moment(tooltipItems[0].xLabel,"MMM DD, YYYY").format("ddd, DD-MMM-YYYY");
+                                        return date;
+                                    },
+                                    label: function(tooltipItem, data) {
+                                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        
+                                        
+                                        return label + $.number(tooltipItem.yLabel);
+                                    }
+                                }
+                            }
+                        }
+                    }); 
+                  }
                 });
         }
 
