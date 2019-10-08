@@ -264,7 +264,8 @@
 			var date_data = {
                 startdate: $('input[name=startdate]').val(),
                 enddate: $('input[name=enddate]').val(),
-                category: category
+                category: category,
+                branch_id: {{ Session::get('branch_id') }}
             };
 			$.ajax(
                 {

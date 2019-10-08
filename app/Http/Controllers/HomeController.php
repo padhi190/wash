@@ -364,6 +364,7 @@ class HomeController extends Controller
 
         $to = $enddate;
         $from = $startdate;
+        // dd($branch_id);
         if(in_array($category, ["carwash", "bikewash", "voucher", "detailing", "lain2"]))
         {
             $data = Income::select(\DB::raw('sum(amount) as amount,DATE(entry_date) as date'))
