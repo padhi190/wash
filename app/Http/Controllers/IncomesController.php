@@ -1,5 +1,7 @@
 <?php
 
+use \GuzzleHttp\Client;
+
 namespace App\Http\Controllers;
 
 use App\Income;
@@ -160,8 +162,26 @@ class IncomesController extends Controller
 
         // return redirect()->route('incomes.index');
         $request->session()->flash('alert-success', 'Bon no. ' . $request->nobon . ' berhasil ditambahkan!');
+        $this->sendSMS($income);
         // $request->session()->flash('print-bon', '');
         return redirect()->route('incomes.create');
+    }
+
+    private function sendSMS(Income $income)
+    {
+        $url = 'http://192.168.1.10:8090/SendSMS';
+        $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' at Wash Inc ' . $income->branch->branch_name;
+
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get($url, [
+            'query' => ['username' => 'washinc',
+                        'password' => 'kopo168',
+                        'phone' => '08122118611',
+                        'message'=> $message]
+        ]);
+
+        dd($response);
+
     }
 
 
