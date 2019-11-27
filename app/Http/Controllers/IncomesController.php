@@ -162,26 +162,38 @@ class IncomesController extends Controller
 
         // return redirect()->route('incomes.index');
         $request->session()->flash('alert-success', 'Bon no. ' . $request->nobon . ' berhasil ditambahkan!');
-        $this->sendSMS($income);
+        $sms = config('sms');
+        if($sms['on'])
+        {
+            $this->sendSMS($income, $sms);    
+        }
+        
         // $request->session()->flash('print-bon', '');
         return redirect()->route('incomes.create');
     }
 
-    private function sendSMS(Income $income)
+    private function sendSMS(Income $income, $sms)
     {
-        $url = 'http://192.168.1.10:8090/SendSMS';
-        $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' at Wash Inc ' . $income->branch->branch_name;
+        $branch_name = session('branch_name');
+        $url = $sms[$branch_name];
+        $survey_link = 'http://shorturl.at/fvwDZ';
+        $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
+        $phone = $income->vehicle->customer->phone;
+        
 
-        $client = new \GuzzleHttp\Client();
-        $response = $client->get($url, [
-            'query' => ['username' => 'washinc',
-                        'password' => 'kopo168',
-                        'phone' => '08122118611',
-                        'message'=> $message]
-        ]);
+        if($phone != '')
+        {
+            $client = new \GuzzleHttp\Client();
+            $client->get($url, [
+                'query' => ['username' => 'washinc',
+                            'password' => 'kopo168',
+                            'phone' => $phone,
+                            'message'=> $message],
+                'future' => true
+            ]);
 
-        dd($response);
-
+        }
+        
     }
 
 

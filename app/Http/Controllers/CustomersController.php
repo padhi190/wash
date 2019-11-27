@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\Income;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreCustomersRequest;
@@ -313,7 +314,7 @@ class CustomersController extends Controller
         $sales->fnb_amount          = $request->fnb_amount;
         $sales->wax_amount          = $request->wax_amount;
 
-        $vehicle->sales()->save($sales);
+        $income = $vehicle->sales()->save($sales);
         
 
         $branch = \App\Branch::findOrFail(session('branch_id'));
@@ -323,20 +324,38 @@ class CustomersController extends Controller
         $message = 'Customer ' . ucwords($customer->name) . ' ,Plat No. ' .  strtoupper($vehicle->license_plate) . ' & Bon no. ' . $request->nobon . ' berhasil ditambahkan!';
         $request->session()->flash('alert-success', $message);
         // $request->session()->flash('print-bon', '');
+        // dd($income);
+        $sms = config('sms');
+        if($sms['on'])
+        {
+            $this->sendSMS($income, $sms);    
+        }
         return redirect()->route('incomes.create');
 
-        // $relations = [
-        //     'branches' => \App\Branch::get()->pluck('branch_name', 'id')->prepend('Please select', ''),
-        //     'vehicles' => \App\Vehicle::get()->pluck('full_vehicle', 'id')->prepend('Please select', ''),
-        //     'income_categories' => \App\IncomeCategory::get()->pluck('name', 'id'),
-        //     'products' => \App\Product::get()->pluck('name', 'id')->prepend('Please select', ''),
-        //     'payment_types' => \App\Account::get()->pluck('name', 'id'),
-        //     'last_bon' => \App\Branch::where('id', session('branch_id'))->first()->last_bon,
-        //     'vehicle_id' => null,
-        //     'prices' => config('pricelist')
-        // ];
+    }
 
-        // return view('incomes.create', $relations);
+    private function sendSMS(Income $income, $sms)
+    {
+        $branch_name = session('branch_name');
+        $url = $sms[$branch_name];
+        $survey_link = 'http://shorturl.at/fvwDZ';
+        $message='This is your digital receipt for Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
+        $phone = $income->vehicle->customer->phone;
+        
+
+        if($phone != '')
+        {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->get($url, [
+                'query' => ['username' => 'washinc',
+                            'password' => 'kopo168',
+                            'phone' => $phone,
+                            'message'=> $message],
+                'future' => true
+            ]);
+
+        }
+        
     }
 
 }
