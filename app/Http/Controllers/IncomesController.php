@@ -162,20 +162,19 @@ class IncomesController extends Controller
 
         // return redirect()->route('incomes.index');
         $request->session()->flash('alert-success', 'Bon no. ' . $request->nobon . ' berhasil ditambahkan!');
-        $sms = config('sms');
-        if($sms['on'])
+        if($branch->sms_on)
         {
-            $this->sendSMS($income, $sms);    
+            $this->sendSMS($income, $branch);    
         }
         
         // $request->session()->flash('print-bon', '');
         return redirect()->route('incomes.create');
     }
 
-    private function sendSMS(Income $income, $sms)
+    private function sendSMS(Income $income, $branch)
     {
-        $branch_name = session('branch_name');
-        $url = $sms[$branch_name];
+        $branch = \App\Branch::findOrFail(session('branch_id'));
+        $url = $branch->sms_url.'/SendSMS?';
         $survey_link = 'http://shorturl.at/fvwDZ';
         $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
         $phone = $income->vehicle->customer->phone;

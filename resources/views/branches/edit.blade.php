@@ -72,6 +72,32 @@
                     @endif
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('sms_url', 'SMS URL', ['class' => 'control-label']) !!}
+                    {!! Form::text('sms_url', old('sms_url'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('sms_url'))
+                        <p class="help-block">
+                            {{ $errors->first('sms_url') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('sms_on', 'SMS BON?', ['class' => 'control-label']) !!}
+                    {!! Form::text('sms_on', old('sms_on'), ['class' => 'form-control', 'placeholder' => '']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('sms_on'))
+                        <p class="help-block">
+                            {{ $errors->first('sms_on') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
             
         </div>
     </div>
