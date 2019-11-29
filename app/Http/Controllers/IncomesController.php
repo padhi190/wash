@@ -188,6 +188,7 @@ class IncomesController extends Controller
                             'password' => 'kopo168',
                             'phone' => $phone,
                             'message'=> $message],
+                'timeout'=> 3,
                 'future' => true
             ]);
 
