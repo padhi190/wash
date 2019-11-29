@@ -10,6 +10,8 @@ use App\Http\Requests\StoreCustomersRequest;
 use App\Http\Requests\StoreCustomerFullRequest;
 use App\Http\Requests\UpdateCustomersRequest;
 use Yajra\Datatables\Datatables;
+use App\Helpers\Helper;
+
 
 class CustomersController extends Controller
 {
@@ -325,37 +327,12 @@ class CustomersController extends Controller
         $request->session()->flash('alert-success', $message);
         // $request->session()->flash('print-bon', '');
         // dd($income);
-        $sms = config('sms');
-        if($sms['on'])
+        if($branch->sms_on)
         {
-            $this->sendSMS($income, $sms);    
+            Helper::sendBON($income, $branch);    
         }
         return redirect()->route('incomes.create');
 
-    }
-
-    private function sendSMS(Income $income, $sms)
-    {
-        $branch_name = session('branch_name');
-        $url = $sms[$branch_name];
-        $survey_link = 'http://shorturl.at/fvwDZ';
-        $message='This is your digital receipt for Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
-        $phone = $income->vehicle->customer->phone;
-        
-
-        if($phone != '')
-        {
-            $client = new \GuzzleHttp\Client();
-            $response = $client->get($url, [
-                'query' => ['username' => 'washinc',
-                            'password' => 'kopo168',
-                            'phone' => $phone,
-                            'message'=> $message],
-                'future' => true
-            ]);
-
-        }
-        
     }
 
 }
