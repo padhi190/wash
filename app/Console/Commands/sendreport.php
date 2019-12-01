@@ -117,27 +117,29 @@ class sendreport extends Command
 
         $client = new \GuzzleHttp\Client();
 
+        $message='';
         foreach ($branches as $branch) {
             # code...
             $branch_name = $branch->branch_name;
-            $message = '*'.strtoupper($branch_name) .'*'.PHP_EOL . 'Carwash: '.$data['carwash_no'][$branch_name]. ' (Rp '. 
+            $message .= '*'.strtoupper($branch_name) .'*'.PHP_EOL . 'Carwash: '.$data['carwash_no'][$branch_name]. ' (Rp '. 
                     number_format($data['carwash_dollar'][$branch_name]) .')' . PHP_EOL;
             $message .= 'Bikewash: ' . $data['bikewash_no'][$branch_name]. ' (Rp ' . 
                         number_format($data['bikewash_dollar'][$branch_name]).')' .PHP_EOL .
                         'Wax: ' . $data['wax_no'][$branch_name]. ' (Rp '. 
                         number_format($data['wax_dollar'][$branch_name]) .')' . PHP_EOL .
                         'Detailing: ' . $data['detailing_no'][$branch_name]. ' (Rp '. 
-                        number_format($data['detailing_dollar'][$branch_name]) .')' .PHP_EOL;
+                        number_format($data['detailing_dollar'][$branch_name]) .')' .PHP_EOL .
+                        '*Total: Rp ' . number_format($data['sales_dollar'][$branch_name]) . '*' .PHP_EOL . PHP_EOL;
 
-            $response = $client->put($branch->sms_url, [
+        }
+
+        $response = $client->put($branch->sms_url, [
             'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
                         'uid' => '6281322999456',
                         'to' => '6281322999456',
                         'custom_uid' => $branch_name.Carbon::now(),
                         'text'=> $message],
             ]);
-
-        }
 
         dd($message);
     }
