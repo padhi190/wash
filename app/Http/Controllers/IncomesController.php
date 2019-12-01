@@ -165,8 +165,8 @@ class IncomesController extends Controller
         $request->session()->flash('alert-success', 'Bon no. ' . $request->nobon . ' berhasil ditambahkan!');
         if($branch->sms_on)
         {
-            // Helper::sendBON($income, $branch);
-            Helper::sendVOUCHER($income, $branch);    
+            Helper::sendBON($income, $branch);
+            // Helper::sendVOUCHER($income, $branch);    
         }
         
         // $request->session()->flash('print-bon', '');

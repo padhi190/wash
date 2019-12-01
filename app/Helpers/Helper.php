@@ -73,12 +73,12 @@ class Helper
 
     public static function sendVOUCHER(\App\Income $income, $branch)
     {
-    	$valid = Carbon::createFromFormat('Y-m-d H:i', $income->entry_date);
+    	$valid = $income->created_at;
     	$valid->addDays(14);
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
         $voucher= self::generateRandomString();
-        $message='Thank you for your feedback. Show this sms to our cashier to get our Carwash + Spray Wax for ~Rp 65,000~  Rp 50,000 on your next visit at Wash, Inc ' . $income->branch->branch_name .'. *Voucher code: ' . $voucher .'* valid until *' . $valid->format("j M 'y") . '*. More info: ' . $income->branch->phone;
+        $message='Thank you for your feedback. Show this sms to our cashier to get our Carwash + Spray Wax for ~Rp 65,000~  Rp 50,000 on your next visit at Wash, Inc ' . $income->branch->branch_name .'. *Voucher code: ' . $voucher .'* valid until *' . $valid->format("j M 'y"). '*. More info: ' . $income->branch->phone;
         $phone = $income->vehicle->customer->phone;
         $phone = self::convert_phone($phone);
 
