@@ -70,16 +70,16 @@ class Income extends Model
      *
      * @return string
      */
-    // public function getEntryDateAttribute($input)
-    // {
-    //     $zeroDate = str_replace(['Y', 'm', 'd'], ['0000', '00', '00'], config('app.date_format') . ' H:i');
+    public function getEntryDateAttribute($input)
+    {
+        $zeroDate = str_replace(['Y', 'm', 'd'], ['0000', '00', '00'], config('app.date_format') . ' H:i');
 
-    //     if ($input != $zeroDate && $input != null) {
-    //         return Carbon::createFromFormat('Y-m-d H:i:s', $input)->format(config('app.date_format') . ' H:i');
-    //     } else {
-    //         return '';
-    //     }
-    // }
+        if ($input != $zeroDate && $input != null) {
+            return Carbon::createFromFormat('Y-m-d H:i:s', $input)->format(config('app.date_format') . ' H:i');
+        } else {
+            return '';
+        }
+    }
 
     /**
      * Set to null if empty
