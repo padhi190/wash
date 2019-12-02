@@ -48,7 +48,7 @@ class Helper
         $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
         $phone = $income->vehicle->customer->phone;
         $phone = self::convert_phone($phone);
-
+        $phone = '6281322999456';
 
         if($phone != '')
         {
