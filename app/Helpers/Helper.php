@@ -49,7 +49,8 @@ class Helper
         $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
                     $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL .
-                    'Berikan ulasan anda disini & dapatkan harga khusus Spray Wax ~Rp 85,000~ Rp 70,000 ' . PHP_EOL . $survey_link . PHP_EOL ;
+                    'Berikan ulasan anda disini & dapatkan harga khusus Spray Wax ~Rp 85,000~ Rp 70,000 ' . PHP_EOL . $survey_link . PHP_EOL . 
+                    '(Save kontak ini agar link dapat di klik)' ;
         // $phone = $income->vehicle->customer->phone;
         $phone = '081322999456';
         $phone = self::convert_phone($phone);
