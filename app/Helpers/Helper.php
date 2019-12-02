@@ -45,10 +45,15 @@ class Helper
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
         $survey_link = 'http://shorturl.at/fvwDZ';
-        $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
-        $phone = $income->vehicle->customer->phone;
+        // $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
+        $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
+                    'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
+                    $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL .
+                    'Berikan ulasan anda disini & dapatkan harga khusus Spray Wax ~Rp 85,000~ Rp 70,000 ' . PHP_EOL . $survey_link . PHP_EOL ;
+        // $phone = $income->vehicle->customer->phone;
+        $phone = '081322999456';
         $phone = self::convert_phone($phone);
-        $phone = '6281322999456';
+        // $phone = '6281322999456';
 
         if($phone != '')
         {
@@ -56,7 +61,7 @@ class Helper
             
             $response = $client->put($url, [
                 'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
-                            'uid' => '6281322999456',
+                            'uid' => '6282116273608',
                             'to' => $phone,
                             'custom_uid' => $income->nobon,
                             'text'=> $message],
@@ -89,7 +94,7 @@ class Helper
             
             $response = $client->put($url, [
                 'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
-                            'uid' => '6281322999456',
+                            'uid' => '6282116273608',
                             'to' => $phone,
                             'custom_uid' => $income->nobon,
                             'text'=> $message],
