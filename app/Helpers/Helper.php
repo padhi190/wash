@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 use Carbon\Carbon;
+use GuzzleHttp\Exception\RequestException;
 
 class Helper
 {
@@ -45,35 +46,17 @@ class Helper
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
         $survey_link = 'http://shorturl.at/fvwDZ';
-        // $message='This is your digital receipt for Rp ' . number_format($income->total_amount) . ' (' . $income->vehicle->license_plate . ') at Wash Inc ' . $income->branch->branch_name . '. Leave your feedback at ' . $survey_link;
+        
         $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
                     $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL .
-                    'Berikan ulasan anda disini & dapatkan harga khusus Spray Wax ~Rp 85,000~ Rp 70,000 ' . PHP_EOL . $survey_link . PHP_EOL . 
+                    'Berikan ulasan anda & dapatkan harga khusus Spray Wax ~Rp 85,000~ Rp 70,000 ' . PHP_EOL . $survey_link . PHP_EOL . 
                     '(Save kontak ini agar link dapat di klik)' ;
         // $phone = $income->vehicle->customer->phone;
         $phone = '081322999456';
-        $phone = self::convert_phone($phone);
-        // $phone = '6281322999456';
-
-        if($phone != '')
-        {
-            $client = new \GuzzleHttp\Client();
-            
-            $response = $client->put($url, [
-                'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
-                            'uid' => '6282116273608',
-                            'to' => $phone,
-                            'custom_uid' => $income->nobon,
-                            'text'=> $message],
-                'future' => true
-            ]);
-
-            $response->then(function ($response) {
-                console.log($response);
-            });
-
-        }
+        $custom_uid = $income->nobon;
+        self::sendWA($url, $phone, $message, $custom_uid);
+        
         
     }
 
@@ -86,6 +69,83 @@ class Helper
         $voucher= self::generateRandomString();
         $message='Thank you for your feedback. Show this sms to our cashier to get our Carwash + Spray Wax for ~Rp 65,000~  Rp 50,000 on your next visit at Wash, Inc ' . $income->branch->branch_name .'. *Voucher code: ' . $voucher .'* valid until *' . $valid->format("j M 'y"). '*. More info: ' . $income->branch->phone;
         $phone = $income->vehicle->customer->phone;
+        $custom_uid = $income->nobon;
+        self::sendWA($url, $phone, $message, $custom_uid);
+        // $phone = self::convert_phone($phone);
+
+
+        // if($phone != '')
+        // {
+        //     $client = new \GuzzleHttp\Client();
+            
+        //     $response = $client->put($url, [
+        //         'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
+        //                     'uid' => '6282116273608',
+        //                     'to' => $phone,
+        //                     'custom_uid' => $income->nobon,
+        //                     'text'=> $message],
+        //         'future' => true
+        //     ]);
+
+        //     $response->then(function ($response) {
+        //         console.log($response);
+        //     });
+
+        // }
+        
+    }
+
+
+    public static function checkWAStatus($phone)
+    {
+        $uid = self::convert_phone($phone);
+        $url = 'https://www.waboxapp.com/api/status/'.$uid;
+        if($phone != '')
+        {
+            $client = new \GuzzleHttp\Client();
+            
+            try {
+                $response = $client->put($url, [
+                    'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d'],
+                ]);
+                if($response->getStatusCode() == "200")
+                    return $response->json();
+            } catch (RequestException $e) {
+                 return ['success' => false];
+            }
+
+        }
+
+
+    }
+
+    public static function sendExpenseWarning($expense, $branch)
+    {
+        $message = $expense->expense_category->name . " Rp " . number_format($expense->amount) . PHP_EOL . $expense->signature . PHP_EOL .
+                    $expense->note . PHP_EOL . "at Wash, Inc " . $branch->branch_name;
+        $url = $branch->sms_url;
+
+        if($branch->branch_name == "Kopo")
+        {
+            $phones = ['081322999456', '08122363622'];
+        }
+        elseif ($branch->branch_name = "Buah Batu") {
+            $phones = ['081322999456'];   
+        }
+        else
+        {
+            $phones = ['081322999456', '08122363622'];
+        }
+
+        foreach ($phones as $phone) {
+            $custom_uid = $expense->id . $branch->branch_name . $phone;
+            self::sendWA($url, $phone, $message, $custom_uid);
+        }
+        
+    }
+
+    public static function sendWA($url, $phone, $message, $custom_uid)
+    {
         $phone = self::convert_phone($phone);
 
 
@@ -97,7 +157,7 @@ class Helper
                 'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
                             'uid' => '6282116273608',
                             'to' => $phone,
-                            'custom_uid' => $income->nobon,
+                            'custom_uid' => $custom_uid,
                             'text'=> $message],
                 'future' => true
             ]);
@@ -107,7 +167,6 @@ class Helper
             });
 
         }
-        
     }
    
 }

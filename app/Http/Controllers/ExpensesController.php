@@ -9,6 +9,8 @@ use App\Http\Requests\StoreExpensesRequest;
 use App\Http\Requests\UpdateExpensesRequest;
 use Yajra\Datatables\Datatables;
 use Carbon\Carbon;
+use App\Helpers\Helper;
+
 
 
 class ExpensesController extends Controller
@@ -107,6 +109,11 @@ class ExpensesController extends Controller
             return abort(401);
         }
         $expense = Expense::create($request->all());
+
+        $branch = \App\Branch::find($expense->branch_id);
+
+        if($expense->amount >= 500000)
+            Helper::sendExpenseWarning($expense, $branch);
 
         $request->session()->flash('alert-success', 'Bon no. ' . $expense->id . ' berhasil ditambahkan!');
         $request->session()->flash('print-bon',array($expense->id, $expense->entry_date, $expense->expense_category->name , $expense->amount, $expense->signature));

@@ -27,6 +27,10 @@
 
         <button class="btn btn-primary btn-lg" data-toggle="control-sidebar" id="antrianButton">Antrian</button>
 
+        <button type="button" data-toggle="tooltip" title="{{$wainfo}}" class="btn {{$wastatus['success'] ? 'btn-success' : 'btn-danger'}} btn-lg">
+              <i class="fa fa-whatsapp fa-lg"></i> 
+        </button>
+
        
     </p>
     @endcan

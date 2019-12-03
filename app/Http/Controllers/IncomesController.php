@@ -118,6 +118,18 @@ class IncomesController extends Controller
 
 
         
+        $phone = '082116273608';
+        $wastatus = Helper::checkWAStatus($phone);
+
+        if($wastatus['success'])
+        {
+            $wainfo = 'Connected to ' .$wastatus['uid'] . " (" .
+                      $wastatus['battery'] . "%)";
+
+        }
+
+        else
+            $wainfo = "not connected";
 
         $relations = [
             'customer_id' => null,
@@ -129,7 +141,11 @@ class IncomesController extends Controller
             'vehicle_id' => null,
             'prices' => config('pricelist'.session('branch_id')),
             'last_sales' => $last_sales,
+            'wastatus' => $wastatus,
+            'wainfo' =>$wainfo,
         ];
+
+        // dd($wastatus);
 
         $antrian = \App\Antrian::where('branch_id',session('branch_id'))->orderBy('arrival_time', 'asc')->get();
         $antrian_mobil = \App\Antrian::where('branch_id',session('branch_id'))->where('type', 'mobil')->count();
@@ -140,6 +156,7 @@ class IncomesController extends Controller
                 'antrian_motor' => $antrian_motor
                 ]);
 
+        
         return view('incomes.create', $relations);
     }
 
