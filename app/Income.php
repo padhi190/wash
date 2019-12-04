@@ -33,6 +33,11 @@ class Income extends Model
         Income::observe(new \App\Observers\UserActionsObserver);
     }
 
+    public function survey()
+    {
+        return $this->hasOne(Survey::class);
+    }
+
     /**
      * Set to null if empty
      * @param $input

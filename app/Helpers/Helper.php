@@ -45,7 +45,8 @@ class Helper
     {
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
-        $survey_link = 'http://shorturl.at/fvwDZ';
+        // $survey_link = 'http://shorturl.at/fvwDZ';
+        $survey_link = route('survey.create', ['branch_id' => $branch->id, 'income_id' => $income->id]);
         
         $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .

@@ -22,6 +22,9 @@ $this->post('password/reset', 'Auth\ResetPasswordController@reset')->name('auth.
 $this->get('change_password', 'Auth\ChangePasswordController@showChangePasswordForm')->name('auth.change_password');
 $this->patch('change_password', 'Auth\ChangePasswordController@changePassword')->name('auth.change_password');
 
+$this->get('s/{branch_id}/{income_id}','SurveyController@create')->name('survey.create');
+$this->post('s/store', 'SurveyController@store')->name('survey.store');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index');
     Route::get('/monthly_reports/income_statement', 'HomeController@viewIncomeStatement')->name('monthly_reports.incomestatement');
@@ -33,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/history/income', ['uses' => 'HistoryController@income', 'as' => 'history.income']);
     Route::get('/history/expense', ['uses' => 'HistoryController@expense', 'as' => 'history.expense']);
     Route::get('/change_branch/{branch_id}', 'ChangeBranchController@index');
+    Route::resource('surveytemplate', 'SurveyTemplateController');
     Route::resource('roles', 'RolesController');
     Route::resource('antrians', 'AntrianController');
     Route::post('roles_mass_destroy', ['uses' => 'RolesController@massDestroy', 'as' => 'roles.mass_destroy']);

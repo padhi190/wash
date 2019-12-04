@@ -26,15 +26,7 @@ class IncomesController extends Controller
             return abort(401);
         }
 
-        // $to = Carbon::now();
-        // $from = clone $to;
-        // $from->subDays(14);
-        // $from->hour=5;
-        // $from->minute=0;
-        // $incomes = Income::with('income_category','vehicle','payment_type')->orderBy('entry_date','desc')
-        //             ->whereBetween('entry_date', [$from, $to])
-        //             ->where('branch_id', session('branch_id'))
-        //             ->get();
+        
         $ajaxurl = 'loadIncomesData';
         $title = 'Last 14 Days';
         return view('incomes.index', compact('ajaxurl', 'title'));
@@ -49,10 +41,7 @@ class IncomesController extends Controller
         
         $to = $enddate;
         $from = $startdate;
-        // $from->subDays(14);
-        // $from->hour=5;
-        // $from->minute=0;
-        // dd($request->input('enddate'));
+       
         $query = Income::query();
         $query->between($from, $to)->where('branch_id', session('branch_id'))->with('income_category', 'vehicle','payment_type');
         $query->select('incomes.*');
