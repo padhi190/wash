@@ -68,7 +68,7 @@ class Helper
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
         $voucher= self::generateRandomString();
-        $message='Terima Kasih atas feedback Anda. Anda mendapatkan harga khusus Carwash + Spray Wax for ~Rp 65,000~  Rp 50,000 di Wash, Inc ' . $income->branch->branch_name .'. *Kode voucher: ' . $voucher .'* berlaku s.d. *' . $valid->format("j M 'y"). '*. Info: ' . $income->branch->phone;
+        $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus Carwash + Spray Wax for ~Rp 65,000~  Rp 50,000' . PHP_EOL . ' di Wash, Inc ' . $income->branch->branch_name .'. *Kode voucher: ' . $voucher .'* berlaku s.d. *' . $valid->format("j M 'y"). '*. Info: ' . $income->branch->phone;
         // $phone = $income->vehicle->customer->phone;
         $phone = '081322999456';
         $custom_uid = $income->nobon . Carbon::now();

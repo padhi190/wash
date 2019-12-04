@@ -30,12 +30,15 @@ class SurveyController extends Controller
         // dd(url('survey.create/{{$branch_id}}/{{$income_id}}'));
         // dd(route('survey.create', ['branch_id' => $branch_id, 'income_id' => $income_id]));
         $bon = Income::where('id',$income_id)->where('branch_id',$branch_id)->first();
+        if(is_null($bon)){
+            return "Data tidak ditemukan";
+        }
 
         $survey_exist = Survey::where('income_id', $bon->id)->where('branch_id', $branch_id)->count();
         $survey_template = SurveyTemplate::find('1');
         if($survey_exist)
         {
-            echo "Anda sudah mengisi survey. Terima Kasih.";
+            return "Anda sudah mengisi survey. Terima Kasih.";
         }
         else
         {
