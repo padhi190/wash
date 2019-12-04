@@ -6,6 +6,7 @@ use App\Survey;
 use App\Income;
 use App\SurveyTemplate;
 use Illuminate\Http\Request;
+use App\Helpers\Helper;
 
 class SurveyController extends Controller
 {
@@ -57,8 +58,13 @@ class SurveyController extends Controller
     {
         //
         $income = Income::where('id',$request->income_id)->where('branch_id',$request->branch_id)->count();
+        $branch = \App\Branch::find($request->branch_id);
         if($income)
+        {
             $survey = Survey::create($request->all());
+            $phone = $survey->income->vehicle->customer->phone;
+            Helper::sendVOUCHER($survey->income, $branch);
+        }
         echo "Terima Kasih";
     }
 
