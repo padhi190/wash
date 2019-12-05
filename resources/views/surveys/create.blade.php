@@ -47,7 +47,7 @@ h1 { font-size: 1.5em; margin: 10px; display:block; }
 @stop
 
 @section('content')
-    <img src="{{asset('img/logo.jpeg')}}" style="width: 100px">
+    <img src="{{asset('img/logo_white.jpeg')}}" style="width: 100px; margin-left: auto; margin-right: auto; display: block">
     <h3 class="page-title">Survey Kepuasan Pelanggan</h3>
     {!! Form::open(['method' => 'POST', 'route' => ['survey.store']]) !!}
 
