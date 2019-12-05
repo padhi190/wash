@@ -43,7 +43,7 @@ class Helper
 
 	public static function sendBON(\App\Income $income, $branch)
     {
-        $branch = \App\Branch::findOrFail(session('branch_id'));
+        $branch = \App\Branch::find($branch->id);
         $url = $branch->sms_url;
         // $survey_link = 'http://shorturl.at/fvwDZ';
         $survey_link = route('survey.create', ['branch_id' => $branch->id, 'income_id' => base_convert($income->id,10, 16)]);
@@ -65,7 +65,7 @@ class Helper
     {
     	$valid = $income->created_at;
     	$valid->addDays(14);
-        $branch = \App\Branch::findOrFail(session('branch_id'));
+        $branch = \App\Branch::find($branch->id);
         $url = $branch->sms_url;
         $voucher= self::generateRandomString();
         $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus Spray Wax ~Rp 85,000~  Rp 70,000' . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $voucher .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
