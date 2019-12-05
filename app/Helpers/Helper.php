@@ -46,7 +46,7 @@ class Helper
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
         // $survey_link = 'http://shorturl.at/fvwDZ';
-        $survey_link = route('survey.create', ['branch_id' => $branch->id, 'income_id' => $income->id]);
+        $survey_link = route('survey.create', ['branch_id' => $branch->id, 'income_id' => base_convert($income->id,10, 16)]);
         
         $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
@@ -68,32 +68,12 @@ class Helper
         $branch = \App\Branch::findOrFail(session('branch_id'));
         $url = $branch->sms_url;
         $voucher= self::generateRandomString();
-        $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus Carwash + Spray Wax for ~Rp 65,000~  Rp 50,000' . PHP_EOL . ' di Wash, Inc ' . $income->branch->branch_name .'. *Kode voucher: ' . $voucher .'* berlaku s.d. *' . $valid->format("j M 'y"). '*. Info: ' . $income->branch->phone;
+        $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus Spray Wax ~Rp 85,000~  Rp 70,000' . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $voucher .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
         // $phone = $income->vehicle->customer->phone;
         $phone = '081322999456';
         $custom_uid = $income->nobon . Carbon::now();
         self::sendWA($url, $phone, $message, $custom_uid);
-        // $phone = self::convert_phone($phone);
-
-
-        // if($phone != '')
-        // {
-        //     $client = new \GuzzleHttp\Client();
-            
-        //     $response = $client->put($url, [
-        //         'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
-        //                     'uid' => '6282116273608',
-        //                     'to' => $phone,
-        //                     'custom_uid' => $income->nobon,
-        //                     'text'=> $message],
-        //         'future' => true
-        //     ]);
-
-        //     $response->then(function ($response) {
-        //         console.log($response);
-        //     });
-
-        // }
+        
         
     }
 

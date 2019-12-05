@@ -7,6 +7,7 @@ use App\Income;
 use App\SurveyTemplate;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
+use App\Http\Requests\StoreSurvey;
 
 class SurveyController extends Controller
 {
@@ -27,6 +28,7 @@ class SurveyController extends Controller
      */
     public function create($branch_id, $income_id)
     {
+        $income_id = base_convert($income_id, 16, 10);
         // dd(url('survey.create/{{$branch_id}}/{{$income_id}}'));
         // dd(route('survey.create', ['branch_id' => $branch_id, 'income_id' => $income_id]));
         $bon = Income::where('id',$income_id)->where('branch_id',$branch_id)->first();
@@ -57,9 +59,15 @@ class SurveyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreSurvey $request)
     {
         //
+        $survey_exist = Survey::where('income_id', $request->income_id)->where('branch_id', $request->branch_id)->count();
+        if($survey_exist)
+        {
+            $message = 'Ulasan Anda sudah kami terima';
+            return view('surveys.message', compact('message'));
+        }
         $income = Income::where('id',$request->income_id)->where('branch_id',$request->branch_id)->count();
         $branch = \App\Branch::find($request->branch_id);
         if($income)
@@ -68,7 +76,8 @@ class SurveyController extends Controller
             $phone = $survey->income->vehicle->customer->phone;
             Helper::sendVOUCHER($survey->income, $branch);
         }
-        echo "Terima Kasih";
+        $message = "Terima Kasih atas feedback Anda";
+        return view('surveys.message', compact('message'));
     }
 
     /**
