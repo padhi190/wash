@@ -15,6 +15,8 @@ class SurveyTemplateController extends Controller
     public function index()
     {
         //
+        $surveytemplates = SurveyTemplate::all();
+        return view('surveytemplates.index', compact('surveytemplates'));
     }
 
     /**
@@ -38,7 +40,7 @@ class SurveyTemplateController extends Controller
     {
         //
         $surveytemplate = SurveyTemplate::create($request->all());
-        return view('surveytemplates.create');
+        return redirect()->route('surveytemplate.index');
     }
 
     /**
@@ -58,9 +60,12 @@ class SurveyTemplateController extends Controller
      * @param  \App\SurveyTemplate  $surveyTemplate
      * @return \Illuminate\Http\Response
      */
-    public function edit(SurveyTemplate $surveyTemplate)
+    public function edit($id)
     {
         //
+        $surveytemplate = SurveyTemplate::findOrFail($id);
+
+        return view('surveytemplates.edit', compact('surveytemplate'));
     }
 
     /**
@@ -70,9 +75,13 @@ class SurveyTemplateController extends Controller
      * @param  \App\SurveyTemplate  $surveyTemplate
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SurveyTemplate $surveyTemplate)
+    public function update(Request $request, $id)
     {
         //
+        $surveytemplate = SurveyTemplate::findOrFail($id);
+        $surveytemplate->update($request->all());
+
+        return redirect()->route('surveytemplate.index');
     }
 
     /**
@@ -81,8 +90,12 @@ class SurveyTemplateController extends Controller
      * @param  \App\SurveyTemplate  $surveyTemplate
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SurveyTemplate $surveyTemplate)
+    public function destroy($id)
     {
         //
+        $surveytemplate = surveytemplate::findOrFail($id);
+        $surveytemplate->delete();
+
+        return redirect()->route('surveytemplate.index');
     }
 }

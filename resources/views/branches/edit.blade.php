@@ -98,6 +98,19 @@
                     @endif
                 </div>
             </div>
+
+             <div class="row">
+                <div class="col-xs-12 form-group">
+                    {!! Form::label('survey_template_id', 'Survey Template', ['class' => 'control-label']) !!}
+                    {!! Form::select('survey_template_id', $survey_template_id, old('survey_template_id'), ['class' => 'form-control select2']) !!}
+                    <p class="help-block"></p>
+                    @if($errors->has('survey_template_id'))
+                        <p class="help-block">
+                            {{ $errors->first('survey_template_id') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
             
         </div>
     </div>

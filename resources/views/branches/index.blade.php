@@ -28,6 +28,7 @@
                         <th>@lang('quickadmin.branch.fields.last_bon')</th>
                         <th>SMS url</th>
                         <th>SMS bon?</th>
+                        <th>Survey Template</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -47,6 +48,7 @@
                                 <td>{{ $branch->last_bon }}</td>
                                 <td>{{ $branch->sms_url }}</td>
                                 <td>{{ $branch->sms_on }}</td>
+                                <td>{{ $branch->survey_template['template_name'] }}</td>
                                 <td>
                                     @can('branch_view')
                                     <a href="{{ route('branches.show',[$branch->id]) }}" class="btn btn-xs btn-primary">@lang('quickadmin.view')</a>

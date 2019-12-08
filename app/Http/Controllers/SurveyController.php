@@ -8,6 +8,8 @@ use App\SurveyTemplate;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 use App\Http\Requests\StoreSurvey;
+use Yajra\Datatables\Datatables;
+use Carbon\Carbon;
 
 class SurveyController extends Controller
 {
@@ -19,6 +21,9 @@ class SurveyController extends Controller
     public function index()
     {
         //
+        $ajaxurl = 'loadSurveyData';
+        $survey_template_id = \App\SurveyTemplate::get()->pluck('template_name', 'id')->prepend('Please select', '');
+        return view('surveys.index', compact('ajaxurl', 'survey_template_id'));
     }
 
     /**
@@ -32,13 +37,15 @@ class SurveyController extends Controller
         // dd(url('survey.create/{{$branch_id}}/{{$income_id}}'));
         // dd(route('survey.create', ['branch_id' => $branch_id, 'income_id' => $income_id]));
         $bon = Income::where('id',$income_id)->where('branch_id',$branch_id)->first();
+        
         if(is_null($bon)){
             $message = 'Data Tidak Ditemukan';
             return view('surveys.message',compact('message'));
         }
 
         $survey_exist = Survey::where('income_id', $bon->id)->where('branch_id', $branch_id)->count();
-        $survey_template = SurveyTemplate::find('1');
+        $branch = \App\Branch::find($branch_id);
+        $survey_template = $branch->survey_template;
         if($survey_exist)
         {
             $message = "Anda sudah mengisi survey. Terima Kasih.";
@@ -126,4 +133,47 @@ class SurveyController extends Controller
     {
         //
     }
+
+    public function loadSurveyData(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+        $survey_template_id = $request->input('survey_template_id');
+        // $to = Carbon::now();
+        // $from = clone $to;
+        // $from->subDays(14);
+        // $from->hour=5;
+        // $from->minute=0;
+
+        $query = Survey::query();
+        $query->whereBetween('created_at',[$from, $to])->where('branch_id', session('branch_id'))->where('template_id', $survey_template_id);
+        $query->with('income');
+        $query->select('surveys.*');
+        $template = 'actionsTemplate2';
+
+        $datatables = Datatables::of($query);
+        $datatables->setRowAttr([
+                'data-entry-id' => '{{$id}}',
+            ]);
+        $datatables->editColumn('amount', function($query){
+                  return number_format($query->income->total_amount);  
+                });
+        // $datatables->editColumn('amount_rp', function($q){
+        //     return 'Rp. ' . number_format($q->amount);
+        // });
+        // $datatables->editColumn('actions', function ($row) use ($template) {
+        //         $gateKey  = 'expense_';
+        //         $routeKey = 'expenses';
+
+        //         return view($template, compact('row', 'gateKey', 'routeKey'));
+        //     });
+        // $datatables->rawColumns(['actions']);
+        return $datatables->make(true);
+    }
+
 }

@@ -17,7 +17,7 @@ class Branch extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['branch_name', 'address', 'city', 'phone', 'last_bon', 'sms_url', 'sms_on'];
+    protected $fillable = ['branch_name', 'address', 'city', 'phone', 'last_bon', 'sms_url', 'sms_on', 'survey_template_id'];
     
     public static function boot()
     {
@@ -26,4 +26,8 @@ class Branch extends Model
         Branch::observe(new \App\Observers\UserActionsObserver);
     }
     
+    public function survey_template()
+    {
+        return $this->belongsTo(SurveyTemplate::class, 'survey_template_id');
+    }
 }

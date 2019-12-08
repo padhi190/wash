@@ -57,6 +57,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/loadAllBranchesIncomeByDate', 'HomeController@loadAllBranchesIncomeByDate')->name('loadAllBranchesIncomeByDate');
     Route::get('/loadExpenseDataByCategory', 'HomeController@loadExpenseDataByCategory')->name('loadExpenseDataByCategory');
     Route::get('/loadExpensesData', 'ExpensesController@loadExpensesData')->name('loadExpensesData');
+    Route::get('/loadSurveyData', 'SurveyController@loadSurveyData')->name('loadSurveyData');
+    Route::get('/survey','SurveyController@index')->name('survey.index');
     Route::get('/loadTrashedVehiclesDataTables', 'VehiclesController@loadTrashedVehiclesDataTables')->name('loadTrashedVehiclesDataTables');
     Route::get('/loadTrashedIncomesData', 'IncomesController@loadTrashedIncomesData')->name('loadTrashedIncomesData');
     Route::get('/loadTrashedExpensesData', 'ExpensesController@loadTrashedExpensesData')->name('loadTrashedExpensesData');

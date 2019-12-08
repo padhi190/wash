@@ -68,8 +68,9 @@ class BranchesController extends Controller
             return abort(401);
         }
         $branch = Branch::findOrFail($id);
+        $survey_template_id = \App\SurveyTemplate::get()->pluck('template_name', 'id')->prepend('Please select', '');
 
-        return view('branches.edit', compact('branch'));
+        return view('branches.edit', compact('branch', 'survey_template_id'));
     }
 
     /**
