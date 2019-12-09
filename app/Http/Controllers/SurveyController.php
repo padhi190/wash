@@ -144,16 +144,12 @@ class SurveyController extends Controller
         $to = $enddate;
         $from = $startdate;
         $survey_template_id = $request->input('survey_template_id');
-        // $to = Carbon::now();
-        // $from = clone $to;
-        // $from->subDays(14);
-        // $from->hour=5;
-        // $from->minute=0;
+       
 
         $query = Survey::query();
         $query->whereBetween('created_at',[$from, $to])->where('branch_id', session('branch_id'))->where('template_id', $survey_template_id);
         $query->with('income');
-        $query->select('surveys.*');
+        $query->select(['surveys.*']);
         $template = 'actionsTemplate2';
 
         $datatables = Datatables::of($query);
@@ -163,6 +159,15 @@ class SurveyController extends Controller
         $datatables->editColumn('amount', function($query){
                   return number_format($query->income->total_amount);  
                 });
+        $datatables->editColumn('license_plate', function($query){
+                  return $query->income->vehicle->license_plate;  
+                });
+        $datatables->editColumn('income_id', function($query){
+                  return $query->income_id . " (" . $query->income->entry_date . ")";  
+                });
+        $datatables->editColumn('income_category_name_full', function($q){
+                  return $q->income->income_category->name.$q->income->additional_sales;  
+              });
         // $datatables->editColumn('amount_rp', function($q){
         //     return 'Rp. ' . number_format($q->amount);
         // });
@@ -174,6 +179,23 @@ class SurveyController extends Controller
         //     });
         // $datatables->rawColumns(['actions']);
         return $datatables->make(true);
+    }
+
+    public function loadSurveyStats(Request $request)
+    {
+        $arrStart = explode("-", $request->input('startdate'));
+        $arrEnd = explode("-", $request->input('enddate'));
+        $startdate = Carbon::create($arrStart[2],$arrStart[1], $arrStart[0], 0, 0, 0);
+        $enddate = Carbon::create($arrEnd[2],$arrEnd[1], $arrEnd[0], 23, 59, 0);
+        
+        $to = $enddate;
+        $from = $startdate;
+        $survey_template_id = $request->input('survey_template_id');
+
+        $stats = Survey::whereBetween('created_at',[$from, $to])->where('branch_id', session('branch_id'))->where('template_id', $survey_template_id)->select(\DB::raw('avg(q1) avg_q1, avg(q2) avg_q2, avg(q3) avg_q3, avg(q4) avg_q4, avg(q5) avg_q5'))->get();
+        $questions = SurveyTemplate::where('id', $survey_template_id)->first();
+
+        return compact('stats', 'questions');
     }
 
 }

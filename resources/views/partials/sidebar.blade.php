@@ -169,7 +169,7 @@
             @can('change_branch')
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-bar-chart"></i>
+                    <i class="fa fa-list-alt"></i>
                     <span class="title">Survey</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
@@ -178,14 +178,14 @@
                 <ul class="treeview-menu">
                     <li class="{{ $request->segment(1) == 'survey' ? 'active active-sub' : '' }}">
                         <a href="{{ route('survey.index') }}">
-                            <i class="fa fa-line-chart"></i>
+                            <i class="fa fa-list-alt"></i>
                             <span class="title">Survey Results</span>
                         </a>
                     </li>
                     
                     <li class="{{ $request->segment(1) == 'surveytemplate' ? 'active active-sub' : '' }}">
                         <a href="{{ route('surveytemplate.index') }}">
-                            <i class="fa fa-line-chart"></i>
+                            <i class="fa fa-list-alt"></i>
                             <span class="title">Survey Template</span>
                         </a>
                     </li>
