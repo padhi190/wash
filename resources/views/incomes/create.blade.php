@@ -42,6 +42,8 @@
     
     {!! Form::open(['method' => 'POST', 'route' => ['incomes.store']]) !!}
 
+    {{ Form::hidden('wax_category', old('wax_category'), ['id' => 'wax_category']) }}
+
     <div class="panel panel-default">
         
         
@@ -183,7 +185,11 @@
                         </label>
                         <label class="btn btn-success">
                             <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
-                                Wax
+                                Full Wax
+                        </label>
+                         <label class="btn btn-success">
+                            <input type="checkbox" name="Spraywaxcheckbox" id="Spraywaxcheckbox" value="SprayWax" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
+                                Spray Wax
                         </label>
                       
                     </div>
@@ -272,6 +278,7 @@
 
     @section('formSection')
         {!! Form::open(['method' => 'POST', 'route' => ['customers.storeFull']]) !!}
+        {{ Form::hidden('wax_category', old('wax_category'), ['id' => 'wax_category2']) }}
 
         <div class="panel panel-default">
             
@@ -537,7 +544,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-3 form-group">
+                    <div class="col-xs-4 form-group">
                         {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
                         <p class="help-block"></p>
                         
@@ -548,13 +555,17 @@
                             </label>
                             <label class="btn btn-success">
                                 <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox2" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
-                                    Wax
+                                    Full Wax
+                            </label>
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="Spraywaxcheckbox" id="Spraywaxcheckbox2" value="SprayWax" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
+                                    Spray Wax
                             </label>
                           
                         </div>
                     </div>
 
-                    <div class="col-xs-3 form-group fnb_field2" style="visibility: hidden;">
+                    <div class="col-xs-2 form-group fnb_field2" style="visibility: hidden;">
                         {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
                         <p class="help-block"></p>
                         {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount2', 'onchange' => 'updateTotal2()']) !!}
@@ -1163,6 +1174,17 @@
             if($('input[name="Waxcheckbox"]').is(':checked')){
                 wax = parseInt($('#wax_amount').val());
             }
+
+            if($('input[name="Spraywaxcheckbox"]').is(':checked')){
+                $('#wax_category').val("Spray");
+                wax = parseInt($('#wax_amount').val());
+            }
+
+            if($('input[name="Spraywaxcheckbox"]').is(':checked') == false){
+                $('#wax_category').val("");
+                wax = parseInt($('#wax_amount').val());
+            }
+
             var total = fnb + wax + parseInt($('#amount').val());
             $('#total_amount').val(total);
         };
@@ -1178,6 +1200,17 @@
             if($('input[id="Waxcheckbox2"]').is(':checked')){
                 wax = parseInt($('#wax_amount2').val());
             }
+
+            if($('input[id="Spraywaxcheckbox2"]').is(':checked')){
+                $('#wax_category2').val("Spray");
+                wax = parseInt($('#wax_amount2').val());
+            }
+
+            if($('input[id="Spraywaxcheckbox2"]').is(':checked') == false){
+                $('#wax_category2').val("");
+                wax = parseInt($('#wax_amount2').val());
+            }
+
             var total = fnb + wax + parseInt($('#amount2').val());
             $('#total_amount2').val(total);
         };

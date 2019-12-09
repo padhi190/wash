@@ -5,6 +5,8 @@
     
     {!! Form::model($income, ['method' => 'PUT', 'route' => ['incomes.update', $income->id]]) !!}
 
+    {{ Form::hidden('wax_category', old('wax_category'), ['id' => 'wax_category']) }}
+
     <div class="panel panel-default">
 
         <div class="panel-body">
@@ -140,10 +142,15 @@
                             {{$income->fnb_amount > 0 ? 'checked' : ''}}> 
                                 F&B
                         </label>
-                        <label class="btn btn-success {{$income->wax_amount > 0 ? 'active' : ''}}">
+                        <label class="btn btn-success {{($income->wax_amount > 0 && $income->wax_category != 'Spray') ? 'active' : ''}}">
                             <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax(this), updateTotal()"
-                            {{$income->wax_amount > 0 ? 'active' : ''}}> 
-                                Wax
+                            {{($income->wax_amount > 0 && $income->wax_category != 'Spray') ? 'checked' : ''}}> 
+                                Full Wax
+                        </label>
+                        <label class="btn btn-success {{$income->wax_category == 'Spray' ? 'active' : ''}}">
+                            <input type="checkbox" name="Spraywaxcheckbox" id="Spraywaxcheckbox" value="SprayWax" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"
+                            {{$income->wax_category == 'Spray' ? 'checked' : ''}}> 
+                                Spray Wax
                         </label>
                       
                     </div>
@@ -259,6 +266,17 @@
             if($('input[name="Waxcheckbox"]').is(':checked')){
                 wax = parseInt($('#wax_amount').val());
             }
+
+            if($('input[name="Spraywaxcheckbox"]').is(':checked')){
+                $('#wax_category').val("Spray");
+                wax = parseInt($('#wax_amount').val());
+            }
+
+            if($('input[name="Spraywaxcheckbox"]').is(':checked') == false){
+                $('#wax_category').val("");
+                wax = parseInt($('#wax_amount').val());
+            }
+
             var total = fnb + wax + parseInt($('#amount').val());
             $('#total_amount').val(total);
         };

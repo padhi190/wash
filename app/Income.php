@@ -185,7 +185,10 @@ class Income extends Model
             $additional=$additional . ", F&B";
         }
         if($this->attributes['wax_amount']>0){
-            $additional=$additional . ", Wax";
+            if($this->attributes['wax_category']!="")
+                $additional=$additional . ", Wax (" . $this->attributes['wax_category'] . ")";
+            else
+                $additional=$additional . ", Wax (Full)";
         }
 
         return $additional;

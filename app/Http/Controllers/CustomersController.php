@@ -274,6 +274,7 @@ class CustomersController extends Controller
 
     public function storeFull(StoreCustomerFullRequest $request)
     {
+        // dd($request);
         if (! Gate::allows('customer_create')) {
             return abort(401);
         }
@@ -315,6 +316,7 @@ class CustomersController extends Controller
         $sales->payment_type_id     = $request->payment_type_id;
         $sales->fnb_amount          = $request->fnb_amount;
         $sales->wax_amount          = $request->wax_amount;
+        $sales->wax_category        = $request->wax_category;
 
         $income = $vehicle->sales()->save($sales);
         
