@@ -81,9 +81,24 @@ class SurveyController extends Controller
         $branch = \App\Branch::find($request->branch_id);
         if($income)
         {
-            $survey = Survey::create($request->all());
-            $phone = $survey->income->vehicle->customer->phone;
-            Helper::sendVOUCHER($survey->income, $branch);
+            $bon = Income::find($request->income_id);
+            $promo = Helper::getPromoType($bon);
+            $coupon_code = Helper::generateRandomString();
+            $data = $request->all();
+
+            if($promo['giveVoucher'])
+            {
+                $days = $promo['expire'];
+                $data['coupon_code'] = $coupon_code;
+                $data['expiry_date'] = Carbon::now()->addDays($days)->format('Y-m-d'); 
+                $data['coupon_type'] = $promo['voucherType'];
+            }
+            
+            // dd($data);
+            $survey = Survey::create($data);
+            // $phone = $survey->income->vehicle->customer->phone;
+            
+            Helper::sendVOUCHER($survey, $branch);
         }
         $message = "Terima Kasih atas feedback Anda";
         return view('surveys.message', compact('message'));

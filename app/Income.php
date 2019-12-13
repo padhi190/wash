@@ -188,7 +188,7 @@ class Income extends Model
             if($this->attributes['wax_category']!="")
                 $additional=$additional . ", Wax (" . $this->attributes['wax_category'] . ")";
             else
-                $additional=$additional . ", Wax (Full)";
+                $additional=$additional . ", Wax (Cream)";
         }
 
         return $additional;
@@ -197,5 +197,18 @@ class Income extends Model
     public function scopeBetween($query, Carbon $from, Carbon $to)
     {
         $query->whereBetween('entry_date', [$from, $to]);
+    }
+
+    public function getWaxTypeAttribute()
+    {
+        $wax_type = "None";
+        if($this->attributes['wax_amount']>0){
+            if($this->attributes['wax_category']!="")
+                $wax_type = $this->attributes['wax_category'];
+            else
+                $wax_type = "Cream";
+        }
+
+        return $wax_type;
     }
 }

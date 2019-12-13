@@ -50,9 +50,22 @@ class Helper
         
         $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
-                    $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL .
-                    'Berikan ulasan anda & dapatkan harga khusus Spray Wax ~Rp 85,000~ Rp 70,000 ' . PHP_EOL . $survey_link . PHP_EOL . 
+                    $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL;
+
+        $promo = self::getPromoType($income);
+        // dd($promo);
+        if($promo['giveVoucher'])
+        {
+            $promo_message = 'Berikan ulasan anda & dapatkan harga khusus ' . $promo['voucherType'] . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . PHP_EOL . $survey_link . PHP_EOL . '(Save kontak ini agar link dapat di klik)';
+        }
+        else
+        {
+            $promo_message   =  'Berikan ulasan anda disini' . PHP_EOL . $survey_link . PHP_EOL . 
                     '(Save kontak ini agar link dapat di klik)' ;
+        }
+        
+
+        $message .= $promo_message;
         // $phone = $income->vehicle->customer->phone;
         $phone = '081322999456';
         $custom_uid = $income->nobon;
@@ -61,20 +74,81 @@ class Helper
         
     }
 
-    public static function sendVOUCHER(\App\Income $income, $branch)
+    public static function sendVOUCHER(\App\Survey $survey, $branch)
     {
-    	$valid = $income->created_at;
-    	$valid->addDays(14);
-        $branch = \App\Branch::find($branch->id);
+        $message = 'Terima Kasih atas feedback Anda.' . PHP_EOL . 'Wash, Inc. ' . $branch->branch_name;
+        $income = $survey->income;
+        $promo = self::getPromoType($income);
+
+        if($promo['giveVoucher'])
+        {
+            $valid = Carbon::parse($survey->expiry_date);
+            $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus ' .$survey->coupon_type . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
+
+        }
+    	
+        
+    	
         $url = $branch->sms_url;
-        $voucher= self::generateRandomString();
-        $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus Spray Wax ~Rp 85,000~  Rp 70,000' . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $voucher .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
+        
+
+        
         // $phone = $income->vehicle->customer->phone;
         $phone = '081322999456';
         $custom_uid = $income->nobon . Carbon::now();
         self::sendWA($url, $phone, $message, $custom_uid);
         
         
+    }
+
+    public static function getPromoType(\App\Income $income)
+    {
+        
+        $promo['giveVoucher'] = false;
+        
+        // Carwash
+        if ($income->income_category_id == 1) 
+        {
+            // dd($income->wax_type);
+            $promo['giveVoucher'] = true;
+            switch ($income->wax_type) {
+                case 'None':
+                    $promo['voucherType'] = 'Spray Wax';
+                    $promo['hargaCoret'] = 'Rp 85.000';
+                    $promo['hargaDiskon'] = 'Rp 75.000';
+                    $promo['expire'] = 14;
+                    break;
+
+                case 'Spray':
+                    $promo['voucherType'] = 'Cream Wax';
+                    $promo['hargaCoret'] = 'Rp 100.000';
+                    $promo['hargaDiskon'] = 'Rp 85.000';
+                    $promo['expire'] = 14;
+                    break;
+
+                case 'Cream':
+                    $promo['voucherType'] = 'Detailing';
+                    $promo['hargaCoret'] = 'Rp 1.000.000';
+                    $promo['hargaDiskon'] = 'Rp 800.000';
+                    $promo['expire'] = 31;
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+        // Detailing
+        elseif ($income->income_category_id == 3) {
+            # code...
+            $promo['giveVoucher'] = true;
+            $promo['voucherType'] = 'Car Wash';
+            $promo['hargaCoret'] = 'Rp 50.000';
+            $promo['hargaDiskon'] = 'Free';
+            $promo['expire'] = 14;
+        }
+
+        return $promo;
     }
 
 
