@@ -166,7 +166,7 @@
                 </ul>
             </li>
             @endcan
-            @can('change_branch')
+            
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-list-alt"></i>
@@ -182,17 +182,17 @@
                             <span class="title">Survey Results</span>
                         </a>
                     </li>
-                    
+                    @can('change_branch')
                     <li class="{{ $request->segment(1) == 'surveytemplate' ? 'active active-sub' : '' }}">
                         <a href="{{ route('surveytemplate.index') }}">
                             <i class="fa fa-list-alt"></i>
                             <span class="title">Survey Template</span>
                         </a>
                     </li>
-                   
+                    @endcan
                 </ul>
             </li>
-            @endcan
+            
             @can('history_access')
             <li class="treeview {{ $request->segment(1) == 'history' ? 'active' : '' }}">
                 <a href="#">

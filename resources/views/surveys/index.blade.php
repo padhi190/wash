@@ -43,12 +43,15 @@
                         <th>Kategori</th>
                         <th>Plat No</th>
                         <th>Jumlah</th>
-                        <th id="q1">q1</th>
-                        <th id="q2">q2</th>
-                        <th id="q3">q3</th>
-                        <th id="q4">q4</th>
-                        <th id="q5">q5</th>
-                        <th id="essay">Essay</th>
+                        <th id="q1_header">q1</th>
+                        <th id="q2_header">q2</th>
+                        <th id="q3_header">q3</th>
+                        <th id="q4_header">q4</th>
+                        <th id="q5_header">q5</th>
+                        <th id="essay_header">Essay</th>
+                        <th>Kode Voucher</th>
+                        <th>Berlaku</th>
+                        <th>Tipe Voucher</th>
                         
                         <!-- <th>&nbsp</th> -->
                     </tr>
@@ -101,6 +104,9 @@
                         { data: 'q4' },
                         { data: 'q5' },
                         { data: 'essay'},
+                        { data: 'coupon_code'},
+                        { data: 'expiry_date'},
+                        { data: 'coupon_type'},
                     ]
                 });
             
@@ -134,6 +140,12 @@
                         $('#q3_avg').number(result['stats'][0]['avg_q3'],2);
                         $('#q4_avg').number(result['stats'][0]['avg_q4'],2);
                         $('#q5_avg').number(result['stats'][0]['avg_q5'],2);
+                        $('#q1_header').html(result['questions']['q1']);
+                        $('#q2_header').html(result['questions']['q2']);
+                        $('#q3_header').html(result['questions']['q3']);
+                        $('#q4_header').html(result['questions']['q4']);
+                        $('#q5_header').html(result['questions']['q5']);
+                        $('#essay_header').html(result['questions']['essay']);
 
                     }
                 });
