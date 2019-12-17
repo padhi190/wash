@@ -114,22 +114,29 @@ class Helper
             switch ($income->wax_type) {
                 case 'None':
                     $promo['voucherType'] = 'Spray Wax';
-                    $promo['hargaCoret'] = 'Rp 85.000';
-                    $promo['hargaDiskon'] = 'Rp 75.000';
+                    $promo['hargaCoret'] = 'Rp 100.000';
+                    $promo['hargaDiskon'] = 'Rp 70.000';
                     $promo['expire'] = 14;
                     break;
 
                 case 'Spray':
                     $promo['voucherType'] = 'Cream Wax';
-                    $promo['hargaCoret'] = 'Rp 100.000';
-                    $promo['hargaDiskon'] = 'Rp 85.000';
+                    $promo['hargaCoret'] = 'Rp 125.000';
+                    $promo['hargaDiskon'] = 'Rp 90.000';
                     $promo['expire'] = 14;
                     break;
 
                 case 'Cream':
+                    $promo['voucherType'] = 'Soft Coating';
+                    $promo['hargaCoret'] = 'Rp 350.000';
+                    $promo['hargaDiskon'] = 'Rp 225.000';
+                    $promo['expire'] = 14;
+                    break;
+
+                case 'Softcoat':
                     $promo['voucherType'] = 'Detailing';
-                    $promo['hargaCoret'] = 'Rp 1.000.000';
-                    $promo['hargaDiskon'] = 'Rp 800.000';
+                    $promo['hargaCoret'] = '5%';
+                    $promo['hargaDiskon'] = '10%';
                     $promo['expire'] = 31;
                     break;
                 

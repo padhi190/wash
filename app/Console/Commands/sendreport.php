@@ -135,7 +135,7 @@ class sendreport extends Command
 
         $response = $client->put($branch->sms_url, [
             'query' => ['token' => '364c2bb8ec26bda46614d82f6b76bc6f5de1c9205d92d',
-                        'uid' => '6281322999456',
+                        'uid' => '6282116273608',
                         'to' => '6281322999456',
                         'custom_uid' => $branch_name.Carbon::now(),
                         'text'=> $message],

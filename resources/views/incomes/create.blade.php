@@ -174,7 +174,7 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3 form-group">
+                <div class="col-xs-4 form-group">
                     {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     
@@ -185,17 +185,21 @@
                         </label>
                         <label class="btn btn-success">
                             <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
-                                Full Wax
+                                Cream Wax
                         </label>
-                         <label class="btn btn-success">
+                        <label class="btn btn-success">
                             <input type="checkbox" name="Spraywaxcheckbox" id="Spraywaxcheckbox" value="SprayWax" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
                                 Spray Wax
+                        </label>
+                        <label class="btn btn-success">
+                            <input type="checkbox" name="Softcoatingcheckbox" id="Softcoatingcheckbox" value="Softcoating" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
+                                Soft Coating
                         </label>
                       
                     </div>
                 </div>
                 
-                <div class="col-xs-3 form-group fnb_field" style="visibility: hidden;">
+                <div class="col-xs-2 form-group fnb_field" style="visibility: hidden;">
                     {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount', 'onchange' => 'updateTotal()']) !!}
@@ -555,11 +559,15 @@
                             </label>
                             <label class="btn btn-success">
                                 <input type="checkbox" name="Waxcheckbox" id="Waxcheckbox2" value="Wax" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
-                                    Full Wax
+                                    Cream Wax
                             </label>
                             <label class="btn btn-success">
                                 <input type="checkbox" name="Spraywaxcheckbox" id="Spraywaxcheckbox2" value="SprayWax" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
                                     Spray Wax
+                            </label>
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="Softcoatingcheckbox" id="Softcoatingcheckbox2" value="Softcoating" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
+                                    Soft Coating
                             </label>
                           
                         </div>
@@ -1172,6 +1180,7 @@
             }
 
             if($('input[name="Waxcheckbox"]').is(':checked')){
+                $('#wax_category').val("");
                 wax = parseInt($('#wax_amount').val());
             }
 
@@ -1180,9 +1189,17 @@
                 wax = parseInt($('#wax_amount').val());
             }
 
-            if($('input[name="Spraywaxcheckbox"]').is(':checked') == false){
-                $('#wax_category').val("");
+            if($('input[name="Softcoatingcheckbox"]').is(':checked')){
+                $('#wax_category').val("Softcoat");
                 wax = parseInt($('#wax_amount').val());
+            }
+
+            if($('input[name="Spraywaxcheckbox"]').is(':checked') == false){
+                if($('input[name="Softcoatingcheckbox"]').is(':checked') == false)
+                {
+                    $('#wax_category').val("");
+                    wax = parseInt($('#wax_amount').val());
+                }
             }
 
             var total = fnb + wax + parseInt($('#amount').val());
@@ -1190,6 +1207,7 @@
         };
 
         function updateTotal2(){
+
             var fnb = 0;
             var wax = 0;
             // window.alert($('input[id="FnBcheckbox2"]').is(':checked'));
@@ -1198,6 +1216,7 @@
             }
 
             if($('input[id="Waxcheckbox2"]').is(':checked')){
+                $('#wax_category2').val("");
                 wax = parseInt($('#wax_amount2').val());
             }
 
@@ -1206,11 +1225,18 @@
                 wax = parseInt($('#wax_amount2').val());
             }
 
-            if($('input[id="Spraywaxcheckbox2"]').is(':checked') == false){
-                $('#wax_category2').val("");
+            if($('input[id="Softcoatingcheckbox2"]').is(':checked')){
+                $('#wax_category2').val("Softcoat");
                 wax = parseInt($('#wax_amount2').val());
             }
 
+            if($('input[id="Spraywaxcheckbox2"]').is(':checked') == false){
+                if($('input[id="Softcoatingcheckbox2"]').is(':checked') == false){
+                    $('#wax_category2').val("");
+                    wax = parseInt($('#wax_amount2').val());
+                }
+            }
+            // alert(wax);
             var total = fnb + wax + parseInt($('#amount2').val());
             $('#total_amount2').val(total);
         };
@@ -1272,8 +1298,13 @@
         function showWax(addition){
             // window.alert(addition.checked);
             if(addition.checked){
-                $('.wax_field').css('visibility', 'visible'); 
-                $('#wax_amount').val({{$prices['wax']}});
+                $('.wax_field').css('visibility', 'visible');
+                if(addition.value == "Wax") 
+                    $('#wax_amount').val("{{$prices['wax']}}");
+                if(addition.value == "SprayWax")
+                    $('#wax_amount').val("{{$prices['spraywax']}}");
+                if(addition.value == "Softcoating")
+                    $('#wax_amount').val("{{$prices['softcoating']}}");
             }
             else{
                 $('.wax_field').css('visibility', 'hidden'); 
@@ -1285,7 +1316,12 @@
             // window.alert(addition.checked);
             if(addition.checked){
                 $('.wax_field2').css('visibility', 'visible'); 
-                $('#wax_amount2').val({{$prices['wax']}});
+                if(addition.value == "Wax") 
+                    $('#wax_amount2').val("{{$prices['wax']}}");
+                if(addition.value == "SprayWax")
+                    $('#wax_amount2').val("{{$prices['spraywax']}}");
+                if(addition.value == "Softcoating")
+                    $('#wax_amount2').val("{{$prices['softcoating']}}");
             }
             else{
                 $('.wax_field2').css('visibility', 'hidden'); 
