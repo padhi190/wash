@@ -83,7 +83,13 @@ class Helper
         if($promo['giveVoucher'])
         {
             $valid = Carbon::parse($survey->expiry_date);
-            $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus ' .$survey->coupon_type . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
+            // $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus ' .$survey->coupon_type . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
+
+            $message='Terima Kasih sudah mengisi survey dan membantu kami menjadi lebih baik.'. PHP_EOL. 'Sebagai tanda terima kasih, kami memberikan potongan harga khusus ' .$survey->coupon_type . ' untuk Anda.'. PHP_EOL . 'Harga Khusus ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
+            if($survey->coupon_type == 'Detailing')
+            {
+                $message='Terima Kasih sudah mengisi survey dan membantu kami menjadi lebih baik.'. PHP_EOL. 'Sebagai tanda terima kasih, kami memberikan voucher Potongan Khusus Detailing untuk Anda di Wash, Inc ' . $income->branch->branch_name . ' sebesar '. $promo['hargaDiskon'] . ' dari harga normal. '. PHP_EOL . 'Gunakan Voucher ini agar mobil anda menjadi kembali berkilau seperti ketika masih baru :)' .PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;                
+            }
 
         }
     	
