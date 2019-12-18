@@ -172,16 +172,36 @@ class SurveyController extends Controller
                 'data-entry-id' => '{{$id}}',
             ]);
         $datatables->editColumn('amount', function($query){
-                  return number_format($query->income->total_amount);  
+                  
+                  if($query->income === null)
+                    $data = 'N/A';
+                  else
+                    $data = number_format($query->income->total_amount);
+                  return $data;  
                 });
         $datatables->editColumn('license_plate', function($query){
-                  return $query->income->vehicle->license_plate;  
+                  
+                  if($query->income === null)
+                    $data = 'N/A';
+                  else
+                    $data = $query->income->vehicle->license_plate;
+                  return $data;  
                 });
         $datatables->editColumn('income_id', function($query){
-                  return $query->income_id . " (" . $query->income->entry_date . ")";  
+                  
+                  if($query->income === null)
+                    $data = 'N/A';
+                  else
+                    $data = $query->income_id . " (" . $query->income->entry_date . ")";
+                  return $data ;  
                 });
         $datatables->editColumn('income_category_name_full', function($q){
-                  return $q->income->income_category->name.$q->income->additional_sales;  
+                  
+                  if($q->income === null)
+                    $data = 'N/A';
+                  else
+                    $data = $q->income->income_category->name.$q->income->additional_sales;
+                  return $data;
               });
         // $datatables->editColumn('amount_rp', function($q){
         //     return 'Rp. ' . number_format($q->amount);
