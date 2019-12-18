@@ -66,8 +66,8 @@ class Helper
         
 
         $message .= $promo_message;
-        // $phone = $income->vehicle->customer->phone;
-        $phone = '081322999456';
+        $phone = $income->vehicle->customer->phone;
+        // $phone = '081322999456';
         $custom_uid = $income->nobon;
         self::sendWA($url, $phone, $message, $custom_uid);
         
@@ -99,8 +99,8 @@ class Helper
         
 
         
-        // $phone = $income->vehicle->customer->phone;
-        $phone = '081322999456';
+        $phone = $income->vehicle->customer->phone;
+        // $phone = '081322999456';
         $custom_uid = $income->nobon . Carbon::now();
         self::sendWA($url, $phone, $message, $custom_uid);
         
