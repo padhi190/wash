@@ -48,26 +48,39 @@ class Helper
         // $survey_link = 'http://shorturl.at/fvwDZ';
         $survey_link = route('survey.create', ['branch_id' => $branch->id, 'income_id' => base_convert($income->id,10, 16)]);
         
-        $message = "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
+        $message = "_(Hi Gaes, ini pesan otomatis dari Wash, Inc jadi gawsa dibales cukup dibaca lalu klik link ajah)_" . PHP_EOL . "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
                     $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL;
 
-        $promo = self::getPromoType($income);
+        $promo = self::getPromoType($income, $branch);
         // dd($promo);
-        if($promo['giveVoucher'])
+        if($promo['giveVoucher'] == 'surveyVoucher')
         {
-            $promo_message = 'Berikan ulasan anda & dapatkan harga khusus ' . $promo['voucherType'] . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . PHP_EOL . $survey_link . PHP_EOL . '(Save kontak ini agar link dapat di klik)';
+            $promo_message = 'Berikan ulasan Anda & dapatkan harga khusus ' . $promo['voucherType'] . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . PHP_EOL . $survey_link . PHP_EOL . '(Save kontak ini agar link dapat di klik)';
+        }
+        elseif($promo['giveVoucher'] == 'direct')
+        {
+            $voucher_code = self::generateRandomString();
+            $expiry = Carbon::now()->addDays($promo['expire'])->format("j M 'y");
+            $promo_message = 'Kamu dapet potongan nih Gaes buat *' . $promo['voucherType'] . "* di Wash, Inc " . $branch->branch_name . "." . PHP_EOL .
+                             '✅ Harga Spesial khusus buat kamu niiih ya *~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . '*' . PHP_EOL .
+                             '✅ *Kode Voucher: ' . $voucher_code . '*' . PHP_EOL .
+                             '✅ Tukerin nih voucher *sebelum ' . $expiry . '* di Wash, Inc ' . $branch->branch_name . "." . PHP_EOL  .
+                             'Jan lupa loh!' . PHP_EOL .
+                             'Info: ' . $branch->phone . PHP_EOL . PHP_EOL .
+                             'Tengkyuuu bet ya Gaes udah jadi pelanggan setia Wash, Inc 🥰. Jan lupa kasi pesan yang berkesan dengan nge-klik link dibawah ini ' . $survey_link . ' 😘' ;
         }
         else
         {
-            $promo_message   =  'Berikan ulasan anda disini' . PHP_EOL . $survey_link . PHP_EOL . 
-                    '(Save kontak ini agar link dapat di klik)' ;
+            $promo_message   =  'Tengkyuuu bet ya Gaes udah jadi pelanggan setia Wash, Inc 🥰. Jan lupa kasi pesan yang berkesan dengan nge-klik link dibawah ini ' . PHP_EOL . $survey_link . PHP_EOL . 
+                    '(Save dulu nomer ini yaa biar link nya bisa di klik 😘)' ;
         }
         
 
         $message .= $promo_message;
         $phone = $income->vehicle->customer->phone;
         // $phone = '081322999456';
+        // dd($message);
         $custom_uid = $income->nobon;
         self::sendWA($url, $phone, $message, $custom_uid);
         
@@ -76,14 +89,18 @@ class Helper
 
     public static function sendVOUCHER(\App\Survey $survey, $branch)
     {
-        $message = 'Terima Kasih atas feedback Anda.' . PHP_EOL . 'Wash, Inc. ' . $branch->branch_name;
+        $message = 'Bhaiiqqq... Tengkyu banget lho yaaa udah kasi pesan yang berkesan 🤗' . PHP_EOL . 
+                    'Wash, Inc. ' . $branch->branch_name . PHP_EOL . 
+                    $branch->address . ', ' . $branch->city . PHP_EOL . 
+                    $branch->phone . PHP_EOL .
+                    '_(Pesan otomatis dari Wash, Inc)_';
         $income = $survey->income;
-        $promo = self::getPromoType($income);
+        $promo = self::getPromoType($income, $branch);
 
-        if($promo['giveVoucher'])
+        if($promo['giveVoucher'] == 'surveyVoucher')
         {
             $valid = Carbon::parse($survey->expiry_date);
-            // $message='Terima Kasih atas feedback Anda.'. PHP_EOL. 'Anda mendapatkan harga khusus ' .$survey->coupon_type . ' ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
+
 
             $message='Terima Kasih sudah mengisi survey dan membantu kami menjadi lebih baik.'. PHP_EOL. 'Sebagai tanda terima kasih, kami memberikan potongan harga khusus ' .$survey->coupon_type . ' untuk Anda.'. PHP_EOL . 'Harga Khusus ~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . ' di Wash, Inc ' . $income->branch->branch_name . PHP_EOL .'*Kode voucher: ' . $survey->coupon_code .'*'. PHP_EOL. 'berlaku s.d. *' . $valid->format("j M 'y"). '*'.PHP_EOL .'Info: ' . $income->branch->phone;
             if($survey->coupon_type == 'Detailing')
@@ -107,42 +124,42 @@ class Helper
         
     }
 
-    public static function getPromoType(\App\Income $income)
+    public static function getPromoType(\App\Income $income, $branch)
     {
         
-        $promo['giveVoucher'] = false;
-        
+        $promo['giveVoucher'] = 'none';
+        $prices = config('pricelist'.$branch->id);
         // Carwash
         if ($income->income_category_id == 1) 
         {
             // dd($income->wax_type);
-            $promo['giveVoucher'] = true;
+            $promo['giveVoucher'] = 'direct';
             switch ($income->wax_type) {
                 case 'None':
                     $promo['voucherType'] = 'Spray Wax';
-                    $promo['hargaCoret'] = 'Rp 100.000';
-                    $promo['hargaDiskon'] = 'Rp 70.000';
+                    $promo['hargaCoret'] = $prices['spraywax_coret'];
+                    $promo['hargaDiskon'] =$prices['spraywax_promo'];
                     $promo['expire'] = 14;
                     break;
 
                 case 'Spray':
                     $promo['voucherType'] = 'Cream Wax';
-                    $promo['hargaCoret'] = 'Rp 125.000';
-                    $promo['hargaDiskon'] = 'Rp 90.000';
+                    $promo['hargaCoret'] = $prices['creamwax_coret'];
+                    $promo['hargaDiskon'] = $prices['creamwax_promo'];
                     $promo['expire'] = 14;
                     break;
 
                 case 'Cream':
                     $promo['voucherType'] = 'Soft Coating';
-                    $promo['hargaCoret'] = 'Rp 350.000';
-                    $promo['hargaDiskon'] = 'Rp 225.000';
+                    $promo['hargaCoret'] = $prices['softcoating_coret'];
+                    $promo['hargaDiskon'] = $prices['softcoating_promo'];
                     $promo['expire'] = 14;
                     break;
 
                 case 'Softcoat':
                     $promo['voucherType'] = 'Detailing';
-                    $promo['hargaCoret'] = '5%';
-                    $promo['hargaDiskon'] = '10%';
+                    $promo['hargaCoret'] = $prices['detailing_coret'];
+                    $promo['hargaDiskon'] = $prices['detailing_promo'];
                     $promo['expire'] = 31;
                     break;
                 
@@ -154,9 +171,9 @@ class Helper
         // Detailing
         elseif ($income->income_category_id == 3) {
             # code...
-            $promo['giveVoucher'] = true;
+            $promo['giveVoucher'] = 'direct';
             $promo['voucherType'] = 'Car Wash';
-            $promo['hargaCoret'] = 'Rp 50.000';
+            $promo['hargaCoret'] = 'Rp '. number_format($prices['carwash']);
             $promo['hargaDiskon'] = 'Free';
             $promo['expire'] = 14;
         }
@@ -196,14 +213,14 @@ class Helper
 
         if($branch->branch_name == "Kopo")
         {
-            $phones = ['081322999456', '08122363622'];
+            $phones = ['081322999456', '08122363622', '08122440040'];
         }
         elseif ($branch->branch_name = "Buah Batu") {
-            $phones = ['081322999456'];   
+            $phones = ['081322999456', '081220002211'];   
         }
         else
         {
-            $phones = ['081322999456', '08122363622'];
+            $phones = ['081322999456', '08122363622', '08122440040'];
         }
 
         foreach ($phones as $phone) {
@@ -216,7 +233,7 @@ class Helper
     public static function sendWA($url, $phone, $message, $custom_uid)
     {
         $phone = self::convert_phone($phone);
-
+        // $phone = '6281322999456';
 
         if($phone != '')
         {

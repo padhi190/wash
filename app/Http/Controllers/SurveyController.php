@@ -82,11 +82,11 @@ class SurveyController extends Controller
         if($income)
         {
             $bon = Income::find($request->income_id);
-            $promo = Helper::getPromoType($bon);
+            $promo = Helper::getPromoType($bon, $branch);
             $coupon_code = Helper::generateRandomString();
             $data = $request->all();
 
-            if($promo['giveVoucher'])
+            if($promo['giveVoucher']=='surveyVoucher')
             {
                 $days = $promo['expire'];
                 $data['coupon_code'] = $coupon_code;
