@@ -281,6 +281,7 @@ class VehiclesController extends Controller
         $sales->payment_type_id     = $request->payment_type_id;
         $sales->fnb_amount          = $request->fnb_amount;
         $sales->wax_amount          = $request->wax_amount;
+        $sales->fogging_amount      = $request->fogging_amount;
 
         $vehicle->sales()->save($sales);
 

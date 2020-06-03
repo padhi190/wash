@@ -196,7 +196,7 @@
                                 Soft Coating
                         </label>
                         <label class="btn btn-success">
-                        <input type="checkbox" name="Foggingcheckbox" id="Foggingcheckbox" value="FnB" data-name="fnb" autocomplete="off" onchange="showFogging(this),updateTotal()"> 
+                            <input type="checkbox" name="Foggingcheckbox" id="Foggingcheckbox" value="FnB" data-name="fnb" autocomplete="off" onchange="showFogging(this),updateTotal()"> 
                                 Fogging
                         </label>
                       
@@ -568,7 +568,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-4 form-group">
+                    <div class="col-xs-5 form-group">
                         {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
                         <p class="help-block"></p>
                         
@@ -589,11 +589,15 @@
                                 <input type="checkbox" name="Softcoatingcheckbox" id="Softcoatingcheckbox2" value="Softcoating" data-name="fnb" autocomplete="off" onchange="showWax2(this),updateTotal2()"> 
                                     Soft Coating
                             </label>
+                            <label class="btn btn-success">
+                                <input type="checkbox" name="Foggingcheckbox" id="Foggingcheckbox2" value="Fogging" data-name="fnb" autocomplete="off" onchange="showFogging2(this),updateTotal2()"> 
+                                    Fogging
+                            </label>
                           
                         </div>
                     </div>
 
-                    <div class="col-xs-2 form-group fnb_field2" style="visibility: hidden;">
+                    <div class="col-xs-1 form-group fnb_field2" style="visibility: hidden;">
                         {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
                         <p class="help-block"></p>
                         {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount2', 'onchange' => 'updateTotal2()']) !!}
@@ -605,7 +609,7 @@
                         @endif
                     </div>
 
-                    <div class="col-xs-3 form-group wax_field2" style="visibility: hidden;">
+                    <div class="col-xs-2 form-group wax_field2" style="visibility: hidden;">
                         {!! Form::label('wax_amount', 'Harga Wax', ['class' => 'control-label']) !!}
                         <p class="help-block"></p>
                         {!! Form::number('wax_amount', old('wax_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'wax_amount2', 'onchange'=>'updateTotal2()']) !!}
@@ -617,7 +621,19 @@
                         @endif
                     </div>
 
-                    <div class="col-xs-3 form-group">
+                    <div class="col-xs-2 form-group fogging_field2" style="visibility: hidden;">
+                    {!! Form::label('fogging_amount', 'Harga Fogging', ['class' => 'control-label']) !!}
+                    <p class="help-block"></p>
+                    {!! Form::number('fogging_amount', old('fogging_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fogging_amount2', 'onchange' => 'updateTotal2()']) !!}
+                    
+                    @if($errors->has('fogging_amount'))
+                        <p class="help-block">
+                            {{ $errors->first('fogging_amount') }}
+                        </p>
+                    @endif
+                </div>
+
+                    <div class="col-xs-2 form-group">
                         {!! Form::label('total_amount', 'Total', ['class' => 'control-label']) !!}
                         <p class="help-block"></p>
                         {!! Form::number('total_amount', old('total_amount', $prices['carwash']), ['class' => 'form-control disabled', 'placeholder' => '', 'id' => 'total_amount2','disabled']) !!}
@@ -1235,9 +1251,14 @@
 
             var fnb = 0;
             var wax = 0;
+            var fogging = 0;
             // window.alert($('input[id="FnBcheckbox2"]').is(':checked'));
             if($('input[id="FnBcheckbox2"]').is(':checked')){
                 fnb = parseInt($('#fnb_amount2').val());
+            }
+
+            if($('input[name="Foggingcheckbox2"]').is(':checked')){
+                fogging = parseInt($('#fogging_amount2').val());
             }
 
             if($('input[id="Waxcheckbox2"]').is(':checked')){
@@ -1262,7 +1283,7 @@
                 }
             }
             // alert(wax);
-            var total = fnb + wax + parseInt($('#amount2').val());
+            var total = fnb + wax + fogging + parseInt($('#amount2').val());
             $('#total_amount2').val(total);
         };
 
@@ -1314,6 +1335,18 @@
             else{
                 $('.fnb_field2').css('visibility', 'hidden'); 
                 $('#fnb_amount2').val(0);
+            }
+        };
+
+        function showFogging2(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.fogging_field2').css('visibility', 'visible');
+                $('#fogging_amount2').val({{$prices['fogging']}}); 
+            }
+            else{
+                $('.fogging_field2').css('visibility', 'hidden'); 
+                $('#fogging_amount2').val(0);
             }
         };
 

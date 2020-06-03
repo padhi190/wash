@@ -317,6 +317,7 @@ class CustomersController extends Controller
         $sales->fnb_amount          = $request->fnb_amount;
         $sales->wax_amount          = $request->wax_amount;
         $sales->wax_category        = $request->wax_category;
+        $sales->fogging_amount      = $request->fogging_amount;
 
         $income = $vehicle->sales()->save($sales);
         
