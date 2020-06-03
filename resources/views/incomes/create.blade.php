@@ -174,7 +174,7 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-4 form-group">
+                <div class="col-xs-5 form-group">
                     {!! Form::label('addon', 'Tambahan', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     
@@ -195,11 +195,15 @@
                             <input type="checkbox" name="Softcoatingcheckbox" id="Softcoatingcheckbox" value="Softcoating" data-name="fnb" autocomplete="off" onchange="showWax(this),updateTotal()"> 
                                 Soft Coating
                         </label>
+                        <label class="btn btn-success">
+                        <input type="checkbox" name="Foggingcheckbox" id="Foggingcheckbox" value="FnB" data-name="fnb" autocomplete="off" onchange="showFogging(this),updateTotal()"> 
+                                Fogging
+                        </label>
                       
                     </div>
                 </div>
                 
-                <div class="col-xs-2 form-group fnb_field" style="visibility: hidden;">
+                <div class="col-xs-1 form-group fnb_field" style="visibility: hidden;">
                     {!! Form::label('fnb_amount', 'Harga F&B', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     {!! Form::number('fnb_amount', old('fnb_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fnb_amount', 'onchange' => 'updateTotal()']) !!}
@@ -211,7 +215,7 @@
                     @endif
                 </div>
 
-                <div class="col-xs-3 form-group wax_field" style="visibility: hidden;">
+                <div class="col-xs-2 form-group wax_field" style="visibility: hidden;">
                     {!! Form::label('wax_amount', 'Harga Wax', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     {!! Form::number('wax_amount', old('wax_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'wax_amount', 'onchange'=>'updateTotal()']) !!}
@@ -223,7 +227,19 @@
                     @endif
                 </div>
 
-                <div class="col-xs-3 form-group">
+                <div class="col-xs-2 form-group fogging_field" style="visibility: hidden;">
+                    {!! Form::label('fogging_amount', 'Harga Fogging', ['class' => 'control-label']) !!}
+                    <p class="help-block"></p>
+                    {!! Form::number('fogging_amount', old('fogging_amount'), ['class' => 'form-control', 'placeholder' => '', 'id' => 'fogging_amount', 'onchange' => 'updateTotal()']) !!}
+                    
+                    @if($errors->has('fogging_amount'))
+                        <p class="help-block">
+                            {{ $errors->first('fogging_amount') }}
+                        </p>
+                    @endif
+                </div>
+
+                <div class="col-xs-2 form-group">
                     {!! Form::label('total_amount', 'Total', ['class' => 'control-label']) !!}
                     <p class="help-block"></p>
                     {!! Form::number('total_amount', old('total_amount', $prices['carwash']), ['class' => 'form-control disabled', 'placeholder' => '', 'id' => 'total_amount','disabled']) !!}
@@ -266,6 +282,10 @@
             
             @if($last_sales->wax_amount > 0)
             <p>Wax : <span text-align="right">Rp. {{number_format($last_sales->wax_amount)}}</span></p>
+            @endif
+
+            @if($last_sales->fogging_amount > 0)
+            <p>Fogging : <span text-align="right">Rp. {{number_format($last_sales->fogging_amount)}}</span></p>
             @endif
 
             @if($last_sales->fnb_amount > 0)
@@ -1174,9 +1194,14 @@
         function updateTotal(){
             var fnb = 0;
             var wax = 0;
+            var fogging = 0;
             // window.alert($('input[name="FnBcheckbox"]').is(':checked'));
             if($('input[name="FnBcheckbox"]').is(':checked')){
                 fnb = parseInt($('#fnb_amount').val());
+            }
+
+            if($('input[name="Foggingcheckbox"]').is(':checked')){
+                fogging = parseInt($('#fogging_amount').val());
             }
 
             if($('input[name="Waxcheckbox"]').is(':checked')){
@@ -1202,7 +1227,7 @@
                 }
             }
 
-            var total = fnb + wax + parseInt($('#amount').val());
+            var total = fnb + wax + fogging + parseInt($('#amount').val());
             $('#total_amount').val(total);
         };
 
@@ -1265,6 +1290,18 @@
             else{
                 $('.fnb_field').css('visibility', 'hidden'); 
                 $('#fnb_amount').val(0);
+            }
+        };
+
+        function showFogging(addition){
+            // window.alert(addition.checked);
+            if(addition.checked){
+                $('.fogging_field').css('visibility', 'visible');
+                $('#fogging_amount').val({{$prices['fogging']}}); 
+            }
+            else{
+                $('.fogging_field').css('visibility', 'hidden'); 
+                $('#fogging_amount').val(0);
             }
         };
 

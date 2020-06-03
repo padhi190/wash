@@ -8,6 +8,7 @@
         
         
         <p id="wax"></p>
+        <p id="fogging"></p>
         <p id="fnb"></p>
         
         <p id="total"></p> 
@@ -130,7 +131,10 @@
               <div class="info-box-content">
                 <span class="info-box-text">Detailing</span>
                 <span class="info-box-number"><span id="detailing_dollar">0</span></span>
-                <span class="info-box-number"><i class="fa fa-car"></i> <span id="detailing_no">0</span></span>
+                <span class="info-box-number">
+                    <i class="fa fa-car"></i> <span id="detailing_no">0</span> &nbsp &nbsp
+                    <i class="fa fa-cloud"></i> <span id="fogging_dollar">0</span>K (<span id="fogging_no"></span>)
+                </span>
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
@@ -286,6 +290,8 @@
                             $("#total_etc").number(result['total_etc']);
                             $("#expense_dollar").number(result['expense_dollar']);
                             $("#expense_debit").number(result['expense_debit']);
+                            $("#fogging_dollar").number(result['fogging_dollar']/1000);
+                            $("#fogging_no").number(result['fogging_no']);
 
                         }
                     });

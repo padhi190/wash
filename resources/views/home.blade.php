@@ -128,7 +128,10 @@
               <div class="info-box-content">
                 <span class="info-box-text">Detailing</span>
                 <span class="info-box-number" id="detailing_dollar"></span>
-                <span class="info-box-number"><i class="fa fa-car"></i> <span id="detailing_no"></span></span>
+                <span class="info-box-number">
+                  <i class="fa fa-car"></i> <span id="detailing_no"></span> &nbsp &nbsp
+                  <i class="fa fa-cloud"></i> <span id="fogging_dollar"></span>K (<span id="fogging_no"></span>)
+                </span>
               </div><!-- /.info-box-content -->
             </div><!-- /.info-box -->
         </div>
@@ -294,6 +297,8 @@
                             $("#total_vehicle").html(processingText);
                             $("#total_mobil").html(processingText);
                             $("#total_motor").html(processingText);
+                            $("#fogging_dollar").html(processingText);
+                            $("#fogging_no").html(processingText);
                         },
                         success: function(result){
                             $("#sales_dollar, #sales_dollar_bon").number(result['sales_dollar']);
@@ -320,6 +325,8 @@
                             $("#total_vehicle").number(result['total_vehicle']);
                             $("#total_mobil").number(result['total_mobil']);
                             $("#total_motor").number(result['total_motor']);
+                            $("#fogging_dollar").number(result['fogging_dollar']/1000);
+                            $("#fogging_no").number(result['fogging_no']);
 
                         }
                     });

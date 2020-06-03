@@ -159,6 +159,20 @@ class HomeController extends Controller
                         ->where('branch_id', session('branch_id'))
                         ->sum('amount');
 
+        $fogging_dollar = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('fogging_amount', '>', '0')
+                        ->where('branch_id', session('branch_id'))
+                        ->sum('fogging_amount');
+
+        $fogging_no = Income::with('income_category')
+                        ->whereBetween('entry_date', [$from, $to])
+                        ->where('fogging_amount', '>', '0')
+                        ->where('branch_id', session('branch_id'))
+                        ->count();
+
+
+
         $total_etc = $fnb_dollar + $voucher_dollar + $etc_dollar;
 
 
@@ -189,7 +203,9 @@ class HomeController extends Controller
                                         'total_etc',
                                         'total_motor',
                                         'total_mobil',
-                                        'total_vehicle'
+                                        'total_vehicle',
+                                        'fogging_dollar',
+                                        'fogging_no'
                                         ));
     }
 

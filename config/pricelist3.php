@@ -5,6 +5,7 @@ return [
 	'wax' => 50000,
 	'spraywax' => 30000,
 	'softcoating' => 175000,
+	'fogging' => 35000,
 	'bikewash' => 20000,
 	'detailing' => 750000,
 	'fnb' => 6000,

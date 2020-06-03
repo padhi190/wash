@@ -34,6 +34,13 @@
     @else 
         $(".modal-body #fnb").html( "" );
     @endif
+
+    @if($row->fogging_amount > 0)
+        $(".modal-body #fogging").html( "Fogging : Rp. {!! number_format($row->fogging_amount) !!}" );
+    @else 
+        $(".modal-body #fogging").html( "" );
+    @endif
+
     $(".modal-body #total").html( "<strong>Total : Rp. {{ number_format($row->total_amount)}}</strong>" );
     });
 </script>

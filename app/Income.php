@@ -24,7 +24,7 @@ class Income extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['entry_date', 'qty', 'nobon', 'amount', 'discount', 'note', 'branch_id', 'vehicle_id', 'income_category_id', 'product_id', 'payment_type_id', 'fnb_amount', 'wax_amount','wax_category'];
+    protected $fillable = ['entry_date', 'qty', 'nobon', 'amount', 'discount', 'note', 'branch_id', 'vehicle_id', 'income_category_id', 'product_id', 'payment_type_id', 'fnb_amount', 'wax_amount','wax_category','fogging_amount'];
     
     public static function boot()
     {
@@ -160,6 +160,7 @@ class Income extends Model
     {
         $fnb_amount = $this->attributes['fnb_amount'];
         $wax_amount = $this->attributes['wax_amount'];
+        $fogging_amount = $this->attributes['fogging_amount'];
         $amount = $this->attributes['amount'];
 
         if(! is_numeric($fnb_amount)) {
@@ -170,12 +171,16 @@ class Income extends Model
             $wax_amount = 0;
         }
 
+        if(! is_numeric($fogging_amount)) {
+            $fogging_amount = 0;
+        }
+
         if(! is_numeric($amount)) {
             $amount = 0;
         }
 
         // return $this->attributes['amount'] + $this->attributes['fnb_amount'] + $this->attributes['wax_amount'];
-        return $amount + $fnb_amount + $wax_amount;
+        return $amount + $fnb_amount + $wax_amount + $fogging_amount;
     }
     
     public function getAdditionalSalesAttribute()
@@ -183,6 +188,9 @@ class Income extends Model
         $additional='';
         if($this->attributes['fnb_amount']>0){
             $additional=$additional . ", F&B";
+        }
+        if($this->attributes['fogging_amount']>0){
+            $additional=$additional . ", Fogging";
         }
         if($this->attributes['wax_amount']>0){
             if($this->attributes['wax_category']!="")
