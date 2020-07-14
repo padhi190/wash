@@ -48,7 +48,7 @@ class Helper
         // $survey_link = 'http://shorturl.at/fvwDZ';
         $survey_link = route('survey.create', ['branch_id' => $branch->id, 'income_id' => base_convert($income->id,10, 16)]);
         
-        $message = "_(Hi Gaes, ini pesan otomatis dari Wash, Inc jadi gawsa dibales cukup dibaca lalu klik link ajah)_" . PHP_EOL . "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
+        $message = "_(Pesan otomatis dari Wash, Inc)_" . PHP_EOL . "*Wash, Inc ". $branch->branch_name . '*'. PHP_EOL .
                     'Total : Rp ' . number_format($income->total_amount) .' (' . $income->vehicle->license_plate . ')' .PHP_EOL .
                     $branch->address . ', ' . $branch->city . PHP_EOL . PHP_EOL;
 
@@ -62,18 +62,16 @@ class Helper
         {
             $voucher_code = self::generateRandomString();
             $expiry = Carbon::now()->addDays($promo['expire'])->format("j M 'y");
-            $promo_message = 'Kamu dapet potongan nih Gaes buat *' . $promo['voucherType'] . "* di Wash, Inc " . $branch->branch_name . "." . PHP_EOL .
-                             '✅ Harga Spesial khusus buat kamu niiih ya *~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . '*' . PHP_EOL .
+            $promo_message = 'Anda mendapatkan potongan khusus untuk *' . $promo['voucherType'] . "* di Wash, Inc " . $branch->branch_name . "." . PHP_EOL .
+                             '✅ Harga Spesial *~' . $promo['hargaCoret'] . '~ ' . $promo['hargaDiskon'] . '*' . PHP_EOL .
                              '✅ *Kode Voucher: ' . $voucher_code . '*' . PHP_EOL .
-                             '✅ Tukerin nih voucher *sebelum ' . $expiry . '* di Wash, Inc ' . $branch->branch_name . "." . PHP_EOL  .
-                             'Jan lupa loh!' . PHP_EOL .
+                             '✅ Tukarkan voucher ini *sebelum ' . $expiry . '* di Wash, Inc ' . $branch->branch_name . "." . PHP_EOL  .
                              'Info: ' . $branch->phone . PHP_EOL . PHP_EOL .
-                             'Tengkyuuu bet ya Gaes udah jadi pelanggan setia Wash, Inc 🥰. Jan lupa kasi pesan yang berkesan dengan nge-klik link dibawah ini ' . $survey_link . ' 😘' ;
+                             'Terima kasih sudah menjadi pelanggan setia Wash, Inc 🙏. Untuk saran & kritik, klik link berikut ini ' . $survey_link ;
         }
         else
         {
-            $promo_message   =  'Tengkyuuu bet ya Gaes udah jadi pelanggan setia Wash, Inc 🥰. Jan lupa kasi pesan yang berkesan dengan nge-klik link dibawah ini ' . PHP_EOL . $survey_link . PHP_EOL . 
-                    '(Save dulu nomer ini yaa biar link nya bisa di klik 😘)' ;
+            $promo_message   =  'Terima kasih sudah menjadi pelanggan setia Wash, Inc 🙏. Untuk saran & kritik, klik link berikut ini ' . $survey_link ;
         }
         
 
@@ -89,7 +87,7 @@ class Helper
 
     public static function sendVOUCHER(\App\Survey $survey, $branch)
     {
-        $message = 'Bhaiiqqq... Tengkyu banget lho yaaa udah kasi pesan yang berkesan 🤗' . PHP_EOL . 
+        $message = 'Saran anda sudah kami terima 🙏' . PHP_EOL . 
                     'Wash, Inc. ' . $branch->branch_name . PHP_EOL . 
                     $branch->address . ', ' . $branch->city . PHP_EOL . 
                     $branch->phone . PHP_EOL .
